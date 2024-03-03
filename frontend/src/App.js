@@ -44,7 +44,6 @@ export default function App() {
           ) : (
             <p>Loading...</p>
           )}
-          <EditSimulation/>
         </div>
       </div>} />
             <Route path="/edit-rooms" element={<EditSimulation />} /> {/* Your room editing component */}
