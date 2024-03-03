@@ -1,7 +1,7 @@
 import React from 'react';
-import Profile from './Components/Dashboard/Profile';
-import HouseView from './Components/Dashboard/HouseView';
-import DashboardTabs from './Components/Dashboard/DashboardTabs';
+import Profile from './components/Dashboard/Profile';
+import HouseView from './components/Dashboard/HouseView';
+import DashboardTabs from './components/Dashboard/DashboardTabs';
 
 
 const SmartHomeDashboard = () => {

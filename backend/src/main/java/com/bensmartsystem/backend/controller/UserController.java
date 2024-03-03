@@ -1,6 +1,9 @@
-package com.bensmartsystem.backend;
+package com.bensmartsystem.backend.controller;
 
 import org.springframework.web.bind.annotation.*;
+
+import com.bensmartsystem.backend.model.User;
+
 import java.util.ArrayList;
 import java.util.List;
 
