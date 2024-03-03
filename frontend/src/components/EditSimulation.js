@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import axios from 'axios';
 
 // A little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
@@ -17,6 +18,7 @@ function UserFigure({ name }) {
       </div>
     );
   }
+
   
   
 
@@ -26,14 +28,19 @@ const RoomEditPage = () => {
         { id: 'user-2', name: 'User 2' },
         // ...and so on
       ]);
+      const [rooms, setRooms] = useState([]);
+
+    useEffect(() => {
+        // Fetch room information from the backend endpoint using axios
+        axios.get('http://localhost:8080/api/rooms')
+        .then((response) => {
+            setRooms(response.data); // Update the state of rooms with the response from the backend
+        })
+        .catch((error) => {
+            console.error("Error fetching room information", error);
+        });
+    }, []);
     
-      const [rooms, setRooms] = useState([
-        { id: 'room-1', name: 'Living Room', users: ['user-1'] }, // User ID as a string
-        { id: 'room-2', name: 'Kitchen', users: ['user-2'] },
-        { id: 'room-3', name: 'Master Bedroom', users: []},
-        { id: 'room-4', name: 'Master Bathroom', users: []}
-        // ...and so on
-      ]);
 
       const onDragEnd = (result) => {
         const { source, destination } = result;
