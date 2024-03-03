@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import EditSimulation from "./components/EditSimulation";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -18,7 +20,11 @@ export default function App() {
 
   return (
     <div className="bg-blue-100">
-      <div className="flex justify-center items-center h-screen">
+
+      <Router>
+        <div>
+          <Routes>
+            <Route path="/" element={<div className="flex justify-center items-center h-screen">
         <div className="bg-purple-300 p-6 rounded-lg w-108 h-50">
           <p className="text-5xl mb-4">User Information</p>
           {user ? (
@@ -39,7 +45,11 @@ export default function App() {
             <p>Loading...</p>
           )}
         </div>
-      </div>
+      </div>} />
+            <Route path="/edit-rooms" element={<EditSimulation />} /> {/* Your room editing component */}
+          </Routes>
+        </div>
+      </Router>
     </div>
   );
 }
