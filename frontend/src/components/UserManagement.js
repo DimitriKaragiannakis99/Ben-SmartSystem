@@ -54,6 +54,7 @@ function getUID() {
     return Date.now().toString(36);
     }
 
+    //TODO: Change all this so the logic is in the backend
 //In here we have the functionality to add/remove and edit user profile information
 //We will first add the user information
 function AddUser(userName, permissions) {
@@ -72,7 +73,6 @@ This means that the user can only open doors but not windows or lights
 
 //We will just save the userName and the permissions in the local storage
 //I guess we will set the ID here by just using the length of the local storage
-// !This is not ideal since the local storage can be used for other things too
 let id = getUID();
 
 localStorage.setItem(id, JSON.stringify({name: userName, permissions:(permissions)}));
@@ -90,11 +90,11 @@ function RemoveUser(id) {
     return true;
 }
 
-function EditUser(userName, permissions) {
+function EditUser(id, userName, permissions) {
     //We will just save the userName and the permissions in the local storage
-    localStorage.setItem(+userName, JSON.stringify(permissions));
+    localStorage.setItem(id, JSON.stringify({name: userName, permissions:(permissions)}));
     //Print to the console the user information
-    console.log("Updated User: " + userName + " Permissions: " + JSON.stringify(permissions));
+    console.log("Updated User ID: " + id + " Permissions: " + JSON.stringify(permissions));
     return true;
 }
 
@@ -113,9 +113,6 @@ function readUsers() {
     return users;
 }
 
-
-
-
 function UserManagementTab() {
 
     // Hooks to read the users from the local storage
@@ -126,7 +123,7 @@ function UserManagementTab() {
     }, []);
     
 
-    // Hooks for the dialog form
+    // Hooks for the dialog form for creating a new user
     const [open, setOpen] = React.useState(false);
     const handleClickOpen = () => {
       setOpen(true);
@@ -135,15 +132,28 @@ function UserManagementTab() {
       setOpen(false);
     };
 
+    // Hooks for the dialog form for editing a user
+    const [openE, setOpenE] = React.useState(false);
+    const [currentID, setCurrentID] = React.useState("");
+    const handleClickOpenE = (ID) => {
+      setOpenE(true);
+      setCurrentID(ID);
+    };
+    const handleCloseE = () => {
+      setOpenE(false);
+    };
+
+
+
     let selectedIds = [];
    
     const onRowsSelectionHandler = (ids) => {
         // This is all the data in case it is needed
-        const selectedRowsData = ids.map((id) => users.find((row) => row.id === id));
+        let selectedRowsData = ids.map((id) => users.find((row) => row.id === id));
         //Print all the IDS
         selectedIds=ids;
-        console.log(selectedIds);
-        // console.log(selectedRowsData);
+        //  console.log(selectedIds);
+        //  console.log(selectedRowsData);
       };
 
       function removeAllSelectedUsers(selectedIds)
@@ -155,6 +165,29 @@ function UserManagementTab() {
 
         //Update the UI
         setUsers(readUsers());
+
+    }
+
+    function editSelectedUser(selectedIds)
+    {
+        console.log(selectedIds);
+        if(selectedIds.length > 1)
+        {
+            console.log("You can only edit one user at a time");
+            //Open a dialog box that says that you can only edit one user at a time
+            alert('You can only edit one user at a time');
+        } else if(selectedIds.length === 0)
+        {
+            console.log("You need to select a user to edit");
+            //Open a dialog box that says that you need to select a user to edit
+            alert('You need to select a user to edit');
+        } else 
+        {
+            //In here we will just open the dialog box with the user information
+            handleClickOpenE(selectedIds[0]);
+        
+        }
+
 
     }
 
@@ -189,7 +222,7 @@ function UserManagementTab() {
 							onClick={handleClickOpen}>
 							Add New
 							</button>
-                             {/* The Dialog Form */}
+                             {/* The Dialog Form for Adding a User */}
                              <Dialog
                                 open={open}
                                 onClose={handleClose}
@@ -236,10 +269,68 @@ function UserManagementTab() {
                                 </DialogActions>
                             </Dialog>
 
+                             {/* The Dialog Form for Editing a User */}
+                             <Dialog
+                                open={openE}
+                                onClose={handleCloseE}
+                                PaperProps={{
+                                component: 'form',
+                                onSubmit: (event) => {
+                                    event.preventDefault();
+                                    const formData = new FormData(event.currentTarget);
+                                    const formJson = Object.fromEntries(formData.entries());
+                                    //In here we will send handle the data
+                                    const userName=formJson.name;
+                                    // Here we will remove the name from the formJson
+                                    delete formJson.name;
+                                    const permissions = formJson;
+                                    const id = currentID;
+                                    EditUser(id,userName, permissions);
+                                    setUsers(readUsers());
+                                    handleCloseE();
+                                },
+                                }}
+                            >
+                                <DialogTitle>Edit User</DialogTitle>
+                                <DialogContent>
+                                <TextField
+                                    autoFocus
+                                    required
+                                    margin="dense"
+                                    label="User's ID:"
+                                    id="ID"
+                                    disabled
+                                    fullWidth
+                                    variant="standard"
+                                    value = {currentID}
+                                /> 
+                                <TextField
+                                    autoFocus
+                                    required
+                                    margin="dense"
+                                    id="name"
+                                    name="name"
+                                    label="New User's Name:"
+                                    fullWidth
+                                    variant="standard"
+                                /> 
+                                {/* Permissions's part of the form */}
+                                {/* //TODO: Dinamically update this too */}
+                                    <FormControlLabel control={<Checkbox />} value={true} name="remoteAccess" label="Remote Access" />
+                                    <FormControlLabel control={<Checkbox />} value={true} name="lightAccess" label="Light Access" />
+                                    <FormControlLabel control={<Checkbox />} value={true} name="windowAccess" label="Window Access" />
+                                    <FormControlLabel control={<Checkbox />} value={true} name="doorAccess" label="Door Access" />
+                            
+                                </DialogContent>
+                                <DialogActions>
+                                <Button onClick={handleCloseE}>Cancel</Button>
+                                <Button type="submit">Add</Button>
+                                </DialogActions>
+                            </Dialog>
 
                             <button
 							className="px-4 py-2 mt-2 border border-gray-300 bg-green-500 text-white rounded hover:bg-green-700 transition-colors mr-2"
-							onClick={() => handleOpenCloseAction("open")}>
+							onClick={() => editSelectedUser(selectedIds)}>
 							Edit Selected
 							</button>
 
