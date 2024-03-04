@@ -31,4 +31,12 @@ public class RoomController {
         return ResponseEntity.ok(new ArrayList<>(rooms.values()));
     }
 
+    @PostMapping("/saveRooms")
+    public ResponseEntity<String> saveRooms(@RequestBody List<Room> rooms) {
+        // TODO: Save the rooms data to a database
+
+        // Return an appropriate response
+        return ResponseEntity.ok("Rooms data saved successfully");
+    }
+
 }

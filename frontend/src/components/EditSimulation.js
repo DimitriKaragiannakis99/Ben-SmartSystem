@@ -60,13 +60,21 @@ const RoomEditPage = () => {
     return rooms.map((room, index) => ({
       id: `object-${index + 1}`, // Unique ID for each object
       content: "Special Object", // You might customize this per object if needed
-      placedInWindow: room.isWindowBlocked ? `${room.id}-window` : null, // Assign window if blocked, otherwise null
+      placedInWindow: room.isWindowBlocked ? room.id + "-window" : null,
     }));
   };
 
   const unblockWindow = (windowId) => {
     // Update windowBlocked state to mark the window as not blocked
     setWindowBlocked((prev) => ({ ...prev, [windowId]: false }));
+
+    const updatedRooms = rooms.map((room) => {
+      if (room.id + "-window" === windowId) {
+        return { ...room, isWindowBlocked: false };
+      }
+      return room;
+    });
+    setRooms(updatedRooms);
 
     // Optionally, update the objects state to remove the object from the window
     const updatedObjects = objects.map((obj) => {
@@ -127,10 +135,12 @@ const RoomEditPage = () => {
       source.droppableId === "objects-area" &&
       destination.droppableId.includes("-window")
     ) {
-      console.log("Object dropped in window");
       const windowId = destination.droppableId;
+
+      // Update windowBlocked state to mark the window as blocked
       setWindowBlocked((prev) => ({ ...prev, [windowId]: true }));
 
+      // Optionally, update the objects state to reflect the dropped object
       const updatedObjects = objects.map((obj) => {
         if (obj.id === source.draggableId) {
           return { ...obj, placedInWindow: windowId };
@@ -138,6 +148,18 @@ const RoomEditPage = () => {
         return obj;
       });
       setObjects(updatedObjects);
+
+      // Update the corresponding room's isBlocked property to true
+      const roomId = windowId.replace("-window", "");
+      const updatedRooms = rooms.map((room) => {
+        if (room.id === roomId) {
+          return { ...room, isWindowBlocked: true };
+        }
+        return room;
+      });
+
+      // Update the state of rooms
+      setRooms(updatedRooms);
     }
   };
 
@@ -145,9 +167,27 @@ const RoomEditPage = () => {
     // Example action: Log the current rooms state to the console
     console.log("Saving current state:", rooms);
 
-    //TODO: Save to backend
+    // Prepare the data to be sent to the backend
+    const dataToSend = rooms.map((room) => ({
+      id: room.id,
+      name: room.name,
+      users: room.users,
+      isBlocked: room.isBlocked, // Assuming this property indicates whether the window is blocked or not
+    }));
 
-    alert("Current state saved! Check the console or local storage.");
+    // Send a POST request to the backend API endpoint
+    axios
+      .post("http://localhost:8080/api/saveRooms", dataToSend)
+      .then((response) => {
+        // Handle success
+        console.log("Rooms saved successfully:", response.data);
+        alert("Rooms saved successfully!");
+      })
+      .catch((error) => {
+        // Handle error
+        console.error("Error saving rooms:", error);
+        alert("Failed to save rooms. Please try again later.");
+      });
   };
 
   return (
@@ -184,7 +224,7 @@ const RoomEditPage = () => {
         </Droppable>
         <div className="flex flex-wrap justify-center gap-4 p-4">
           {rooms.map((room, roomIndex) => (
-            <div key={room.id} className="flex space-x-4">
+            <div key={room.id} className="flex">
               <Droppable droppableId={room.id} key={room.id}>
                 {(provided, snapshot) => (
                   <div
@@ -236,7 +276,7 @@ const RoomEditPage = () => {
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={`w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg p-2 flex flex-col items-center justify-center ${
+                    className={`w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg p-2 pr-2 flex flex-col items-center justify-center ${
                       snapshot.isDraggingOver ? "bg-blue-200" : "bg-gray-50"
                     }`}
                     style={{ minHeight: "100px", minWidth: "100px" }}
