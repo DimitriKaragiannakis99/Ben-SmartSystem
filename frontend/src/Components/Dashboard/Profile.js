@@ -4,6 +4,7 @@ import DateTimeDisplay from './DateTimeDisplay';
 import SimulationToggle from './SimulationToggle';
 
 const Profile = () => {
+  const loggedOnTime = localStorage.getItem('userTypeTimestamp') || 'Not logged yet';
   return (
     <div className="flex flex-col items-center h-full">
       <h1 className="text-3xl font-bold underline mb-20">Profile</h1>
@@ -26,7 +27,7 @@ const Profile = () => {
         <DateTimeDisplay />
       </div>
       <div className="mb-16">
-        <p>Time Logged on: <strong>...</strong></p>
+        <p>Time Logged on: <strong>{loggedOnTime}</strong></p>
       </div>
     </div>
   );

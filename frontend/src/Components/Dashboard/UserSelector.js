@@ -1,7 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const UserSelector = () => {
-  const [userType, setUserType] = useState('Parent'); // Default user type
+  // initialize userType state with the value from localStorage, otherwise choose Parent
+  const [userType, setUserType] = useState(() => {
+    const savedUserType = localStorage.getItem('userType');
+    return savedUserType || 'Parent';
+  });
+
+  const handleUserTypeChange = (e) => {
+    const newUserType = e.target.value;
+    setUserType(newUserType);
+    const timestamp = new Date().toLocaleTimeString();
+    localStorage.setItem('userTypeTimestamp', timestamp);
+  };
+  
+
+  useEffect(() => {
+    localStorage.setItem('userType', userType);
+  }, [userType]);
 
   return (
     <div className="user-selector-container">
@@ -9,7 +25,7 @@ const UserSelector = () => {
       <select
         id="user-type-select"
         value={userType}
-        onChange={(e) => setUserType(e.target.value)}
+        onChange={(handleUserTypeChange)}
         className="user-type-dropdown font-bold"
       >
         <option value="Parent">Parent</option>
