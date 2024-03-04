@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-@CrossOrigin(origins = "http://localhost:3000") 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class RoomController {
@@ -19,10 +19,10 @@ public class RoomController {
 
     static {
         // Initialize some rooms with users
-        rooms.put("room-1", new Room("room-1", "Living Room", new ArrayList<>(Arrays.asList("user-1"))));
-        rooms.put("room-2", new Room("room-2", "Kitchen", new ArrayList<>(Arrays.asList("user-2"))));
-        rooms.put("room-3", new Room("room-3", "Dining Room", new ArrayList<>()));
-        rooms.put("room-4", new Room("room-4", "Master Bedroom", new ArrayList<>()));
+        rooms.put("room-1", new Room("room-1", "Living Room", new ArrayList<>(Arrays.asList("user-1")), true));
+        rooms.put("room-2", new Room("room-2", "Kitchen", new ArrayList<>(Arrays.asList("user-2")), false));
+        rooms.put("room-3", new Room("room-3", "Dining Room", new ArrayList<>(), false));
+        rooms.put("room-4", new Room("room-4", "Master Bedroom", new ArrayList<>(), true));
     }
 
     @GetMapping("/rooms")
@@ -32,4 +32,3 @@ public class RoomController {
     }
 
 }
-
