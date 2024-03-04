@@ -6,16 +6,18 @@ public class Room {
     private String id;
     private String name;
     private List<String> users;
+    private List<String> roomComponents;
 
 
     public Room() {
         // Default constructor
     }
 
-    public Room(String id, String name, List<String> users) {
+    public Room(String id, String name, List<String> users,List<String> roomComponents) {
         this.id = id;
         this.name = name;
         this.users = users;
+        this.roomComponents = roomComponents;
     }
 
     // Getters and setters for id, name, and users
@@ -42,5 +44,13 @@ public class Room {
 
     public void setUsers(List<String> users) {
         this.users = users;
+    }
+
+    public List<String> getRoomComponents(){
+        return  roomComponents;
+    }
+
+    public void setRoomComponents(List <String> roomComponents){
+        this.roomComponents= roomComponents;
     }
 }
