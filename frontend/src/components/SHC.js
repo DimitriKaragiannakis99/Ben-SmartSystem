@@ -88,7 +88,7 @@ function SHC() {
 			<div className="container bg-blue-500 mx-auto my-8 p-4">
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
 					{/* Container for room components and rooms */}
-					<div className="md:col-span-1 md:order-1">
+					<div className="md:col-span-3 md:order-1">
 						{/* Box for house components */}
 						<div className="mb-4 p-4 border border-gray-200 rounded">
 							<h2 className="font-bold mb-3">Room Components</h2>
@@ -165,10 +165,6 @@ function SHC() {
 					</div>
 
 					{/* Box for the simulation */}
-					<div className="md:col-span-2 md:order-2 p-4 border border-gray-200 rounded h-100">
-						<h2 className="font-bold mb-3">House View</h2>
-						{/* Simulation content here */}
-					</div>
 				</div>
 
 				{/* Scrollable console box */}
