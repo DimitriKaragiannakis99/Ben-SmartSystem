@@ -15,8 +15,8 @@ public class UserController {
 
     public UserController() {
         // Hardcoded user data
-        users.add(new User(1L, "john_doe", "john@example.com"));
-        users.add(new User(2L, "jane_doe", "jane@example.com"));
+        users.add(new User(1L, "john_doe", "{\"useDoors\":true,\"useWindows\":false,\"useLights\":false}"));
+        users.add(new User(2L, "jane_doe", "{\"useDoors\":false,\"useWindows\":false,\"useLights\":false}"));
     }
 
     @GetMapping("/{userId}")

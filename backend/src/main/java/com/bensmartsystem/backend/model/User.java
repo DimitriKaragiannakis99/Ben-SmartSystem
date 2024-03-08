@@ -16,11 +16,11 @@ public class User {
 
     @Getter
     @Column(nullable = false)
-    private String email;
+    private String permissions;
 
-    public User(Long id, String username, String email) {
+    public User(Long id, String username, String permissions) {
         this.id = id;
         this.username = username;
-        this.email = email;
+        this.permissions = permissions;
     }
 }
