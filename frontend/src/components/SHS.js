@@ -8,6 +8,12 @@ import DialogTitle from '@mui/material/DialogTitle';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { DataGrid, GridToolbarContainer, useGridApiContext } from '@mui/x-data-grid';
+import dayjs from 'dayjs';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateTimeField } from '@mui/x-date-pickers/DateTimeField';
+
 import axios from 'axios';
 
 
@@ -77,11 +83,12 @@ This means that the user can only open doors but not windows or lights
 //I guess we will set the ID here by just using the length of the local storage
 let id = getUID();
 
-// localStorage.setItem(id, JSON.stringify({name: userName, permissions:(permissions)}));
+// This also adds it to the local storage
+ localStorage.setItem(id, JSON.stringify({name: userName, permissions:(permissions)}));
 
 // TODO: Check if this works, after doing the retreival from the backend
 //Add the user here to the backend using axios
-axios.post('http://localhost:8080/api/users/add', {id: id, name: userName})
+axios.post('http://localhost:8080/api/users/add',{id: id,username: userName, permissions: JSON.stringify(permissions)})
 .catch((error) => {
     console.error("Error sending User Info", error);
 });
@@ -94,6 +101,11 @@ return true;
 function RemoveUser(id) {
     //We will just remove the user from the local storage
     localStorage.removeItem(id);
+
+    // We will also remove the user from the backend
+    axios.get('http://localhost:8080/api/users/delete/'+ id).catch((error) => {
+        console.error("Error sending User Info", error);
+    });
     //Print to the console the user information
     console.log("User: " + id + " has been removed");
     return true;
@@ -102,6 +114,12 @@ function RemoveUser(id) {
 function EditUser(id, userName, permissions) {
     //We will just save the userName and the permissions in the local storage
     localStorage.setItem(id, JSON.stringify({name: userName, permissions:(permissions)}));
+    
+    // Update in the backend
+    axios.post('http://localhost:8080/api/users/update/'+id,{id: id,username: userName, permissions: JSON.stringify(permissions)})
+    .catch((error) => {
+        console.error("Error sending User Info", error);
+    });
     //Print to the console the user information
     console.log("Updated User ID: " + id + " Permissions: " + JSON.stringify(permissions));
     return true;
@@ -118,8 +136,14 @@ function logAsUser(id, setter) {
 function setHouseLocation(id, location) 
 {
 
+}
 
-
+function setSimulationTime(hour, day, month)
+{
+    axios.post('http://localhost:8080/api/time/setTime',{hour: hour,day: day, month: month})
+.catch((error) => {
+    console.error("Error sending time Info", error);
+});
 }
 
 function UserManagementTab() {
@@ -135,6 +159,7 @@ function UserManagementTab() {
         setUsers([...readUsers()]);
     }, []);
 
+    // TODO: Fix this, sometimes it doesnt update the users
     function readUsers() {
   
         let users = [];
@@ -166,8 +191,7 @@ function UserManagementTab() {
     
         })
         
-        // console.log("users: " + JSON.stringify(users));
-        return users; //This might be a bit wrong but wtv
+        return users;
         //We will just read all the users from the local storage
     }
     
@@ -192,7 +216,14 @@ function UserManagementTab() {
       setOpenE(false);
     };
 
-
+    // Hooks for the dialog form for changing the time
+    const [openT, setOpenT] = React.useState(false);
+    const handleClickOpenT = () => {
+      setOpenT(true);
+    };
+    const handleCloseT = () => {
+      setOpenT(false);
+    };
 
 
     let selectedIds = [];
@@ -264,6 +295,7 @@ function UserManagementTab() {
         
         }
     }
+
 
 
     return (
@@ -410,6 +442,55 @@ function UserManagementTab() {
                                 <Button type="submit">Add</Button>
                                 </DialogActions>
                             </Dialog>
+                             
+                             {/* The Dialog Form for changing the Time */}
+                             <Dialog
+                                open={openT}
+                                onClose={handleCloseT}
+                                PaperProps={{
+                                component: 'form',
+                                onSubmit: (event) => {
+                                    event.preventDefault();
+                                    const formData = new FormData(event.currentTarget);
+                                    const formJson = Object.fromEntries(formData.entries());
+                                    //In here we will send handle the data
+                                    const text = formJson.dateTime.toString();
+                                    console.log(formJson.dateTime.toString());
+                                     let day = text.split("/")[1];
+                                     let month = text.split("/")[0];
+                                    let hour = text.split("/")[2].split(" ")[1].split(":")[0];
+                                    
+                                    //  console.log("Day: " + day + " Month: " + month + " Year: " + year + " Time: " + time);
+
+                                    setSimulationTime(hour, day, month);
+                                    handleCloseT();
+                                },
+                                }}
+                            >
+                                <DialogTitle>Change Simulation Date/Time</DialogTitle>
+                                <DialogContent>
+
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer
+        components={['DateTimeField', 'DateTimeField', 'DateTimeField']}
+      >
+
+        <DateTimeField
+          label="Enter Date and Time"
+          format="L HH:mm"
+          name = "dateTime"
+          id="dateTime"
+          required
+        />
+
+      </DemoContainer>
+    </LocalizationProvider>
+                                </DialogContent>
+                                <DialogActions>
+                                <Button onClick={handleCloseE}>Cancel</Button>
+                                <Button type="submit">Add</Button>
+                                </DialogActions>
+                            </Dialog>
 
 
                             <button
@@ -422,6 +503,12 @@ function UserManagementTab() {
 							className="px-4 py-2 mt-2 border border-gray-300 bg-red-500 text-white rounded hover:bg-red-700 transition-colors mr-2"
 							onClick={() => removeAllSelectedUsers(selectedIds)}> 
 							Delete Selected
+							</button>
+                                <br />
+                            <button
+							className="px-4 py-2 mt-2 border border-gray-300 bg-gray-500 text-white rounded hover:bg-gray-700 transition-colors mr-2"
+							onClick={handleClickOpenT}>
+							Set Simulation Time
 							</button>
                         </div>
                     </div>
