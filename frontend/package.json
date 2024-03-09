@@ -2,6 +2,7 @@
   "name": "ben-smart-system",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8080/",
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.18.0",
     "@emotion/react": "^11.11.4",

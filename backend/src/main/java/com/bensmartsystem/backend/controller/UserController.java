@@ -29,4 +29,20 @@ public class UserController {
         }
         return null; // User not found
     }
+
+    @PostMapping("/add/{userId}/{username}")
+    public boolean addUser(@PathVariable Long userId, @PathVariable String username) {
+        //Print to the console the new user added
+        System.out.println("User added: " + userId + " " + username);
+        users.add(new User(userId, username, "{\"useDoors\":false,\"useWindows\":false,\"useLights\":false}"));
+        return true;
+    }
+
+    @GetMapping("/all")
+    public List<User> getAllUsers() {
+        return users;
+    }
+    
+
+
 }

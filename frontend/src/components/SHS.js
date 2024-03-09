@@ -8,6 +8,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { DataGrid, GridToolbarContainer, useGridApiContext } from '@mui/x-data-grid';
+import axios from 'axios';
+
 
 // Data for the table\
 //   TODO: Dinamically change this so we get all modules and permission types from backend
@@ -75,10 +77,17 @@ This means that the user can only open doors but not windows or lights
 //I guess we will set the ID here by just using the length of the local storage
 let id = getUID();
 
-localStorage.setItem(id, JSON.stringify({name: userName, permissions:(permissions)}));
+// localStorage.setItem(id, JSON.stringify({name: userName, permissions:(permissions)}));
+
+// TODO: Check if this works, after doing the retreival from the backend
+//Add the user here to the backend using axios
+axios.post('http://localhost:8080/api/users/add', {id: id, name: userName})
+.catch((error) => {
+    console.error("Error sending User Info", error);
+});
 
 //Print to the console the user information
-console.log("Added User: " + userName + "| Permissions: " + JSON.stringify(permissions));
+// console.log("Added User: " + userName + "| Permissions: " + JSON.stringify(permissions));
 return true;
 }
 
@@ -98,22 +107,26 @@ function EditUser(id, userName, permissions) {
     return true;
 }
 
-function readUsers() {
-    //We will just read all the users from the local storage
-    let users = [];
-    for (let i = 0; i < localStorage.length; i++){
-        let id = localStorage.key(i);
-        let value = localStorage.getItem(id);
-        value = JSON.parse(value);
-        let user= {id: id, name: value.name};
-        let newUser = {...user, ...value.permissions}; //Concatenate the user and the permissions
-        users.push(newUser);
-    }
-    console.log("Users: " + JSON.stringify(users));
-    return users;
+
+function logAsUser(id, setter) {
+    //We will just read the user from the local storage
+    console.log("User: " + id + " has been logged in");
+    setter(id);
+
+}
+
+function setHouseLocation(id, location) 
+{
+
+
+
 }
 
 function UserManagementTab() {
+
+
+    // Hooks for the current user
+    const [currentUser, setCurrentUser] = React.useState("Simulator");
 
     // Hooks to read the users from the local storage
     const [users, setUsers] = React.useState([]);
@@ -121,6 +134,42 @@ function UserManagementTab() {
     useEffect(() => {
         setUsers([...readUsers()]);
     }, []);
+
+    function readUsers() {
+  
+        let users = [];
+        // Instead of reading from the local storage, we will read from the backend
+        // We will use axios to get the users from the backend
+        axios.get('http://localhost:8080/api/users/all')
+        .then((response) => {
+        
+            // console.log(response.data);
+            //Assign to the users variable the response from the backend
+            for (let i = 0; i < response.data.length; i++)
+            {
+                // console.log(response.data[i].id);
+                let id = response.data[i].id;
+                let name = response.data[i].username;
+                let permissions = response.data[i].permissions;
+                // console.log(JSON.parse(permissions));
+                let newPermissions = JSON.parse(permissions);
+    
+                // value = JSON.parse(permissions);
+                 let user= {id: id, name: name};
+                let newUser = {...user, ...newPermissions}; //Concatenate the user and the permissions
+                //  console.log(newUser);
+                // let newUser = {...user, ...value.permissions}; //Concatenate the user and the permissions
+                 users.push(newUser);
+            }
+            // console.log("users b: " + JSON.stringify(users));
+            setUsers(users);
+    
+        })
+        
+        // console.log("users: " + JSON.stringify(users));
+        return users; //This might be a bit wrong but wtv
+        //We will just read all the users from the local storage
+    }
     
 
     // Hooks for the dialog form for creating a new user
@@ -145,6 +194,7 @@ function UserManagementTab() {
 
 
 
+
     let selectedIds = [];
    
     const onRowsSelectionHandler = (ids) => {
@@ -164,7 +214,7 @@ function UserManagementTab() {
         }
 
         //Update the UI
-        setUsers(readUsers());
+        readUsers();
 
     }
 
@@ -183,13 +233,38 @@ function UserManagementTab() {
             alert('You need to select a user to edit');
         } else 
         {
-            //In here we will just open the dialog box with the user information
             handleClickOpenE(selectedIds[0]);
+         
         
         }
 
 
     }
+
+
+    function logAsSelectedUser(selectedIds)
+    {
+        console.log(selectedIds);
+        if(selectedIds.length > 1)
+        {
+            console.log("You can only login as one user at a time");
+            //Open a dialog box that says that you can only edit one user at a time
+            alert('You can only login as one user at a time"');
+        } else if(selectedIds.length === 0)
+        {
+            console.log("No user selected, changing back to default user");
+            //Open a dialog box that says that you need to select a user to edit
+            alert('No user selected, changing back to default user');
+            logAsUser('Simulator', setCurrentUser);
+
+        } else 
+        {
+            //In here we will just open the dialog box with the user information
+            logAsUser(selectedIds[0], setCurrentUser);
+        
+        }
+    }
+
 
     return (
         <div className="container bg-blue-500 mx-auto my-8 p-4">
@@ -199,6 +274,8 @@ function UserManagementTab() {
                     {/* Box for house components */}
                     <div className="mb-4 p-4 border border-gray-200 rounded">
                         <h2 className="font-bold mb-3">Users and Module Permissions</h2>
+                        <h3>Current User: {currentUser} </h3> 
+                        <br />
                     {/* Table of all users */}
                         <div style={{ height: 400, width: '100%' }}>
                             <DataGrid 
@@ -217,6 +294,12 @@ function UserManagementTab() {
                                
                       
                         <div> 
+                            <button
+							className="px-4 py-2 mt-2 border border-gray-300 bg-gray-500 text-white rounded hover:bg-gray-700 transition-colors mr-2"
+							onClick={() => logAsSelectedUser(selectedIds)}>
+							Log as selected
+							</button>
+
                             <button
 							className="px-4 py-2 mt-2 border border-gray-300 bg-green-500 text-white rounded hover:bg-green-700 transition-colors mr-2"
 							onClick={handleClickOpen}>
@@ -238,7 +321,7 @@ function UserManagementTab() {
                                     delete formJson.name;
                                     const permissions = formJson;
                                     AddUser(userName, permissions);
-                                    setUsers(readUsers());
+                                    readUsers();
                                     handleClose();
                                 },
                                 }}
@@ -286,7 +369,7 @@ function UserManagementTab() {
                                     const permissions = formJson;
                                     const id = currentID;
                                     EditUser(id,userName, permissions);
-                                    setUsers(readUsers());
+                                    readUsers();
                                     handleCloseE();
                                 },
                                 }}
@@ -327,6 +410,7 @@ function UserManagementTab() {
                                 <Button type="submit">Add</Button>
                                 </DialogActions>
                             </Dialog>
+
 
                             <button
 							className="px-4 py-2 mt-2 border border-gray-300 bg-green-500 text-white rounded hover:bg-green-700 transition-colors mr-2"
