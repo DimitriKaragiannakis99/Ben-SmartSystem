@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
 
-const DateTimeDisplay = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
+function DateTimeDisplay() {
+    const [currentTime, setCurrentTime] = useState('');
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentDate(new Date());
-    }, 1000); // Update the date every second
+    useEffect(() => {
+        fetch('http://localhost:8080/api/time/getTime')
+            .then(response => response.json())
+            .then(data => {
+                const { hour, day, month } = data;
+                setCurrentTime(`${hour}:${day}:${month}`);
+            })
+            .catch(error => {
+                console.error('Error fetching time:', error);
+            });
+    }, []);
 
-    return () => {
-      clearInterval(timer); // Clear the interval on component unmount
-    };
-  }, []);
-
-  return (
-    <div>
-      <p>{currentDate.toLocaleString()}</p>
-    </div>
-  );
-};
+    return (
+        <div>
+            <h1>Current Time: <strong>{currentTime}</strong></h1>
+        </div>
+    );
+}
 
 export default DateTimeDisplay;

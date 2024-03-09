@@ -292,6 +292,7 @@ function UserManagementTab() {
         {
             //In here we will just open the dialog box with the user information
             logAsUser(selectedIds[0], setCurrentUser);
+            localStorage.setItem('currentUserId', selectedIds[0]);
         
         }
     }

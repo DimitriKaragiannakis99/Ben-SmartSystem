@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import EditSimulation from "./components/EditSimulation";
 import SmartHomeDashboard from "./SmartHomeDashboard";
@@ -11,7 +10,7 @@ export default function App() {
         <div>
           <Routes>
             <Route path="/" element={<SmartHomeDashboard />} />
-            <Route path="/edit-rooms" element={<EditSimulation />} /> {/* Your room editing component */}
+            <Route path="/edit-rooms" element={<EditSimulation />} />
           </Routes>
         </div>
       </Router>

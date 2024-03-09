@@ -1,37 +1,33 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const UserSelector = () => {
-  // initialize userType state with the value from localStorage, otherwise choose Parent
-  const [userType, setUserType] = useState(() => {
-    const savedUserType = localStorage.getItem('userType');
-    return savedUserType || 'Parent';
-  });
+  const [currentUser, setCurrentUser] = useState({ id: '', username: '' });
 
-  const handleUserTypeChange = (e) => {
-    const newUserType = e.target.value;
-    setUserType(newUserType);
-    const timestamp = new Date().toLocaleTimeString();
-    localStorage.setItem('userTypeTimestamp', timestamp);
+  const fetchCurrentUser = () => {
+    const userId = localStorage.getItem('currentUserId');
+    if (userId) {
+      axios.get(`http://localhost:8080/api/users/${userId}`)
+        .then(response => {
+          setCurrentUser({
+            id: response.data.id,
+            username: response.data.username
+          });
+        })
+        .catch(error => console.error("Failed to fetch current user details", error));
+    }
   };
-  
 
   useEffect(() => {
-    localStorage.setItem('userType', userType);
-  }, [userType]);
+    fetchCurrentUser();
+    const intervalId = setInterval(fetchCurrentUser, 5000); // fetch every 5 seconds
+
+    return () => clearInterval(intervalId); // cleanup
+  }, []);
 
   return (
     <div className="user-selector-container">
-      <label htmlFor="user-type-select">Change user type:</label>
-      <select
-        id="user-type-select"
-        value={userType}
-        onChange={(handleUserTypeChange)}
-        className="user-type-dropdown font-bold"
-      >
-        <option value="Parent">Parent</option>
-        <option value="Child">Child</option>
-        <option value="Visitor">Visitor</option>
-      </select>
+      <h3>Current User: <strong>{currentUser.username}</strong></h3>
     </div>
   );
 };
