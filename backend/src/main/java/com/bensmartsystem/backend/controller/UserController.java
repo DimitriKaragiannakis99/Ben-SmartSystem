@@ -23,7 +23,6 @@ public class UserController {
     public User getUserById(@PathVariable Long userId) {
         for (User user : users) {
             if (user.getId().equals(userId)) {
-                System.out.println(user);
                 return user;
             }
         }

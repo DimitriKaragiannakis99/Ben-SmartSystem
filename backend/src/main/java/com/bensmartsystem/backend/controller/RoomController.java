@@ -19,10 +19,10 @@ public class RoomController {
 
     static {
         // Initialize some rooms with users
-        rooms.put("room-1", new Room("room-1", "Living Room", new ArrayList<>(Arrays.asList("user-1")),new ArrayList<>(Arrays.asList("Light","Window","Door"))));
-        rooms.put("room-2", new Room("room-2", "Kitchen", new ArrayList<>(Arrays.asList("user-2")),new ArrayList<>(Arrays.asList("Light","Window","Door"))));
-        rooms.put("room-3", new Room("room-3", "Dining Room", new ArrayList<>(),new ArrayList<>()));
-        rooms.put("room-4", new Room("room-4", "Master Bedroom", new ArrayList<>(),new ArrayList<>()));
+        rooms.put("room-1", new Room("Living Room", new ArrayList<>(Arrays.asList("user-1")),new ArrayList<>(Arrays.asList("Light","Window","Door"))));
+        rooms.put("room-2", new Room("Kitchen", new ArrayList<>(Arrays.asList("user-2")),new ArrayList<>(Arrays.asList("Light","Window","Door"))));
+        rooms.put("room-3", new Room("Dining Room", new ArrayList<>(),new ArrayList<>()));
+        rooms.put("room-4", new Room("Master Bedroom", new ArrayList<>(),new ArrayList<>()));
     }
 
     @GetMapping("/rooms")
