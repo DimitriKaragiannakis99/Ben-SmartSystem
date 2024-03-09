@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SHC from '../SHC';
 
 const DashboardTabs = () => {
   const [activeTab, setActiveTab] = useState('tab1');
@@ -18,7 +19,7 @@ const DashboardTabs = () => {
         </li>
       </ul>
       <div className="p-4">
-        {activeTab === 'tab1' && <div>...</div>}
+        {activeTab === 'tab1' && <div><SHC /></div>}
       </div>
     </div>
   );
