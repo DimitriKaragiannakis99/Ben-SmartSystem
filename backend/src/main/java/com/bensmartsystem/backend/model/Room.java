@@ -8,16 +8,25 @@ public class Room {
     private List<String> users;
     private List<String> roomComponents;
 
+    private boolean isWindowBlocked;
 
     public Room() {
         // Default constructor
     }
 
-    public Room(String id, String name, List<String> users,List<String> roomComponents) {
+    public Room(String id, String name, List<String> roomComponents) {
+        this.id = id;
+        this.name = name;
+        this.roomComponents = roomComponents;
+        this.isWindowBlocked = false;
+    }
+
+    public Room(String id, String name, List<String> users, List<String> roomComponents, boolean isWindowBlocked) {
         this.id = id;
         this.name = name;
         this.users = users;
         this.roomComponents = roomComponents;
+        this.isWindowBlocked = isWindowBlocked;
     }
 
     // Getters and setters for id, name, and users
@@ -46,11 +55,19 @@ public class Room {
         this.users = users;
     }
 
-    public List<String> getRoomComponents(){
-        return  roomComponents;
+    public List<String> getRoomComponents() {
+        return roomComponents;
     }
 
-    public void setRoomComponents(List <String> roomComponents){
-        this.roomComponents= roomComponents;
+    public void setRoomComponents(List<String> roomComponents) {
+        this.roomComponents = roomComponents;
+    }
+
+    public boolean getIsWindowBlocked() {
+        return isWindowBlocked;
+    }
+
+    public void setIsWindowBlocked(boolean isWindowBlocked) {
+        this.isWindowBlocked = isWindowBlocked;
     }
 }
