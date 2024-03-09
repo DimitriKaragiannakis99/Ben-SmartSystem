@@ -14,7 +14,6 @@ public class Room {
     private List<String> users;
     private List<String> roomComponents;
     private boolean isWindowBlocked;
-    private boolean isWindowBlocked;
 
     public Room(String name, List<String> roomComponents){
         this.id = UUID.randomUUID().toString();
@@ -22,17 +21,12 @@ public class Room {
         this.roomComponents = roomComponents;
         this.isWindowBlocked = isWindowBlocked;
 
-    }this.id=UUID.randomUUID().toString();this.name=name;this.roomComponents=roomComponents;this.isWindowBlocked=isWindowBlocked;
-
     }
 
     public Room(String name, List<String> users, List<String> roomComponents, boolean isWindowBlocked) {
-
-    public Room(String id, String name, List<String> users, List<String> roomComponents, boolean isWindowBlocked) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.roomComponents = roomComponents;
-        this.isWindowBlocked = isWindowBlocked;
         this.isWindowBlocked = isWindowBlocked;
     }
 
