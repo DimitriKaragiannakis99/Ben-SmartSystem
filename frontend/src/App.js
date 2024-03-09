@@ -3,22 +3,9 @@ import axios from "axios";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import EditSimulation from "./components/EditSimulation";
 import SHC from "./components/SHC";
+import HomeLayout from "./components/HomeLayout";
 
 export default function App() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    //Fetch user information from backend endpoint using axios
-    axios
-      .get("http://localhost:8080/api/users/1")
-      .then((response) => {
-        setUser(response.data); //Were updating the state of user with the response from backend
-      })
-      .catch((error) => {
-        console.log("Error fetching user information", error);
-      });
-  }, []); //Empty dependency array -> effect runs only once
-
   return (
     <div className="bg-blue-100">
       <Router>
@@ -53,6 +40,8 @@ export default function App() {
             />
             <Route path="/edit-rooms" element={<EditSimulation />} />{" "}
             <Route path="/shc" element={<SHC />} /> {/* Your shc component */}
+            <Route path="/home-layout" element={<HomeLayout />} />{" "}
+            {/*Page to submit home layout file */}
           </Routes>
         </div>
       </Router>
