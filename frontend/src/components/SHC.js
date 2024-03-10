@@ -29,6 +29,18 @@ function SHC() {
 			});
 	}, []);
 
+	// fetch OutputConsole log object
+	useEffect(() => {
+		axios
+			.get("http://localhost:8080/api/console")
+			.then((response) => {
+				setConsoleMessages(response.data);
+			})
+			.catch((error) => {
+				console.error("Error fetching room information", error);
+			});
+	}, []);
+
 	// determine which rooms have been selected (check box)
 	const handleRoomCheckChange = (roomName) => {
 		setSelectedRooms((prevSelectedRooms) => ({

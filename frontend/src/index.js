@@ -8,10 +8,11 @@ import UserManagement from "./components/SHS";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-    //  <App />
-    <>
-        <RoomEditPage />
-        <SHC />
-        <UserManagement />
-        </>
+	//  <App />
+
+	<>
+		<RoomEditPage />
+		<SHC />
+		<UserManagement />
+	</>
 );
