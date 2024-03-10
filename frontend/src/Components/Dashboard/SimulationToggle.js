@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
+import { RoomContext } from './RoomProvider';
 
 const SimulationToggle = () => {
-  const [isSimulationOn, setSimulationOn] = useState(false);
+  const {isSimulationOn, setSimulationOn} = useContext(RoomContext);
 
   const toggleSimulation = () => {
     setSimulationOn(!isSimulationOn);

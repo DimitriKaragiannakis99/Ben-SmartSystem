@@ -16,7 +16,7 @@ const Profile = () => {
 
   return (
     <div className="flex flex-col items-center h-full">
-      <h1 className="text-3xl font-bold underline mb-20">Profile</h1>
+      <h1 className="text-3xl font-bold underline mb-20">Simulation</h1>
       <div className="mb-16">
         <UserSelector />
       </div>
