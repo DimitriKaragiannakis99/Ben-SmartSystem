@@ -20,11 +20,8 @@ function UserFigure({ name }) {
 }
 
 const RoomEditPage = () => {
-  const [users] = useState([
-    { id: "user-1", name: "User 1" },
-    { id: "user-2", name: "User 2" },
-    // ...and so on
-  ]);
+  const [users, setUsers] = useState([]);
+
   const initialObjects = [
     { id: "object-1", content: "Special Object", placedInWindow: null },
   ];
@@ -48,6 +45,16 @@ const RoomEditPage = () => {
         setWindowBlocked(initialWindowBlocked);
 
         setObjects(initializeObjects(response.data)); // Initialize the objects with the response from the backend
+
+        // Process and initialize users based on the room data
+        const usersFromRooms = response.data.flatMap((room) =>
+          room.users.map((userId) => ({
+            id: userId,
+            name: `User ${userId.split("-")[1]}`,
+            room: room.id,
+          }))
+        );
+        setUsers(usersFromRooms);
       })
       .catch((error) => {
         console.error("Error fetching room information", error);
