@@ -20,11 +20,11 @@ public class RoomController {
     static {
         // Initialize some rooms with users
         rooms.put("room-1", new Room("Living Room", new ArrayList<>(Arrays.asList("user-1")),
-                new ArrayList<>(Arrays.asList("Light", "Window", "Door")), true));
+                new ArrayList<>(Arrays.asList("Light", "Window", "Door")), true, false, true, true));
         rooms.put("room-2", new Room("Kitchen", new ArrayList<>(Arrays.asList("user-2")),
-                new ArrayList<>(Arrays.asList("Light", "Window", "Door")), false));
-        rooms.put("room-3", new Room("Dining Room", new ArrayList<>(), new ArrayList<>(), false));
-        rooms.put("room-4", new Room("Master Bedroom", new ArrayList<>(), new ArrayList<>(), true));
+                new ArrayList<>(Arrays.asList("Light", "Window", "Door")), false, true, false, false));
+        rooms.put("room-3", new Room("Dining Room", new ArrayList<>(), new ArrayList<>(), false, true, true, true));
+        rooms.put("room-4", new Room("Master Bedroom", new ArrayList<>(), new ArrayList<>(), true, false, false, false));
 
     }
 
@@ -41,5 +41,36 @@ public class RoomController {
         // Return an appropriate response
         return ResponseEntity.ok("Rooms data saved successfully");
     }
+
+    @PostMapping("/toggleLight")
+        public ResponseEntity<String> toggleLight(@RequestParam String roomId) {
+        Room room = rooms.get(roomId);
+        if (room != null) {
+            room.setIsLightOn(!room.getIsLightOn());
+            return ResponseEntity.ok("Light toggled successfully");
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/toggleWindow")
+    public ResponseEntity<String> toggleWindow(@RequestParam String roomId) {
+        Room room = rooms.get(roomId);
+        if (room != null) {
+            room.setIsWindowOpen(!room.getIsWindowOpen());
+            return ResponseEntity.ok("Window toggled successfully");
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/toggleDoor")
+    public ResponseEntity<String> toggleDoor(@RequestParam String roomId) {
+        Room room = rooms.get(roomId);
+        if (room != null) {
+            room.setIsDoorOpen(!room.getIsDoorOpen());
+            return ResponseEntity.ok("Door toggled successfully");
+        }
+        return ResponseEntity.notFound().build();
+    }
+
 
 }
