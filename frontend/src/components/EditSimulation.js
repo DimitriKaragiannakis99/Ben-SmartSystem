@@ -95,8 +95,8 @@ const RoomEditPage = () => {
 
     // Dropped in the same room
     if (
-      source.droppableId.startsWith("room") &&
-      destination.droppableId.startsWith("room")
+      source.droppableId.startsWith("") &&
+      destination.droppableId.startsWith("")
     ) {
       // Ensure we're only dealing with user movements, not window drops
       if (!destination.droppableId.includes("-window")) {
