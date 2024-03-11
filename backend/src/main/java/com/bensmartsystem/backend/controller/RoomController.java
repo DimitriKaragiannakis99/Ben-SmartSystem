@@ -20,12 +20,12 @@ public class RoomController {
     static {
         // Initialize some rooms with users
         rooms.put("room-1", new Room("Living Room", new ArrayList<>(Arrays.asList("user-1")),
-                new ArrayList<>(Arrays.asList("Light", "Window", "Door")), true, false, true, true));
+                new ArrayList<>(Arrays.asList("Light", "Window", "Door")), true, false, true, true,false,false));
         rooms.put("room-2", new Room("Kitchen", new ArrayList<>(Arrays.asList("user-2")),
-                new ArrayList<>(Arrays.asList("Light", "Window", "Door")), false, true, false, false));
-        rooms.put("room-3", new Room("Dining Room", new ArrayList<>(), new ArrayList<>(), false, true, true, true));
+                new ArrayList<>(Arrays.asList("Light", "Window", "Door")), false, true, false, false,false,false));
+        rooms.put("room-3", new Room("Dining Room", new ArrayList<>(), new ArrayList<>(), false, true, true, true,false,false));
         rooms.put("room-4",
-                new Room("Master Bedroom", new ArrayList<>(), new ArrayList<>(), true, false, false, false));
+                new Room("Master Bedroom", new ArrayList<>(), new ArrayList<>(), true, false, false, false,false,false));
 
     }
 
