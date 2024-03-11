@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
-import { useNavigate } from 'react-router-dom';
-import UserSelector from './UserSelector';
-import DateTimeDisplay from './DateTimeDisplay';
-import SimulationToggle from './SimulationToggle';
-import EditSimulaiton from '../EditSimulation';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import UserSelector from "./UserSelector";
+import DateTimeDisplay from "./DateTimeDisplay";
+import SimulationToggle from "./SimulationToggle";
+import EditSimulaiton from "../EditSimulationComponent";
 
 const Profile = () => {
   const [showSimulation, setShowSimulation] = useState(false);
@@ -11,7 +11,7 @@ const Profile = () => {
 
   const handleClick = () => {
     setShowSimulation(true);
-    navigate('/edit-rooms');
+    navigate("/edit-rooms");
   };
 
   return (
@@ -20,7 +20,7 @@ const Profile = () => {
       <div className="mb-16">
         <UserSelector />
       </div>
-      <button 
+      <button
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mb-16"
         onClick={handleClick}
       >
@@ -31,10 +31,14 @@ const Profile = () => {
         <SimulationToggle />
       </div>
       <div className="mb-16">
-        <p>Outside Temperature: <strong>...</strong></p>
+        <p>
+          Outside Temperature: <strong>...</strong>
+        </p>
       </div>
       <div className="mb-16">
-        <p>Location: <strong>...</strong></p>
+        <p>
+          Location: <strong>...</strong>
+        </p>
       </div>
       <div className="mb-16">
         <DateTimeDisplay />

@@ -2,6 +2,8 @@ package com.bensmartsystem.backend.model;
 
 import lombok.Setter;
 import com.fasterxml.jackson.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,7 +22,7 @@ public class Room {
 
     public Room(String name, List<String> roomComponents){
         this.id = UUID.randomUUID().toString();
-        this.users = null;
+        this.users = new ArrayList<>();
         this.name = name;
         this.roomComponents = roomComponents;
         this.isWindowBlocked = false;

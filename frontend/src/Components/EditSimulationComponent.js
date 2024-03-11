@@ -37,7 +37,6 @@ const RoomEditPage = () => {
         setWindowBlocked(initialWindowBlocked);
 
         setObjects(initializeObjects(response.data)); // Initialize the objects with the response from the backend
-
         // Process and initialize users based on the room data
         const usersFromRooms = response.data.flatMap((room) =>
           room.users.map((userId) => ({
