@@ -30,6 +30,8 @@ public class RoomController {
 
     @PostMapping("/saveRooms")
     public ResponseEntity<String> saveRooms(@RequestBody List<Room> rooms) {
+
+        System.out.println(rooms);
         // TODO: Save the rooms data to a database
 
         // Return an appropriate response
@@ -66,18 +68,19 @@ public class RoomController {
         return ResponseEntity.notFound().build();
     }
 
-    //This has the logic for retrieving the .txt file from the front-end, parsing the info and adding it to the hashmap.
+    // This has the logic for retrieving the .txt file from the front-end, parsing
+    // the info and adding it to the hashmap.
     @PostMapping("/uploadRoomLayout")
     public ResponseEntity<String> uploadRoomLayout(@RequestParam("file") MultipartFile file) {
         // Clear existing rooms
         rooms.clear();
 
-        //File was not uploaded correctly
+        // File was not uploaded correctly
         if (file.isEmpty()) {
             return new ResponseEntity<>("No file uploaded", HttpStatus.BAD_REQUEST);
         }
 
-        //Read file in and perform tasks:
+        // Read file in and perform tasks:
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             String line;
             int roomNumber = 1;
