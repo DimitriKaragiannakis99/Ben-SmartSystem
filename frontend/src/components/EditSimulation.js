@@ -26,14 +26,15 @@ const RoomEditPage = () => {
     axios
       .get("http://localhost:8080/api/rooms")
       .then((response) => {
-        setRooms(response.data); // Update the state of rooms with the response from the backend
-        const initialWindowBlocked = response.data.reduce(
-          (acc, room) => ({
-            ...acc,
-            [`${room.id}-window`]: room.isWindowBlocked,
-          }),
-          {}
-        );
+        const modifiedRooms = response.data.map((room, index) => ({
+          ...room,
+          id: `room-${room.id}`,
+        })); // Update the state of rooms with the response from the backend
+        setRooms(modifiedRooms);
+        const initialWindowBlocked = response.data.reduce((acc, room) => {
+          acc[`room-${room.id}-window`] = room.isWindowBlocked;
+          return acc;
+        }, {});
         setWindowBlocked(initialWindowBlocked);
 
         setObjects(initializeObjects(response.data)); // Initialize the objects with the response from the backend
@@ -43,7 +44,7 @@ const RoomEditPage = () => {
           room.users.map((userId) => ({
             id: userId,
             name: `User ${userId.split("-")[1]}`,
-            room: room.id,
+            roomId: `room-${room.id}`,
           }))
         );
         setUsers(usersFromRooms);
@@ -53,13 +54,12 @@ const RoomEditPage = () => {
       });
   }, []);
 
-  // Assuming each blocked window should have an associated object
   const initializeObjects = (rooms) => {
     // Create an object for each room, initially unassigned
     return rooms.map((room, index) => ({
       id: `object-${index + 1}`, // Unique ID for each object
-      content: "Special Object", // You might customize this per object if needed
-      placedInWindow: room.isWindowBlocked ? room.id + "-window" : null,
+      content: "Special Object",
+      placedInWindow: room.isWindowBlocked ? `${room.id}-window` : null,
     }));
   };
 
@@ -68,7 +68,7 @@ const RoomEditPage = () => {
     setWindowBlocked((prev) => ({ ...prev, [windowId]: false }));
 
     const updatedRooms = rooms.map((room) => {
-      if (room.id + "-window" === windowId) {
+      if (`${room.id}-window` === windowId) {
         return { ...room, isWindowBlocked: false };
       }
       return room;
@@ -95,17 +95,17 @@ const RoomEditPage = () => {
 
     // Dropped in the same room
     if (
-      source.droppableId.startsWith("") &&
-      destination.droppableId.startsWith("")
+      source.droppableId.startsWith("room") &&
+      destination.droppableId.startsWith("room")
     ) {
       // Ensure we're only dealing with user movements, not window drops
       if (!destination.droppableId.includes("-window")) {
         let newRooms = [...rooms];
         const sourceRoomIndex = rooms.findIndex(
-          (room) => room.id === source.droppableId
+          (room) => `room-${room.id}` === source.droppableId
         );
         const destRoomIndex = rooms.findIndex(
-          (room) => room.id === destination.droppableId
+          (room) => `room-${room.id}` === destination.droppableId
         );
         const draggedUser = newRooms[sourceRoomIndex].users.splice(
           source.index,
@@ -163,23 +163,22 @@ const RoomEditPage = () => {
   };
 
   const handleSave = () => {
-    // Example action: Log the current rooms state to the console
-    console.log("Saving current state:", rooms);
-
-    // Prepare the data to be sent to the backend
-    const dataToSend = rooms.map((room) => ({
-      id: room.id,
+    const formattedRooms = rooms.map((room) => ({
+      id: room.id.replace("room-", ""),
       name: room.name,
       users: room.users,
-      isBlocked: room.isBlocked, // Assuming this property indicates whether the window is blocked or not
+      roomComponents: room.roomComponents,
+      isDoorOpen: room.isDoorOpen,
+      isLightOn: room.isLightOn,
+      isWindowBlocked: room.isWindowBlocked,
+      isWindowOpen: room.isWindowOpen,
     }));
 
     // Send a POST request to the backend API endpoint
     axios
-      .post("http://localhost:8080/api/saveRooms", dataToSend)
+      .post("http://localhost:8080/api/saveRooms", formattedRooms)
       .then((response) => {
         // Handle success
-        console.log("Rooms saved successfully:", response.data);
         alert("Rooms saved successfully!");
       })
       .catch((error) => {
@@ -223,8 +222,8 @@ const RoomEditPage = () => {
         </Droppable>
         <div className="flex flex-wrap justify-center gap-4 p-4">
           {rooms.map((room, roomIndex) => (
-            <div key={room.id} className="flex">
-              <Droppable droppableId={room.id} key={room.id}>
+            <div key={`room-${room.id}`} className="flex">
+              <Droppable droppableId={`room-${room.id}`} key={room.id}>
                 {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
