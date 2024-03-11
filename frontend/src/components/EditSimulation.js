@@ -2,14 +2,6 @@ import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
 
-// A little function to help us with reordering the result
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-  return result;
-};
-
 function UserFigure({ name }) {
   return (
     <div className="text-center m-2.5">
@@ -20,11 +12,8 @@ function UserFigure({ name }) {
 }
 
 const RoomEditPage = () => {
-  const [users] = useState([
-    { id: "user-1", name: "User 1" },
-    { id: "user-2", name: "User 2" },
-    // ...and so on
-  ]);
+  const [users, setUsers] = useState([]);
+
   const initialObjects = [
     { id: "object-1", content: "Special Object", placedInWindow: null },
   ];
@@ -48,6 +37,16 @@ const RoomEditPage = () => {
         setWindowBlocked(initialWindowBlocked);
 
         setObjects(initializeObjects(response.data)); // Initialize the objects with the response from the backend
+
+        // Process and initialize users based on the room data
+        const usersFromRooms = response.data.flatMap((room) =>
+          room.users.map((userId) => ({
+            id: userId,
+            name: `User ${userId.split("-")[1]}`,
+            room: room.id,
+          }))
+        );
+        setUsers(usersFromRooms);
       })
       .catch((error) => {
         console.error("Error fetching room information", error);
@@ -96,8 +95,8 @@ const RoomEditPage = () => {
 
     // Dropped in the same room
     if (
-      source.droppableId.startsWith("room") &&
-      destination.droppableId.startsWith("room")
+      source.droppableId.startsWith("") &&
+      destination.droppableId.startsWith("")
     ) {
       // Ensure we're only dealing with user movements, not window drops
       if (!destination.droppableId.includes("-window")) {

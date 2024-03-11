@@ -1,35 +1,56 @@
 package com.bensmartsystem.backend.model;
 
+import lombok.Setter;
+import com.fasterxml.jackson.annotation.*;
 import java.util.List;
+import java.util.UUID;
 
+@Setter
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class Room {
+
     private String id;
     private String name;
     private List<String> users;
     private List<String> roomComponents;
-
     private boolean isWindowBlocked;
+    private boolean isLightOn;
+    private boolean isWindowOpen;
+    private boolean isDoorOpen;
 
-    public Room() {
-        // Default constructor
-    }
-
-    public Room(String id, String name, List<String> roomComponents) {
-        this.id = id;
+    public Room(String name, List<String> roomComponents){
+        this.id = UUID.randomUUID().toString();
+        this.users = null;
         this.name = name;
         this.roomComponents = roomComponents;
         this.isWindowBlocked = false;
+        this.isLightOn = false;
+        this.isWindowOpen = false;
+        this.isDoorOpen = false;
     }
 
-    public Room(String id, String name, List<String> users, List<String> roomComponents, boolean isWindowBlocked) {
-        this.id = id;
-        this.name = name;
+    public Room(String name, List<String> users, List<String> roomComponents, boolean isWindowBlocked, boolean isLightOn, boolean isWindowOpen, boolean isDoorOpen) {
+        this.id = UUID.randomUUID().toString();
         this.users = users;
+        this.name = name;
         this.roomComponents = roomComponents;
         this.isWindowBlocked = isWindowBlocked;
+        this.isLightOn = isLightOn;
+        this.isWindowOpen = isWindowOpen;
+        this.isDoorOpen = isDoorOpen;
     }
 
-    // Getters and setters for id, name, and users
+    // Use to debug:
+    public String toString(){
+        StringBuilder roomInfo = new StringBuilder();
+        roomInfo.append(this.name).append("\n");
+        roomInfo.append("Components = { ");
+        for(String s : this.roomComponents){
+            roomInfo.append(s).append(" ");
+        }
+        roomInfo.append("}");
+        return roomInfo.toString();
+    }
 
     public String getId() {
         return id;
@@ -69,5 +90,29 @@ public class Room {
 
     public void setIsWindowBlocked(boolean isWindowBlocked) {
         this.isWindowBlocked = isWindowBlocked;
+    }
+
+    public boolean getIsLightOn() {
+        return isLightOn;
+    }
+
+    public void setIsLightOn(boolean isLightOn) {
+        this.isLightOn = isLightOn;
+    }
+
+    public boolean getIsWindowOpen() {
+        return isWindowOpen;
+    }
+
+    public void setIsWindowOpen(boolean isWindowOpen) {
+        this.isWindowOpen = isWindowOpen;
+    }
+
+    public boolean getIsDoorOpen() {
+        return isDoorOpen;
+    }
+
+    public void setIsDoorOpen(boolean isDoorOpen) {
+        this.isDoorOpen = isDoorOpen;
     }
 }
