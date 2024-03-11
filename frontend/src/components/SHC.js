@@ -17,6 +17,12 @@ function SHC() {
 	// state for console messages
 	const [consoleMessages, setConsoleMessages] = useState([]);
 
+	// state for auto lights
+	const [autoLight, setAutoLight] = useState(false);
+
+	// state for auto locks
+	const [autoLock, setAutoLock] = useState(false);
+
 	// fetch all room info from the backend on page load
 	useEffect(() => {
 		axios
@@ -95,6 +101,38 @@ function SHC() {
 		const message = `[${currentTime}] [${selectedComponent}] in ${selectedRoomNames.join(
 			", "
 		)} was ${actionText} by ${simulatorUser} request.`;
+
+		// Add message to the console
+		setConsoleMessages((prevMessages) => [...prevMessages, message]);
+	};
+
+	const handleAutoLight = (action) => {
+		const currentTime = new Date().toLocaleTimeString();
+
+		if (action === "on") {
+			setAutoLight(true);
+		} else {
+			setAutoLight(false);
+		}
+
+		const actionText = action === "on" ? "activated" : "deactivated";
+		const message = `[${currentTime}] [Auto Lights] was ${actionText} by ${simulatorUser} request.`;
+
+		// Add message to the console
+		setConsoleMessages((prevMessages) => [...prevMessages, message]);
+	};
+
+	const handleAutoLock = (action) => {
+		const currentTime = new Date().toLocaleTimeString();
+
+		if (action === "on") {
+			setAutoLock(true);
+		} else {
+			setAutoLock(false);
+		}
+
+		const actionText = action === "on" ? "activated" : "deactivated";
+		const message = `[${currentTime}] [Auto Locks] was ${actionText} by ${simulatorUser} request.`;
 
 		// Add message to the console
 		setConsoleMessages((prevMessages) => [...prevMessages, message]);
@@ -179,9 +217,46 @@ function SHC() {
 								None
 							</button>
 						</div>
-					</div>
+						{/* Box for the auto lights */}
 
-					{/* Box for the simulation */}
+						<div className=" mt-4 p-4 border border-gray-200 rounded">
+							<h2 className="font-bold mb-3">Auto Lights</h2>
+							<div>
+								<button
+									className="px-4 py-2 mt-2 border border-gray-300 bg-green-500 text-white rounded hover:bg-green-700 transition-colors mr-2"
+									onClick={() => handleAutoLight("on")}
+								>
+									On
+								</button>
+								<button
+									className="px-4 py-2 border border-gray-300 bg-red-500 text-white rounded hover:bg-red-700 transition-colors"
+									onClick={() => handleAutoLight("off")}
+								>
+									Off
+								</button>
+							</div>
+						</div>
+
+						{/* Box for the auto locks */}
+
+						<div className=" mt-4 p-4 border border-gray-200 rounded">
+							<h2 className="font-bold mb-3">Auto Locks</h2>
+							<div>
+								<button
+									className="px-4 py-2 mt-2 border border-gray-300 bg-green-500 text-white rounded hover:bg-green-700 transition-colors mr-2"
+									onClick={() => handleAutoLock("on")}
+								>
+									On
+								</button>
+								<button
+									className="px-4 py-2 border border-gray-300 bg-red-500 text-white rounded hover:bg-red-700 transition-colors"
+									onClick={() => handleAutoLock("off")}
+								>
+									Off
+								</button>
+							</div>
+						</div>
+					</div>
 				</div>
 
 				{/* Scrollable console box */}
