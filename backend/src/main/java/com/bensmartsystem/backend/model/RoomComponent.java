@@ -4,6 +4,7 @@ public class RoomComponent {
     
     private String id;
     private String name;
+   
 
     public RoomComponent(){
 
@@ -12,6 +13,7 @@ public class RoomComponent {
     public RoomComponent(String id, String name){
         this.id = id;
         this.name = name;
+        
 
     }
 
@@ -27,6 +29,7 @@ public class RoomComponent {
         this.name = name;
     }
 
+  
     
 
 

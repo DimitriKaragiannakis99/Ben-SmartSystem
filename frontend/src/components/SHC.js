@@ -23,6 +23,19 @@ function SHC() {
 			.get("http://localhost:8080/api/rooms")
 			.then((response) => {
 				setRooms(response.data);
+				console.log(response.data);
+			})
+			.catch((error) => {
+				console.error("Error fetching room information", error);
+			});
+	}, []);
+
+	// fetch OutputConsole log object
+	useEffect(() => {
+		axios
+			.get("http://localhost:8080/api/console")
+			.then((response) => {
+				setConsoleMessages(response.data);
 			})
 			.catch((error) => {
 				console.error("Error fetching room information", error);
@@ -35,6 +48,8 @@ function SHC() {
 			...prevSelectedRooms,
 			[roomName]: !prevSelectedRooms[roomName],
 		}));
+
+		console.log(selectedRooms);
 	};
 
 	// determine which house component has been selected
@@ -72,6 +87,8 @@ function SHC() {
 			console.log("No component or room selected.");
 			return; // Exit the function if no component or room is selected
 		}
+
+		console.log(selectedComponent);
 
 		const currentTime = new Date().toLocaleTimeString();
 		const actionText = action === "open" ? "opened" : "closed";

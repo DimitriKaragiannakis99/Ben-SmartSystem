@@ -1,11 +1,13 @@
 package com.bensmartsystem.backend.model;
 
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 import com.fasterxml.jackson.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
 @Setter
+@NoArgsConstructor
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class Room {
 
@@ -18,7 +20,7 @@ public class Room {
     private boolean isWindowOpen;
     private boolean isDoorOpen;
 
-    public Room(String name, List<String> roomComponents){
+    public Room(String name, List<String> roomComponents) {
         this.id = UUID.randomUUID().toString();
         this.users = null;
         this.name = name;
@@ -29,7 +31,8 @@ public class Room {
         this.isDoorOpen = false;
     }
 
-    public Room(String name, List<String> users, List<String> roomComponents, boolean isWindowBlocked, boolean isLightOn, boolean isWindowOpen, boolean isDoorOpen) {
+    public Room(String name, List<String> users, List<String> roomComponents, boolean isWindowBlocked,
+            boolean isLightOn, boolean isWindowOpen, boolean isDoorOpen) {
         this.id = UUID.randomUUID().toString();
         this.users = users;
         this.name = name;
@@ -41,11 +44,11 @@ public class Room {
     }
 
     // Use to debug:
-    public String toString(){
+    public String toString() {
         StringBuilder roomInfo = new StringBuilder();
         roomInfo.append(this.name).append("\n");
         roomInfo.append("Components = { ");
-        for(String s : this.roomComponents){
+        for (String s : this.roomComponents) {
             roomInfo.append(s).append(" ");
         }
         roomInfo.append("}");

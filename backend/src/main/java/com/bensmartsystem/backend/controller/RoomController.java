@@ -24,7 +24,8 @@ public class RoomController {
         rooms.put("room-2", new Room("Kitchen", new ArrayList<>(Arrays.asList("user-2")),
                 new ArrayList<>(Arrays.asList("Light", "Window", "Door")), false, true, false, false));
         rooms.put("room-3", new Room("Dining Room", new ArrayList<>(), new ArrayList<>(), false, true, true, true));
-        rooms.put("room-4", new Room("Master Bedroom", new ArrayList<>(), new ArrayList<>(), true, false, false, false));
+        rooms.put("room-4",
+                new Room("Master Bedroom", new ArrayList<>(), new ArrayList<>(), true, false, false, false));
 
     }
 
@@ -36,6 +37,8 @@ public class RoomController {
 
     @PostMapping("/saveRooms")
     public ResponseEntity<String> saveRooms(@RequestBody List<Room> rooms) {
+
+        System.out.println(rooms);
         // TODO: Save the rooms data to a database
 
         // Return an appropriate response
@@ -43,7 +46,7 @@ public class RoomController {
     }
 
     @PostMapping("/toggleLight")
-        public ResponseEntity<String> toggleLight(@RequestParam String roomId) {
+    public ResponseEntity<String> toggleLight(@RequestParam String roomId) {
         Room room = rooms.get(roomId);
         if (room != null) {
             room.setIsLightOn(!room.getIsLightOn());
@@ -71,6 +74,5 @@ public class RoomController {
         }
         return ResponseEntity.notFound().build();
     }
-
 
 }
