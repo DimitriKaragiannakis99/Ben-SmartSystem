@@ -8,14 +8,36 @@ const RoomProvider = ({ children }) => {
 
   const [isSimulationOn, setSimulationOn] = useState(false);
 
+  const [visibleElements, setVisibleElements] = useState({
+    lightbulb: true,
+    window: true,
+    door: true
+  });
+
+  const setElementVisibility = (roomId, element, isVisible) => {
+    setVisibleElements(prevState => ({
+      ...prevState,
+      [roomId]: {
+        ...prevState[roomId],
+        [element]: isVisible
+      }
+    }));
+  };
+
   useEffect(() => {
     axios.get('http://localhost:8080/api/rooms')
       .then((response) => {
-        setRooms(response.data.map(room => ({
-          ...room,
-          isLightOn: room.isLightOn,
-          windowBlocked: room.isWindowBlocked
-        })));
+        const initialVisibleElements = {};
+        response.data.forEach(room => {
+          initialVisibleElements[room.id] = {
+            windowBlocked: room.isWindowBlocked,
+            lightbulb: room.isLightOn,
+            window: room.isWindowOpen,
+            door: room.isDoorOpen
+          };
+        });
+        setVisibleElements(initialVisibleElements);
+        setRooms(response.data);
       })
       .catch((error) => {
         console.error('Error fetching room information', error);
@@ -79,7 +101,7 @@ const RoomProvider = ({ children }) => {
   }
 
   return (
-    <RoomContext.Provider value={{ rooms, toggleLight, toggleWindowBlocked, toggleWindow, toggleDoor, isSimulationOn, setSimulationOn }}>
+    <RoomContext.Provider value={{ rooms, toggleLight, toggleWindowBlocked, toggleWindow, toggleDoor, isSimulationOn, setSimulationOn, visibleElements, setElementVisibility }}>
       {children}
     </RoomContext.Provider>
   );

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { RoomContext } from "./Dashboard/RoomProvider";
 
 function SHC() {
 	// state for all room info
@@ -16,6 +17,8 @@ function SHC() {
 
 	// state for console messages
 	const [consoleMessages, setConsoleMessages] = useState([]);
+
+	const { setElementVisibility } = useContext(RoomContext);
 
 	// fetch all room info from the backend on page load
 	useEffect(() => {
@@ -76,29 +79,30 @@ function SHC() {
 	};
 
 	// determines what gets printed to the console based on open/close button press
-	const handleOpenCloseAction = (action) => {
+	const handleAction = (isOpen) => {
 		// Check if any room is selected
 		const selectedRoomNames = Object.keys(selectedRooms).filter(
-			(roomName) => selectedRooms[roomName]
+		  (roomName) => selectedRooms[roomName]
 		);
-
+	  
 		// Check if a component is selected
 		if (!selectedComponent || selectedRoomNames.length === 0) {
-			console.log("No component or room selected.");
-			return; // Exit the function if no component or room is selected
+		  console.log("No component or room selected.");
+		  return; // Exit the function if no component or room is selected
 		}
-
-		console.log(selectedComponent);
-
+	  
+		const element = selectedComponent === "Light" ? "lightbulb" : selectedComponent.toLowerCase();
+	  
+		selectedRoomNames.forEach(roomName => {
+		  const roomId = rooms.find(room => room.name === roomName).id;
+		  setElementVisibility(roomId, element, isOpen);
+		});
+	  
+		const actionText = isOpen ? "opened" : "closed";
 		const currentTime = new Date().toLocaleTimeString();
-		const actionText = action === "open" ? "opened" : "closed";
-		const message = `[${currentTime}] [${selectedComponent}] in ${selectedRoomNames.join(
-			", "
-		)} was ${actionText} by ${simulatorUser} request.`;
-
-		// Add message to the console
+		const message = `[${currentTime}] [${selectedComponent}] in ${selectedRoomNames.join(", ")} was ${actionText} by ${simulatorUser} request.`;
 		setConsoleMessages((prevMessages) => [...prevMessages, message]);
-	};
+	  };
 
 	return (
 		<>
@@ -136,13 +140,13 @@ function SHC() {
 							<div>
 								<button
 									className="px-4 py-2 mt-2 border border-gray-300 bg-green-500 text-white rounded hover:bg-green-700 transition-colors mr-2"
-									onClick={() => handleOpenCloseAction("open")}
+									onClick={() => handleAction(true)}
 								>
 									Open
 								</button>
 								<button
 									className="px-4 py-2 border border-gray-300 bg-red-500 text-white rounded hover:bg-red-700 transition-colors"
-									onClick={() => handleOpenCloseAction("close")}
+									onClick={() => handleAction(false)}
 								>
 									Close
 								</button>

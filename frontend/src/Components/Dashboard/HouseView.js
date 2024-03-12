@@ -36,15 +36,10 @@ function DoorFigure() {
 
 
 const RoomView = ({ room }) => {
-  const [visibleElements, setVisibleElements] = useState({
-    lightbulb: room.isLightOn,
-    window: room.isWindowOpen,
-    door: room.isDoorOpen
-  });
 
-  const toggleElement = (element) => {
-    setVisibleElements(prevState => ({ ...prevState, [element]: !prevState[element] }));
-  };
+  const { visibleElements } = useContext(RoomContext);
+
+  const roomVisibility = visibleElements[room.id] || {};
 
   return (
     <div className="flex">
@@ -59,21 +54,16 @@ const RoomView = ({ room }) => {
               </div>
             );
           })}
-          {visibleElements.lightbulb && <LightbulbFigure />}
-          {visibleElements.window && <WindowFigure />}
-          {visibleElements.door && <DoorFigure />}
+          {roomVisibility.lightbulb && <LightbulbFigure />}
+          {roomVisibility.window && <WindowFigure />}
+          {roomVisibility.door && <DoorFigure />}
         </div>
       </div>
       <div className={`w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg p-2 pr-2 flex flex-col items-center justify-center ${room.windowBlocked ? 'bg-blue-200' : 'bg-gray-50'}`} style={{ minHeight: '100px', minWidth: '100px' }}>
         <h3 className="font-bold">Window</h3>
-        {room.windowBlocked && (
+        {room.isWindowBlocked && (
           <div className="text-red-500 text-center">Window Blocked</div>
         )}
-      </div>
-      <div className="flex flex-col ml-4">
-        <button onClick={() => toggleElement('lightbulb')}>Toggle Lightbulb</button>
-        <button onClick={() => toggleElement('window')}>Toggle Window</button>
-        <button onClick={() => toggleElement('door')}>Toggle Door</button>
       </div>
     </div>
   );
@@ -81,7 +71,7 @@ const RoomView = ({ room }) => {
 
 
 const HouseView = () => {
-  const { rooms, isSimulationOn } = useContext(RoomContext);
+  const { rooms, isSimulationOn, visibleElements } = useContext(RoomContext);
 
   if (!isSimulationOn) {
     return <div className="bg-blue-100 min-h-screen">Simulation is off.</div>;
@@ -100,7 +90,7 @@ const HouseView = () => {
       </div>
       <div className="flex flex-wrap justify-center gap-4 p-4">
         {rooms.map((room) => (
-          <RoomView key={room.id} room={room} />
+          <RoomView key={room.id} room={room} visibleElements={visibleElements}/>
         ))}
       </div>
     </div>
