@@ -18,7 +18,7 @@ function SHC() {
 	// state for console messages
 	const [consoleMessages, setConsoleMessages] = useState([]);
 
-	const { setElementVisibility } = useContext(RoomContext);
+	const { toggleLight, toggleWindow, toggleDoor } = useContext(RoomContext);
 
 	// fetch all room info from the backend on page load
 	useEffect(() => {
@@ -80,29 +80,31 @@ function SHC() {
 
 	// determines what gets printed to the console based on open/close button press
 	const handleAction = (isOpen) => {
-		// Check if any room is selected
 		const selectedRoomNames = Object.keys(selectedRooms).filter(
-		  (roomName) => selectedRooms[roomName]
+			(roomName) => selectedRooms[roomName]
 		);
-	  
-		// Check if a component is selected
+	
 		if (!selectedComponent || selectedRoomNames.length === 0) {
-		  console.log("No component or room selected.");
-		  return; // Exit the function if no component or room is selected
+			console.log("No component or room selected.");
+			return;
 		}
-	  
-		const element = selectedComponent === "Light" ? "lightbulb" : selectedComponent.toLowerCase();
-	  
+	
+		const toggleFunction = {
+			Light: toggleLight,
+			Window: toggleWindow,
+			Door: toggleDoor
+		}[selectedComponent];
+	
 		selectedRoomNames.forEach(roomName => {
-		  const roomId = rooms.find(room => room.name === roomName).id;
-		  setElementVisibility(roomId, element, isOpen);
+			const roomId = rooms.find(room => room.name === roomName).id;
+			toggleFunction(roomId);
 		});
-	  
+	
 		const actionText = isOpen ? "opened" : "closed";
 		const currentTime = new Date().toLocaleTimeString();
 		const message = `[${currentTime}] [${selectedComponent}] in ${selectedRoomNames.join(", ")} was ${actionText} by ${simulatorUser} request.`;
 		setConsoleMessages((prevMessages) => [...prevMessages, message]);
-	  };
+	};
 
 	return (
 		<>

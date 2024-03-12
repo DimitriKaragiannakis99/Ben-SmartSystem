@@ -45,8 +45,9 @@ public class RoomController {
         return ResponseEntity.ok("Rooms data saved successfully");
     }
 
-    @PostMapping("/toggleLight")
+    @PostMapping(path = "/toggleLight")
     public ResponseEntity<String> toggleLight(@RequestParam String roomId) {
+        System.out.println("blah blah blah");
         Room room = rooms.get(roomId);
         if (room != null) {
             room.setIsLightOn(!room.getIsLightOn());
@@ -74,5 +75,4 @@ public class RoomController {
         }
         return ResponseEntity.notFound().build();
     }
-
 }
