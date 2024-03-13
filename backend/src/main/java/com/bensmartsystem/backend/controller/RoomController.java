@@ -38,36 +38,44 @@ public class RoomController {
         return ResponseEntity.ok("Rooms data saved successfully");
     }
 
-    @PostMapping("/toggleLight")
-    public ResponseEntity<String> toggleLight(@RequestParam String roomId) {
-        System.out.println("Toggling light for room: " + roomId + "...");
-        Room room = rooms.get(roomId);
-        System.out.println("Room: " + room);
-        if (room != null) {
-            room.setIsLightOn(!room.getIsLightOn());
-            System.out.println("Light toggled successfully");
-            return ResponseEntity.ok("Light toggled successfully");
-        } else {
-            return ResponseEntity.notFound().build();
+    public Room findRoomById(String id) {
+        for (Room room : rooms.values()) {
+            if (room.getId().equals(id)) {
+                return room;
+            }
         }
+        return null; // or throw a RoomNotFoundException, depending on your design
+    }
+
+    @PostMapping("/toggleLight")
+    public ResponseEntity<Room> toggleLight(@RequestParam String roomId) {
+        for (Room room : rooms.values()) {
+            if (room.getId().equals(roomId)) {
+                room.setIsLightOn(!room.getIsLightOn());
+                return ResponseEntity.ok(room);
+            }
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping("/toggleWindow")
-    public ResponseEntity<String> toggleWindow(@RequestParam String roomId) {
-        Room room = rooms.get(roomId);
-        if (room != null) {
-            room.setIsWindowOpen(!room.getIsWindowOpen());
-            return ResponseEntity.ok("Window toggled successfully");
+    public ResponseEntity<Room> toggleWindow(@RequestParam String roomId) {
+        for (Room room : rooms.values()) {
+            if (room.getId().equals(roomId)) {
+                room.setIsLightOn(!room.getIsWindowOpen());
+                return ResponseEntity.ok(room);
+            }
         }
         return ResponseEntity.notFound().build();
     }
 
     @PostMapping("/toggleDoor")
-    public ResponseEntity<String> toggleDoor(@RequestParam String roomId) {
-        Room room = rooms.get(roomId);
-        if (room != null) {
-            room.setIsDoorOpen(!room.getIsDoorOpen());
-            return ResponseEntity.ok("Door toggled successfully");
+    public ResponseEntity<Room> toggleDoor(@RequestParam String roomId) {
+        for (Room room : rooms.values()) {
+            if (room.getId().equals(roomId)) {
+                room.setIsLightOn(!room.getIsDoorOpen());
+                return ResponseEntity.ok(room);
+            }
         }
         return ResponseEntity.notFound().build();
     }

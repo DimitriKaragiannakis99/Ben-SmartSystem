@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect } from "react";
-import axios from "axios";
+import React, { createContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
 export const RoomContext = createContext();
 
@@ -8,119 +8,78 @@ const RoomProvider = ({ children }) => {
 
   const [isSimulationOn, setSimulationOn] = useState(false);
 
-  const [visibleElements, setVisibleElements] = useState({
-    lightbulb: true,
-    window: true,
-    door: true,
-  });
-
-  const setElementVisibility = (roomId, element, isVisible) => {
-    setVisibleElements((prevState) => ({
-      ...prevState,
-      [roomId]: {
-        ...prevState[roomId],
-        [element]: isVisible,
-      },
-    }));
-  };
-
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/rooms")
+    axios.get('http://localhost:8080/api/rooms')
       .then((response) => {
-        const initialVisibleElements = {};
-        response.data.forEach((room) => {
-          initialVisibleElements[room.id] = {
-            windowBlocked: room.isWindowBlocked,
-            lightbulb: room.isLightOn,
-            window: room.isWindowOpen,
-            door: room.isDoorOpen,
-          };
-        });
-        setVisibleElements(initialVisibleElements);
-        setRooms(response.data);
+        setRooms(response.data.map(room => ({
+          ...room,
+          isLightOn: room.isLightOn,
+          windowBlocked: room.isWindowBlocked
+        })));
       })
       .catch((error) => {
-        console.error("Error fetching room information", error);
+        console.error('Error fetching room information', error);
       });
   }, []);
 
   const toggleLight = (roomId) => {
-    console.log("Toggling light for room", roomId);
-    fetch(`http://localhost:8080/api/toggleLight?roomId=${roomId}`, {
-      method: "POST", // Specify the method
-      headers: {
-        // Specify any necessary headers
-        // 'Content-Type': 'application/json', // Uncomment if you need to send a body with JSON content
-      },
-      // body: JSON.stringify(data), // Uncomment and replace `data` if you need to send a body
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.text(); // or response.json() if the response is JSON
-      })
-      .then((data) => {
-        console.log(data);
-        fetchRooms(); // Fetch updated rooms from the backend
+    axios.post(`http://localhost:8080/api/toggleLight?roomId=${roomId}`)
+      .then(() => {
+        setRooms(prevRooms =>
+          prevRooms.map(room =>
+            room.id === roomId ? { ...room, isLightOn: !room.isLightOn } : room,
+          ),
+        );
       })
       .catch((error) => {
-        console.error("Error toggling light", error);
+        console.error('Error toggling light', error);
+      });
+  };
+
+  const toggleWindowBlocked = (roomId) => {
+    axios.post(`http://localhost:8080/api/toggleWindow?roomId=${roomId}`)
+      .then(() => {
+        setRooms(prevRooms =>
+          prevRooms.map(room =>
+            room.id === roomId ? { ...room, isWindowBlocked: !room.isWindowBlocked } : room,
+          ),
+        );
+      })
+      .catch((error) => {
+        console.error('Error toggling window', error);
       });
   };
 
   const toggleWindow = (roomId) => {
-    axios
-      .post(`http://localhost:8080/api/toggleWindow`, null, {
-        params: { roomId },
-      })
+    axios.post(`http://localhost:8080/api/toggleWindow?roomId=${roomId}`)
       .then(() => {
-        fetchRooms(); // Fetch updated rooms from the backend
+        setRooms(prevRooms =>
+          prevRooms.map(room =>
+            room.id === roomId ? { ...room, isWindowOpen: !room.isWindowOpen } : room,
+          ),
+        );
       })
       .catch((error) => {
-        console.error("Error toggling window", error);
+        console.error('Error toggling window', error);
       });
-  };
+  }
 
   const toggleDoor = (roomId) => {
-    axios
-      .post(`http://localhost:8080/api/toggleDoor`, null, {
-        params: { roomId },
-      })
+    axios.post(`http://localhost:8080/api/toggleDoor?roomId=${roomId}`)
       .then(() => {
-        fetchRooms(); // Fetch updated rooms from the backend
+        setRooms(prevRooms =>
+          prevRooms.map(room =>
+            room.id === roomId ? { ...room, isDoorOpen: !room.isDoorOpen } : room,
+          ),
+        );
       })
       .catch((error) => {
-        console.error("Error toggling door", error);
+        console.error('Error toggling door', error);
       });
-  };
-
-  // Helper function to fetch updated rooms from the backend
-  const fetchRooms = () => {
-    axios
-      .get("http://localhost:8080/api/rooms")
-      .then((response) => {
-        setRooms(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching room information", error);
-      });
-  };
+  }
 
   return (
-    <RoomContext.Provider
-      value={{
-        rooms,
-        toggleLight,
-        toggleWindow,
-        toggleDoor,
-        isSimulationOn,
-        setSimulationOn,
-        visibleElements,
-        setElementVisibility,
-      }}
-    >
+    <RoomContext.Provider value={{ rooms, toggleLight, toggleWindowBlocked, toggleWindow, toggleDoor, isSimulationOn, setSimulationOn }}>
       {children}
     </RoomContext.Provider>
   );
