@@ -9,10 +9,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
+//FOR NOW THIS CLASS IS USELESS SINCE ITS FUNCTIONALITY IS IN ROOMCONTROLLER
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/home-layout")
 public class HomeLayout {
+
+    // Static list to hold rooms
+    public static List<Room> roomsList = new ArrayList<>();
 
     //Method to create rooms based on file input:
     public static List<Room> createRooms(StringBuilder content) {
@@ -58,16 +62,22 @@ public class HomeLayout {
             //Create a rooms list to hold info
             List<Room> rooms = createRooms(content);
 
+            //Assign rooms to static list to pass to room controller file:
+            roomsList = rooms;
+
             //Proof we created the rooms properly:
-            for(Room r : rooms){
-                System.out.println(r);
-            }
+//            for(Room r : rooms){
+//                System.out.println(r);
+//            }
 
             //Return a success status response + new room objects
             return new ResponseEntity<>(rooms, HttpStatus.OK);
 
         }catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        finally {
+            System.out.println(roomsList.size());
         }
 
     }
