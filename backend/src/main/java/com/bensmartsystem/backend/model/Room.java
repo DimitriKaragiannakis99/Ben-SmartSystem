@@ -21,6 +21,8 @@ public class Room {
     private boolean isLightOn;
     private boolean isWindowOpen;
     private boolean isDoorOpen;
+    private boolean isAutoLightOn;
+    private boolean isAutoLockOn;
 
     public Room(String name, List<String> roomComponents) {
         this.id = UUID.randomUUID().toString();
@@ -31,10 +33,12 @@ public class Room {
         this.isLightOn = false;
         this.isWindowOpen = false;
         this.isDoorOpen = false;
+        this.isAutoLightOn = false;
+        this.isAutoLockOn = false;
     }
 
     public Room(String name, List<String> users, List<String> roomComponents, boolean isWindowBlocked,
-            boolean isLightOn, boolean isWindowOpen, boolean isDoorOpen) {
+            boolean isLightOn, boolean isWindowOpen, boolean isDoorOpen,boolean isAutoLightOn,boolean isAutoLockOn) {
         this.id = UUID.randomUUID().toString();
         this.users = users;
         this.name = name;
@@ -43,6 +47,8 @@ public class Room {
         this.isLightOn = isLightOn;
         this.isWindowOpen = isWindowOpen;
         this.isDoorOpen = isDoorOpen;
+        this.isAutoLightOn = isAutoLightOn;
+        this.isAutoLockOn = isAutoLockOn;
     }
 
     // Use to debug:
@@ -119,5 +125,22 @@ public class Room {
 
     public void setIsDoorOpen(boolean isDoorOpen) {
         this.isDoorOpen = isDoorOpen;
+    }
+
+    public boolean getIsAutoLightOn(){
+        return isAutoLightOn;
+    }
+
+    public void setIsAutoLightOn(boolean isAutoLightOn){
+        this.isAutoLightOn = isAutoLightOn;
+
+    }
+
+    public boolean getIsAutoLockOn(){
+        return isAutoLockOn;
+    }
+
+    public void setIsAutoLockOn(boolean isAutoLockOn){
+        this.isAutoLockOn = isAutoLockOn;
     }
 }
