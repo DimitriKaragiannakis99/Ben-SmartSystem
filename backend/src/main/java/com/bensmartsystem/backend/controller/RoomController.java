@@ -62,7 +62,7 @@ public class RoomController {
     public ResponseEntity<Room> toggleWindow(@RequestParam String roomId) {
         for (Room room : rooms.values()) {
             if (room.getId().equals(roomId)) {
-                room.setIsLightOn(!room.getIsWindowOpen());
+                room.setIsWindowOpen(!room.getIsWindowOpen());
                 return ResponseEntity.ok(room);
             }
         }
@@ -73,7 +73,7 @@ public class RoomController {
     public ResponseEntity<Room> toggleDoor(@RequestParam String roomId) {
         for (Room room : rooms.values()) {
             if (room.getId().equals(roomId)) {
-                room.setIsLightOn(!room.getIsDoorOpen());
+                room.setIsDoorOpen(!room.getIsDoorOpen());
                 return ResponseEntity.ok(room);
             }
         }
