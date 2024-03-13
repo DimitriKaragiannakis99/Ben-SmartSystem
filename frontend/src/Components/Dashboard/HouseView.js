@@ -49,7 +49,8 @@ const HouseView = () => {
           <div key={room.id} className="flex">
             <div className="flex flex-col items-center w-96 h-96 border-2 border-dashed border-gray-300 rounded-lg p-2 bg-gray-50">
               <h2 className="text-center text-lg font-bold mb-2">{room.name}</h2>
-              <div className="flex-1 w-full">
+              <div className="flex">
+              <div className="flex-1">
                 {room.users.map((userId) => {
                   const userName = `User ${userId.split("-")[1]}`;
                   return (
@@ -58,10 +59,13 @@ const HouseView = () => {
                     </div>
                   );
                 })}
+                </div>
+                <div className="flex flex-col items-center justify-start ml-4">
                 {room.isLightOn && <LightbulbFigure />}
                 {room.isWindowOpen && <WindowFigure />}
                 {room.isDoorOpen && <DoorFigure />}
-              </div>
+                </div>
+            </div>
             </div>
             <div className={`w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg p-2 pr-2 flex flex-col items-center justify-center ${room.windowBlocked ? 'bg-blue-200' : 'bg-gray-50'}`} style={{ minHeight: '100px', minWidth: '100px' }}>
               <h3 className="font-bold">Window</h3>
