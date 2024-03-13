@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { RoomContext } from './RoomProvider';
 
+
 function UserFigure({ name }) {
   return (
     <div className="text-center m-2.5">

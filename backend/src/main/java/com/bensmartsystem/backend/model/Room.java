@@ -15,6 +15,7 @@ public class Room {
 
     private String id;
     private String name;
+    // TODO: Change this to User Object
     private List<String> users;
     private List<String> roomComponents;
     private boolean isWindowBlocked;
@@ -106,6 +107,10 @@ public class Room {
 
     public void setUsers(List<String> users) {
         this.users = users;
+    }
+
+    public void addUsers(String user) {
+        this.users.add(user);
     }
 
     public List<String> getRoomComponents() {
