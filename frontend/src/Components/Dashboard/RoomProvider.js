@@ -41,7 +41,7 @@ const RoomProvider = ({ children }) => {
       .then(() => {
         setRooms(prevRooms =>
           prevRooms.map(room =>
-            room.id === roomId ? { ...room, windowBlocked: !room.windowBlocked } : room,
+            room.id === roomId ? { ...room, isWindowBlocked: !room.isWindowBlocked } : room,
           ),
         );
       })
@@ -55,7 +55,7 @@ const RoomProvider = ({ children }) => {
       .then(() => {
         setRooms(prevRooms =>
           prevRooms.map(room =>
-            room.id === roomId ? { ...room, windowOpen: !room.windowOpen } : room,
+            room.id === roomId ? { ...room, isWindowOpen: !room.isWindowOpen } : room,
           ),
         );
       })
@@ -69,7 +69,7 @@ const RoomProvider = ({ children }) => {
       .then(() => {
         setRooms(prevRooms =>
           prevRooms.map(room =>
-            room.id === roomId ? { ...room, doorOpen: !room.doorOpen } : room,
+            room.id === roomId ? { ...room, isDoorOpen: !room.isDoorOpen } : room,
           ),
         );
       })
