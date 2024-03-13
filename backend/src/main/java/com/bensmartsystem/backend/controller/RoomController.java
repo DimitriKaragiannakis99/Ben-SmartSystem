@@ -88,6 +88,15 @@ public class RoomController {
                 // Split the line by a delimiter to separate room name and components
                 String[] parts = line.split(":");
                 // Check if the line has both room name and components
+                if (parts.length == 3) {
+                    String roomName = parts[0].trim();
+                    List<String> components = Arrays.asList(parts[1].trim().split(","));
+                    List<String> users = Arrays.asList(parts[2].trim().split(","));
+                    
+                    // Create a new Room instance and add it to the map
+                    rooms.put(String.format("room-%d", roomNumber), new Room(roomName, components, users));
+                    roomNumber++;
+                }
                 if (parts.length == 2) {
                     String roomName = parts[0].trim();
                     List<String> components = Arrays.asList(parts[1].trim().split(","));

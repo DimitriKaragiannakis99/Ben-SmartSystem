@@ -33,6 +33,17 @@ public class Room {
         this.isDoorOpen = false;
     }
 
+    public Room(String name, List<String> roomComponents, List<String> users) {
+        this.id = UUID.randomUUID().toString();
+        this.users = users;
+        this.name = name;
+        this.roomComponents = roomComponents;
+        this.isWindowBlocked = false;
+        this.isLightOn = false;
+        this.isWindowOpen = false;
+        this.isDoorOpen = false;
+    }
+
     public Room(String name, List<String> users, List<String> roomComponents, boolean isWindowBlocked,
             boolean isLightOn, boolean isWindowOpen, boolean isDoorOpen) {
         this.id = UUID.randomUUID().toString();
