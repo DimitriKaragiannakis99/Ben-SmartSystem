@@ -50,7 +50,7 @@ const RoomEditPage = () => {
         const usersFromRooms = roomsArray.flatMap((room) =>
           room.users.map((userId) => ({
             id: userId,
-            name: `User ${userId.split("-")[1]}`,
+            name: userId,
             roomId: room.id, // Use the original hashmap key
           }))
         );
@@ -178,6 +178,7 @@ const RoomEditPage = () => {
         // Handle success
         alert("Rooms saved successfully!");
         na("/");
+        
       })
       .catch((error) => {
         // Handle error
