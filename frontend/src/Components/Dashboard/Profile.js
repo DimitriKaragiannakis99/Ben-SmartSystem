@@ -1,13 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import UserSelector from "./UserSelector";
 import DateTimeDisplay from "./DateTimeDisplay";
 import SimulationToggle from "./SimulationToggle";
-import EditSimulaiton from "../EditSimulationComponent";
+import EditSimulation from "../EditSimulationComponent";
+import axios from "axios";
 
 const Profile = () => {
   const [showSimulation, setShowSimulation] = useState(false);
+  const [userLocation, setUserLocation] = useState("Unknown");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserLocation = async () => {
+      const currentUserId = localStorage.getItem("currentUserId");
+      if (currentUserId) {
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/api/users/${currentUserId}`
+          );
+          // Assuming the user's location is stored in a property called 'location'
+          setUserLocation(response.data.location || "Unknowwern");
+        } catch (error) {
+          console.error("Error fetching user location:", error);
+        }
+      }
+    };
+
+    fetchUserLocation();
+    const intervalId = setInterval(fetchUserLocation, 5000); // Update location every 5 seconds
+
+    return () => clearInterval(intervalId); // Clean up the interval on component unmount
+  }, []);
 
   const handleClick = () => {
     setShowSimulation(true);
@@ -26,18 +50,18 @@ const Profile = () => {
       >
         Edit Simulation
       </button>
-      {showSimulation && <EditSimulaiton />}
+      {showSimulation && <EditSimulation />}
       <div className="mb-16">
         <SimulationToggle />
       </div>
       <div className="mb-16">
         <p>
-          Outside Temperature: <strong>...</strong>
+          Outside Temperature: <strong>25</strong>
         </p>
       </div>
       <div className="mb-16">
         <p>
-          Location: <strong>...</strong>
+          Location: <strong>{userLocation}</strong>
         </p>
       </div>
       <div className="mb-16">

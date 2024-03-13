@@ -53,7 +53,7 @@ const HouseView = () => {
               <div className="flex">
               <div className="flex-1">
                 {room.users.map((userId) => {
-                  const userName = `User ${userId.split("-")[1]}`;
+                  const userName = userId;
                   return (
                     <div key={userId} className="flex items-center justify-center m-1 p-2 w-36 rounded bg-white">
                       <UserFigure name={userName} />
