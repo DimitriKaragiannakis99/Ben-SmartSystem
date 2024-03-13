@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { RoomContext } from './RoomProvider';
 
+
 function UserFigure({ name }) {
   return (
     <div className="text-center m-2.5">
@@ -50,8 +51,10 @@ const HouseView = () => {
             <div className="flex flex-col items-center w-96 h-96 border-2 border-dashed border-gray-300 rounded-lg p-2 bg-gray-50">
               <h2 className="text-center text-lg font-bold mb-2">{room.name}</h2>
               <div className="flex-1 w-full">
-                {room.users.map((userId) => {
-                  const userName = `User ${userId.split("-")[1]}`;
+                {
+                  
+                room.users.map((userId) => {
+                   const userName = userId;
                   return (
                     <div key={userId} className="flex items-center justify-center m-1 p-2 w-36 rounded bg-white">
                       <UserFigure name={userName} />

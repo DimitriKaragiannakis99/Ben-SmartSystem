@@ -209,7 +209,7 @@ function UserManagementTab() {
 			}
 			// console.log("users b: " + JSON.stringify(users));
 			setUsers(users);
-		});
+			});
 
 		return users;
 		//We will just read all the users from the local storage

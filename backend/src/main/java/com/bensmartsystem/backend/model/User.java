@@ -21,9 +21,14 @@ public class User {
     @Column(nullable = false)
     private String permissions;
 
+    @Getter
+    @Setter
+    private int roomIndex;
+
     public User(String id, String username, String permissions) {
         this.id = id;
         this.username = username;
         this.permissions = permissions;
+        this.roomIndex = 0;
     }
 }
