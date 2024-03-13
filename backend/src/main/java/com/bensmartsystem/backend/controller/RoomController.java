@@ -33,7 +33,17 @@ public class RoomController {
 
     @PostMapping("/saveRooms")
     public ResponseEntity<String> saveRooms(@RequestBody ArrayList<Room> rms) {
-        // Iterate through the incoming rooms map
+        for (Room incomingRoom : rms) {
+            // Find the matching room in the existing list by ID
+            for (int i = 0; i < roomList.size(); i++) {
+                Room existingRoom = roomList.get(i);
+                if (existingRoom.getId().equals(incomingRoom.getId())) {
+                    // Update the existing room with the new values
+                    existingRoom.updateFrom(incomingRoom);
+                    break; // Break out of the loop once the matching room is updated
+                }
+            }
+        }
 
         // Return a response indicating the operation was successful
         return ResponseEntity.ok("Rooms data saved successfully");
@@ -41,32 +51,35 @@ public class RoomController {
 
     @PostMapping("/toggleLight")
     public ResponseEntity<String> toggleLight(@RequestParam String roomId) {
-        Room room = rooms.get(roomId);
-        if (room != null) {
-            room.setIsLightOn(!room.getIsLightOn());
-            return ResponseEntity.ok("Light toggled successfully");
+        for (Room room : roomList) {
+            if (room.getId().equals(roomId)) {
+                room.setIsLightOn(!room.getIsLightOn());
+                return ResponseEntity.ok("Light toggled successfully");
+            }
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
     @PostMapping("/toggleWindow")
     public ResponseEntity<String> toggleWindow(@RequestParam String roomId) {
-        Room room = rooms.get(roomId);
-        if (room != null) {
-            room.setIsWindowOpen(!room.getIsWindowOpen());
-            return ResponseEntity.ok("Window toggled successfully");
+        for (Room room : roomList) {
+            if (room.getId().equals(roomId)) {
+                room.setIsWindowOpen(!room.getIsWindowOpen());
+                return ResponseEntity.ok("Window toggled successfully");
+            }
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
     @PostMapping("/toggleDoor")
     public ResponseEntity<String> toggleDoor(@RequestParam String roomId) {
-        Room room = rooms.get(roomId);
-        if (room != null) {
-            room.setIsDoorOpen(!room.getIsDoorOpen());
-            return ResponseEntity.ok("Door toggled successfully");
+        for (Room room : roomList) {
+            if (room.getId().equals(roomId)) {
+                room.setIsDoorOpen(!room.getIsDoorOpen()); // Assuming there is a method setIsDoorOpen in Room class
+                return ResponseEntity.ok("Door toggled successfully");
+            }
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
     // This has the logic for retrieving the .txt file from the front-end, parsing
