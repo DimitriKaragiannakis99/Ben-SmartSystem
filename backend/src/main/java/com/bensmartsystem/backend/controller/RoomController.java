@@ -50,33 +50,33 @@ public class RoomController {
     }
 
     @PostMapping("/toggleLight")
-    public ResponseEntity<String> toggleLight(@RequestParam String roomId) {
+    public ResponseEntity<?> toggleLight(@RequestParam String roomId) {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsLightOn(!room.getIsLightOn());
-                return ResponseEntity.ok("Light toggled successfully");
+                return ResponseEntity.ok(room);
             }
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
     @PostMapping("/toggleWindow")
-    public ResponseEntity<String> toggleWindow(@RequestParam String roomId) {
+    public ResponseEntity<?> toggleWindow(@RequestParam String roomId) {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsWindowOpen(!room.getIsWindowOpen());
-                return ResponseEntity.ok("Window toggled successfully");
+                return ResponseEntity.ok(room);
             }
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
     @PostMapping("/toggleDoor")
-    public ResponseEntity<String> toggleDoor(@RequestParam String roomId) {
+    public ResponseEntity<?> toggleDoor(@RequestParam String roomId) {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
-                room.setIsDoorOpen(!room.getIsDoorOpen()); // Assuming there is a method setIsDoorOpen in Room class
-                return ResponseEntity.ok("Door toggled successfully");
+                room.setIsDoorOpen(!room.getIsDoorOpen());
+                return ResponseEntity.ok(room);
             }
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
