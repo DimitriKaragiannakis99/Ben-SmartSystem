@@ -68,6 +68,16 @@ public class Room {
         return roomInfo.toString();
     }
 
+    public void updateFrom(Room incomingRoom) {
+        this.name = incomingRoom.name;
+        this.users = incomingRoom.users;
+        this.roomComponents = incomingRoom.roomComponents;
+        this.isWindowBlocked = incomingRoom.isWindowBlocked;
+        this.isLightOn = incomingRoom.isLightOn;
+        this.isWindowOpen = incomingRoom.isWindowOpen;
+        this.isDoorOpen = incomingRoom.isDoorOpen;
+    }
+
     public String getId() {
         return id;
     }

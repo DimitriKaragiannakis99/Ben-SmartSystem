@@ -21,20 +21,32 @@ public class RoomController {
 
     // ConcurrentHashMap for thread-safe in-memory storage
     private static final ConcurrentHashMap<String, Room> rooms = new ConcurrentHashMap<>();
+    // private static final ArrayList<Room> roomList = new ArrayList<>();
 
     @GetMapping("/rooms")
-    public ResponseEntity<List<Room>> getAllRooms() {
+    public ResponseEntity<ConcurrentHashMap<String, Room>> getAllRooms() {
         // Return a new ArrayList to avoid exposing the internal storage structure
-        return ResponseEntity.ok(new ArrayList<>(rooms.values()));
+        return ResponseEntity.ok(rooms);
     }
 
     @PostMapping("/saveRooms")
-    public ResponseEntity<String> saveRooms(@RequestBody List<Room> rooms) {
+    public ResponseEntity<String> saveRooms(@RequestBody ConcurrentHashMap<String, Room> rms) {
+        // Iterate through the incoming rooms map
+        rms.forEach((key, incomingRoom) -> {
+            // Check if the existing rooms map already contains the room
+            if (rooms.containsKey(key)) {
+                // Get the existing room from the map
+                Room existingRoom = rooms.get(key);
+                existingRoom.updateFrom(incomingRoom);
+                System.out.println("Updating room: " + key);
+            } else {
+                System.out.println("Adding room: " + key);
+                // If the room does not exist, add it to the map
+                rooms.put(key, incomingRoom);
+            }
+        });
 
-        System.out.println(rooms);
-        // TODO: Save the rooms data to a database
-
-        // Return an appropriate response
+        // Return a response indicating the operation was successful
         return ResponseEntity.ok("Rooms data saved successfully");
     }
 
@@ -92,7 +104,7 @@ public class RoomController {
                     String roomName = parts[0].trim();
                     List<String> components = Arrays.asList(parts[1].trim().split(","));
                     List<String> users = Arrays.asList(parts[2].trim().split(","));
-                    
+
                     // Create a new Room instance and add it to the map
                     rooms.put(String.format("room-%d", roomNumber), new Room(roomName, components, users));
                     roomNumber++;

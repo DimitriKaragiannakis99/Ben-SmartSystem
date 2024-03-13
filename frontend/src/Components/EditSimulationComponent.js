@@ -19,6 +19,7 @@ const RoomEditPage = () => {
   ];
   const [objects, setObjects] = useState(initialObjects);
   const [rooms, setRooms] = useState([]);
+  const [roomsHashmap, setRoomsHashmap] = useState({});
   const [windowBlocked, setWindowBlocked] = useState({});
 
   useEffect(() => {
@@ -26,24 +27,34 @@ const RoomEditPage = () => {
     axios
       .get("http://localhost:8080/api/rooms")
       .then((response) => {
-        const modifiedRooms = response.data.map((room, index) => ({
+        // Keep the hashmap intact
+        const roomsHashmap = response.data;
+        setRoomsHashmap(roomsHashmap);
+
+        // Convert the hashmap to an array for working with it in the state
+        const roomsArray = Object.entries(roomsHashmap).map(([id, room]) => ({
           ...room,
-          id: `room-${room.id}`,
-        })); // Update the state of rooms with the response from the backend
-        setRooms(modifiedRooms);
-        const initialWindowBlocked = response.data.reduce((acc, room) => {
-          acc[`room-${room.id}-window`] = room.isWindowBlocked;
+        }));
+
+        // Set the rooms state with this array of room objects
+        setRooms(roomsArray);
+
+        // Initialize windowBlocked state
+        const initialWindowBlocked = roomsArray.reduce((acc, room) => {
+          acc[room.id] = room.isWindowBlocked; // Use the original hashmap key
           return acc;
         }, {});
         setWindowBlocked(initialWindowBlocked);
 
-        setObjects(initializeObjects(response.data)); // Initialize the objects with the response from the backend
+        // Initialize the objects with the response from the backend
+        setObjects(initializeObjects(roomsArray));
+
         // Process and initialize users based on the room data
-        const usersFromRooms = response.data.flatMap((room) =>
+        const usersFromRooms = roomsArray.flatMap((room) =>
           room.users.map((userId) => ({
             id: userId,
             name: `User ${userId.split("-")[1]}`,
-            roomId: `room-${room.id}`,
+            roomId: room.id, // Use the original hashmap key
           }))
         );
         setUsers(usersFromRooms);
@@ -160,22 +171,30 @@ const RoomEditPage = () => {
       setRooms(updatedRooms);
     }
   };
+  const mergeArrayIntoHashmap = (roomsArray, roomsHashmap) => {
+    // Create a new hashmap to ensure we're not mutating the state directly
+    const updatedHashmap = { ...roomsHashmap };
+
+    // Iterate over the rooms array and update the corresponding hashmap entry
+    roomsArray.forEach((room) => {
+      const keyToUpdate = Object.keys(updatedHashmap).find(
+        (key) => updatedHashmap[key].id === room.id
+      );
+      if (keyToUpdate) {
+        updatedHashmap[keyToUpdate] = { ...room };
+      }
+    });
+
+    return updatedHashmap;
+  };
 
   const handleSave = () => {
-    const formattedRooms = rooms.map((room) => ({
-      id: room.id.replace("room-", ""),
-      name: room.name,
-      users: room.users,
-      roomComponents: room.roomComponents,
-      isDoorOpen: room.isDoorOpen,
-      isLightOn: room.isLightOn,
-      isWindowBlocked: room.isWindowBlocked,
-      isWindowOpen: room.isWindowOpen,
-    }));
+    // Merge updates from roomsArray back into roomsHashmap
+    const updatedHashmap = mergeArrayIntoHashmap(rooms, roomsHashmap);
 
-    // Send a POST request to the backend API endpoint
+    // Send a POST request to the backend API endpoint with the updated hashmap
     axios
-      .post("http://localhost:8080/api/saveRooms", formattedRooms)
+      .post("http://localhost:8080/api/saveRooms", updatedHashmap)
       .then((response) => {
         // Handle success
         alert("Rooms saved successfully!");
