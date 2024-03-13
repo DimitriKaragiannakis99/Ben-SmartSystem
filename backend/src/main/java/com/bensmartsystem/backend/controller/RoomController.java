@@ -20,31 +20,20 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RoomController {
 
     // ConcurrentHashMap for thread-safe in-memory storage
-    private static final ConcurrentHashMap<String, Room> rooms = new ConcurrentHashMap<>();
-    // private static final ArrayList<Room> roomList = new ArrayList<>();
+    // private static final ConcurrentHashMap<String, Room> rooms = new
+    // ConcurrentHashMap<>();
+    private static final ArrayList<Room> roomList = new ArrayList<>();
 
     @GetMapping("/rooms")
-    public ResponseEntity<ConcurrentHashMap<String, Room>> getAllRooms() {
+    public ResponseEntity<ArrayList<Room>> getAllRooms() {
+        System.out.println(roomList);
         // Return a new ArrayList to avoid exposing the internal storage structure
-        return ResponseEntity.ok(rooms);
+        return ResponseEntity.ok(roomList);
     }
 
     @PostMapping("/saveRooms")
-    public ResponseEntity<String> saveRooms(@RequestBody ConcurrentHashMap<String, Room> rms) {
+    public ResponseEntity<String> saveRooms(@RequestBody ArrayList<Room> rms) {
         // Iterate through the incoming rooms map
-        rms.forEach((key, incomingRoom) -> {
-            // Check if the existing rooms map already contains the room
-            if (rooms.containsKey(key)) {
-                // Get the existing room from the map
-                Room existingRoom = rooms.get(key);
-                existingRoom.updateFrom(incomingRoom);
-                System.out.println("Updating room: " + key);
-            } else {
-                System.out.println("Adding room: " + key);
-                // If the room does not exist, add it to the map
-                rooms.put(key, incomingRoom);
-            }
-        });
 
         // Return a response indicating the operation was successful
         return ResponseEntity.ok("Rooms data saved successfully");
@@ -85,7 +74,7 @@ public class RoomController {
     @PostMapping("/uploadRoomLayout")
     public ResponseEntity<String> uploadRoomLayout(@RequestParam("file") MultipartFile file) {
         // Clear existing rooms
-        rooms.clear();
+        roomList.clear();
 
         // File was not uploaded correctly
         if (file.isEmpty()) {
@@ -106,14 +95,14 @@ public class RoomController {
                     List<String> users = Arrays.asList(parts[2].trim().split(","));
 
                     // Create a new Room instance and add it to the map
-                    rooms.put(String.format("room-%d", roomNumber), new Room(roomName, components, users));
+                    roomList.add(new Room(roomName, components, users));
                     roomNumber++;
                 }
                 if (parts.length == 2) {
                     String roomName = parts[0].trim();
                     List<String> components = Arrays.asList(parts[1].trim().split(","));
                     // Create a new Room instance and add it to the map
-                    rooms.put(String.format("room-%d", roomNumber), new Room(roomName, components));
+                    roomList.add(new Room(roomName, components));
                     roomNumber++;
                 }
             }

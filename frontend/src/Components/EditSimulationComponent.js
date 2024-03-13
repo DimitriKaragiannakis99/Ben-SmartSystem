@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function UserFigure({ name }) {
   return (
@@ -12,6 +13,7 @@ function UserFigure({ name }) {
 }
 
 const RoomEditPage = () => {
+  const na = useNavigate();
   const [users, setUsers] = useState([]);
 
   const initialObjects = [
@@ -19,7 +21,6 @@ const RoomEditPage = () => {
   ];
   const [objects, setObjects] = useState(initialObjects);
   const [rooms, setRooms] = useState([]);
-  const [roomsHashmap, setRoomsHashmap] = useState({});
   const [windowBlocked, setWindowBlocked] = useState({});
 
   useEffect(() => {
@@ -28,13 +29,9 @@ const RoomEditPage = () => {
       .get("http://localhost:8080/api/rooms")
       .then((response) => {
         // Keep the hashmap intact
-        const roomsHashmap = response.data;
-        setRoomsHashmap(roomsHashmap);
+        const roomsArray = response.data;
 
         // Convert the hashmap to an array for working with it in the state
-        const roomsArray = Object.entries(roomsHashmap).map(([id, room]) => ({
-          ...room,
-        }));
 
         // Set the rooms state with this array of room objects
         setRooms(roomsArray);
@@ -171,33 +168,16 @@ const RoomEditPage = () => {
       setRooms(updatedRooms);
     }
   };
-  const mergeArrayIntoHashmap = (roomsArray, roomsHashmap) => {
-    // Create a new hashmap to ensure we're not mutating the state directly
-    const updatedHashmap = { ...roomsHashmap };
-
-    // Iterate over the rooms array and update the corresponding hashmap entry
-    roomsArray.forEach((room) => {
-      const keyToUpdate = Object.keys(updatedHashmap).find(
-        (key) => updatedHashmap[key].id === room.id
-      );
-      if (keyToUpdate) {
-        updatedHashmap[keyToUpdate] = { ...room };
-      }
-    });
-
-    return updatedHashmap;
-  };
 
   const handleSave = () => {
-    // Merge updates from roomsArray back into roomsHashmap
-    const updatedHashmap = mergeArrayIntoHashmap(rooms, roomsHashmap);
-
-    // Send a POST request to the backend API endpoint with the updated hashmap
+    console.log("Saving rooms:", rooms);
+    // Send a POST request to the backend API endpoint
     axios
-      .post("http://localhost:8080/api/saveRooms", updatedHashmap)
+      .post("http://localhost:8080/api/saveRooms", rooms)
       .then((response) => {
         // Handle success
         alert("Rooms saved successfully!");
+        na("/");
       })
       .catch((error) => {
         // Handle error
