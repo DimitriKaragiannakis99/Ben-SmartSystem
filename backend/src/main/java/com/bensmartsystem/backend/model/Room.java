@@ -37,6 +37,17 @@ public class Room {
         this.isAutoLockOn = false;
     }
 
+    public Room(String name, List<String> roomComponents, List<String> users) {
+        this.id = UUID.randomUUID().toString();
+        this.users = users;
+        this.name = name;
+        this.roomComponents = roomComponents;
+        this.isWindowBlocked = false;
+        this.isLightOn = false;
+        this.isWindowOpen = false;
+        this.isDoorOpen = false;
+    }
+
     public Room(String name, List<String> users, List<String> roomComponents, boolean isWindowBlocked,
             boolean isLightOn, boolean isWindowOpen, boolean isDoorOpen,boolean isAutoLightOn,boolean isAutoLockOn) {
         this.id = UUID.randomUUID().toString();
@@ -61,6 +72,16 @@ public class Room {
         }
         roomInfo.append("}");
         return roomInfo.toString();
+    }
+
+    public void updateFrom(Room incomingRoom) {
+        this.name = incomingRoom.name;
+        this.users = incomingRoom.users;
+        this.roomComponents = incomingRoom.roomComponents;
+        this.isWindowBlocked = incomingRoom.isWindowBlocked;
+        this.isLightOn = incomingRoom.isLightOn;
+        this.isWindowOpen = incomingRoom.isWindowOpen;
+        this.isDoorOpen = incomingRoom.isDoorOpen;
     }
 
     public String getId() {

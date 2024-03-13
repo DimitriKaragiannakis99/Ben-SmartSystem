@@ -20,71 +20,74 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RoomController {
 
     // ConcurrentHashMap for thread-safe in-memory storage
-    private static final ConcurrentHashMap<String, Room> rooms = new ConcurrentHashMap<>();
+    // private static final ConcurrentHashMap<String, Room> rooms = new
+    // ConcurrentHashMap<>();
+    private static final ArrayList<Room> roomList = new ArrayList<>();
 
     @GetMapping("/rooms")
-    public ResponseEntity<List<Room>> getAllRooms() {
+    public ResponseEntity<ArrayList<Room>> getAllRooms() {
+        System.out.println(roomList);
         // Return a new ArrayList to avoid exposing the internal storage structure
-        return ResponseEntity.ok(new ArrayList<>(rooms.values()));
+        return ResponseEntity.ok(roomList);
     }
 
     @PostMapping("/saveRooms")
-    public ResponseEntity<String> saveRooms(@RequestBody List<Room> rooms) {
+    public ResponseEntity<String> saveRooms(@RequestBody ArrayList<Room> rms) {
+        for (Room incomingRoom : rms) {
+            // Find the matching room in the existing list by ID
+            for (int i = 0; i < roomList.size(); i++) {
+                Room existingRoom = roomList.get(i);
+                if (existingRoom.getId().equals(incomingRoom.getId())) {
+                    // Update the existing room with the new values
+                    existingRoom.updateFrom(incomingRoom);
+                    break; // Break out of the loop once the matching room is updated
+                }
+            }
+        }
 
-        System.out.println(rooms);
-        // TODO: Save the rooms data to a database
-
-        // Return an appropriate response
+        // Return a response indicating the operation was successful
         return ResponseEntity.ok("Rooms data saved successfully");
     }
 
-    public Room findRoomById(String id) {
-        for (Room room : rooms.values()) {
-            if (room.getId().equals(id)) {
-                return room;
-            }
-        }
-        return null; // or throw a RoomNotFoundException, depending on your design
-    }
-
     @PostMapping("/toggleLight")
-    public ResponseEntity<Room> toggleLight(@RequestParam String roomId) {
-        for (Room room : rooms.values()) {
+    public ResponseEntity<?> toggleLight(@RequestParam String roomId) {
+        for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsLightOn(!room.getIsLightOn());
                 return ResponseEntity.ok(room);
             }
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
     @PostMapping("/toggleWindow")
-    public ResponseEntity<Room> toggleWindow(@RequestParam String roomId) {
-        for (Room room : rooms.values()) {
+    public ResponseEntity<?> toggleWindow(@RequestParam String roomId) {
+        for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsWindowOpen(!room.getIsWindowOpen());
                 return ResponseEntity.ok(room);
             }
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
     @PostMapping("/toggleDoor")
-    public ResponseEntity<Room> toggleDoor(@RequestParam String roomId) {
-        for (Room room : rooms.values()) {
+    public ResponseEntity<?> toggleDoor(@RequestParam String roomId) {
+        for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsDoorOpen(!room.getIsDoorOpen());
                 return ResponseEntity.ok(room);
             }
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
+
     // This has the logic for retrieving the .txt file from the front-end, parsing
     // the info and adding it to the hashmap.
     @PostMapping("/uploadRoomLayout")
     public ResponseEntity<String> uploadRoomLayout(@RequestParam("file") MultipartFile file) {
         // Clear existing rooms
-        rooms.clear();
+        roomList.clear();
 
         // File was not uploaded correctly
         if (file.isEmpty()) {
@@ -99,11 +102,20 @@ public class RoomController {
                 // Split the line by a delimiter to separate room name and components
                 String[] parts = line.split(":");
                 // Check if the line has both room name and components
+                if (parts.length == 3) {
+                    String roomName = parts[0].trim();
+                    List<String> components = Arrays.asList(parts[1].trim().split(","));
+                    List<String> users = Arrays.asList(parts[2].trim().split(","));
+
+                    // Create a new Room instance and add it to the map
+                    roomList.add(new Room(roomName, components, users));
+                    roomNumber++;
+                }
                 if (parts.length == 2) {
                     String roomName = parts[0].trim();
                     List<String> components = Arrays.asList(parts[1].trim().split(","));
                     // Create a new Room instance and add it to the map
-                    rooms.put(String.format("room-%d", roomNumber), new Room(roomName, components));
+                    roomList.add(new Room(roomName, components));
                     roomNumber++;
                 }
             }

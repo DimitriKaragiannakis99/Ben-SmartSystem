@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function UserFigure({ name }) {
   return (
@@ -12,6 +13,7 @@ function UserFigure({ name }) {
 }
 
 const RoomEditPage = () => {
+  const na = useNavigate();
   const [users, setUsers] = useState([]);
 
   const initialObjects = [
@@ -26,24 +28,30 @@ const RoomEditPage = () => {
     axios
       .get("http://localhost:8080/api/rooms")
       .then((response) => {
-        const modifiedRooms = response.data.map((room, index) => ({
-          ...room,
-          id: `room-${room.id}`,
-        })); // Update the state of rooms with the response from the backend
-        setRooms(modifiedRooms);
-        const initialWindowBlocked = response.data.reduce((acc, room) => {
-          acc[`room-${room.id}-window`] = room.isWindowBlocked;
+        // Keep the hashmap intact
+        const roomsArray = response.data;
+
+        // Convert the hashmap to an array for working with it in the state
+
+        // Set the rooms state with this array of room objects
+        setRooms(roomsArray);
+
+        // Initialize windowBlocked state
+        const initialWindowBlocked = roomsArray.reduce((acc, room) => {
+          acc[room.id] = room.isWindowBlocked; // Use the original hashmap key
           return acc;
         }, {});
         setWindowBlocked(initialWindowBlocked);
 
-        setObjects(initializeObjects(response.data)); // Initialize the objects with the response from the backend
+        // Initialize the objects with the response from the backend
+        setObjects(initializeObjects(roomsArray));
+
         // Process and initialize users based on the room data
-        const usersFromRooms = response.data.flatMap((room) =>
+        const usersFromRooms = roomsArray.flatMap((room) =>
           room.users.map((userId) => ({
             id: userId,
             name: `User ${userId.split("-")[1]}`,
-            roomId: `room-${room.id}`,
+            roomId: room.id, // Use the original hashmap key
           }))
         );
         setUsers(usersFromRooms);
@@ -162,23 +170,14 @@ const RoomEditPage = () => {
   };
 
   const handleSave = () => {
-    const formattedRooms = rooms.map((room) => ({
-      id: room.id.replace("room-", ""),
-      name: room.name,
-      users: room.users,
-      roomComponents: room.roomComponents,
-      isDoorOpen: room.isDoorOpen,
-      isLightOn: room.isLightOn,
-      isWindowBlocked: room.isWindowBlocked,
-      isWindowOpen: room.isWindowOpen,
-    }));
-
+    console.log("Saving rooms:", rooms);
     // Send a POST request to the backend API endpoint
     axios
-      .post("http://localhost:8080/api/saveRooms", formattedRooms)
+      .post("http://localhost:8080/api/saveRooms", rooms)
       .then((response) => {
         // Handle success
         alert("Rooms saved successfully!");
+        na("/");
       })
       .catch((error) => {
         // Handle error
