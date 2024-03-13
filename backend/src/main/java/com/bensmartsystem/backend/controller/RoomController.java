@@ -3,7 +3,12 @@ package com.bensmartsystem.backend.controller;
 import com.bensmartsystem.backend.model.Room;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpStatus;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,18 +21,6 @@ public class RoomController {
 
     // ConcurrentHashMap for thread-safe in-memory storage
     private static final ConcurrentHashMap<String, Room> rooms = new ConcurrentHashMap<>();
-
-    static {
-        // Initialize some rooms with users
-        rooms.put("room-1", new Room("Living Room", new ArrayList<>(Arrays.asList("user-1")),
-                new ArrayList<>(Arrays.asList("Light", "Window", "Door")), true, false, true, true));
-        rooms.put("room-2", new Room("Kitchen", new ArrayList<>(Arrays.asList("user-2")),
-                new ArrayList<>(Arrays.asList("Light", "Window", "Door")), false, true, false, false));
-        rooms.put("room-3", new Room("Dining Room", new ArrayList<>(), new ArrayList<>(), false, true, true, true));
-        rooms.put("room-4",
-                new Room("Master Bedroom", new ArrayList<>(), new ArrayList<>(), true, false, false, false));
-
-    }
 
     @GetMapping("/rooms")
     public ResponseEntity<List<Room>> getAllRooms() {
@@ -77,5 +70,38 @@ public class RoomController {
             return ResponseEntity.ok("Door toggled successfully");
         }
         return ResponseEntity.notFound().build();
+    }
+    // This has the logic for retrieving the .txt file from the front-end, parsing
+    // the info and adding it to the hashmap.
+    @PostMapping("/uploadRoomLayout")
+    public ResponseEntity<String> uploadRoomLayout(@RequestParam("file") MultipartFile file) {
+        // Clear existing rooms
+        rooms.clear();
+
+        // File was not uploaded correctly
+        if (file.isEmpty()) {
+            return new ResponseEntity<>("No file uploaded", HttpStatus.BAD_REQUEST);
+        }
+
+        // Read file in and perform tasks:
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            String line;
+            int roomNumber = 1;
+            while ((line = reader.readLine()) != null) {
+                // Split the line by a delimiter to separate room name and components
+                String[] parts = line.split(":");
+                // Check if the line has both room name and components
+                if (parts.length == 2) {
+                    String roomName = parts[0].trim();
+                    List<String> components = Arrays.asList(parts[1].trim().split(","));
+                    // Create a new Room instance and add it to the map
+                    rooms.put(String.format("room-%d", roomNumber), new Room(roomName, components));
+                    roomNumber++;
+                }
+            }
+            return new ResponseEntity<>("Room layout uploaded successfully", HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Error processing file: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

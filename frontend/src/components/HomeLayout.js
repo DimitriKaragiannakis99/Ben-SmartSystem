@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export default function HomeLayout() {
+const HomeLayout = ({ onSubmission }) => {
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     console.log("Uploaded file:", file);
@@ -13,7 +13,7 @@ export default function HomeLayout() {
     //Not using useEffect because there are no changes to DOM.
     try {
       const response = await axios.post(
-        "http://localhost:8080/home-layout/upload",
+        "http://localhost:8080/api/uploadRoomLayout",
         formData,
         {
           headers: {
@@ -24,6 +24,7 @@ export default function HomeLayout() {
 
       // Handle response from backend
       console.log("Response from backend server:", response);
+      onSubmission(response.data); //Pass the data to the callback function
     } catch (error) {
       console.error("Error uploading file:", error);
     }
@@ -53,4 +54,6 @@ export default function HomeLayout() {
       </div>
     </div>
   );
-}
+};
+
+export default HomeLayout;
