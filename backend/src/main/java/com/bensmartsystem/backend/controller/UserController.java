@@ -1,5 +1,7 @@
 package com.bensmartsystem.backend.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.bensmartsystem.backend.model.Room;
@@ -7,11 +9,10 @@ import com.bensmartsystem.backend.model.User;
 import com.bensmartsystem.backend.controller.RoomController;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import java.util.Map;
+
 import lombok.Getter;
 
 
@@ -30,14 +31,21 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public User getUserById(@PathVariable String userId) {
+    public ResponseEntity<?> getUserById(@PathVariable String userId) {
         for (User user : users) {
             if (user.getId().equals(userId)) {
-                System.out.println(user);
-                return user;
+                String roomName = RoomController.getRoomList().get(user.getRoomIndex()).getName();
+                Map<String, Object> userData = new HashMap<>();
+                userData.put("id", user.getId());
+                userData.put("username", user.getUsername());
+                userData.put("permissions", user.getPermissions());
+                userData.put("roomIndex", user.getRoomIndex());
+                userData.put("location", roomName);
+                
+                return ResponseEntity.ok(userData);
             }
         }
-        return null; // User not found
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with id: " + userId);
     }
 
     @PostMapping("/add")
