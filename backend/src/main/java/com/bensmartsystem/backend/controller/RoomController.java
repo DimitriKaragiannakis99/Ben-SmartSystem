@@ -106,6 +106,28 @@ public class RoomController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
+    @PostMapping("/toggleHeater")
+    public ResponseEntity<?> toggleHeater(@RequestParam String roomId) {
+        for (Room room : roomList) {
+            if (room.getId().equals(roomId)) {
+                room.setIsHeaterOn(!room.getIsHeaterOn());
+                return ResponseEntity.ok(room);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
+    }
+
+    @PostMapping("/toggleAc")
+    public ResponseEntity<?> toggleAc(@RequestParam String roomId) {
+        for (Room room : roomList) {
+            if (room.getId().equals(roomId)) {
+                room.setIsAcOn(!room.getIsAcOn());
+                return ResponseEntity.ok(room);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
+    }
+
     // This has the logic for retrieving the .txt file from the front-end, parsing
     // the info and adding it to the hashmap.
     @PostMapping("/uploadRoomLayout")
