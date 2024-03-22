@@ -29,17 +29,14 @@ public class RoomController {
     @Getter
     private static final ArrayList<Room> roomList = new ArrayList<>();
 
-
-
     @GetMapping("/rooms")
     public ResponseEntity<ArrayList<Room>> getAllRooms() {
         System.out.println(roomList);
         // Return a new ArrayList to avoid exposing the internal storage structure
-        //In here we will assign the users to random roomsfor the first time
+        // In here we will assign the users to random roomsfor the first time
         updateUsersInRooms();
         return ResponseEntity.ok(roomList);
     }
-
 
     @PostMapping("/saveRooms")
     public ResponseEntity<String> saveRooms(@RequestBody ArrayList<Room> rms) {
@@ -50,24 +47,21 @@ public class RoomController {
                 if (existingRoom.getId().equals(incomingRoom.getId())) {
                     // Update the existing room with the new values
                     existingRoom.updateFrom(incomingRoom);
-                    
-            // For each user in the incoming room, update the user's roomID
-                for (String username : incomingRoom.getUsers()) {
-                for (User user : UserController.getUsers()) {
-                    if (user.getUsername().equals(username)) {
-                        user.setRoomIndex(i);
+
+                    // For each user in the incoming room, update the user's roomID
+                    for (String username : incomingRoom.getUsers()) {
+                        for (User user : UserController.getUsers()) {
+                            if (user.getUsername().equals(username)) {
+                                user.setRoomIndex(i);
+                            }
+                        }
                     }
-                }
-            }
-                    
-                    
+
                     break; // Break out of the loop once the matching room is updated
                 }
             }
 
-           
         }
-
 
         // Return a response indicating the operation was successful
         return ResponseEntity.ok("Rooms data saved successfully");
@@ -172,25 +166,22 @@ public class RoomController {
     }
 
     // This method assigns the users to the first room in the list
-    //This should run only once when the server starts or when the rooms are updated
-    private void assignRoomsToUsersAtStart(ArrayList<Room> allRooms) 
-    {
+    // This should run only once when the server starts or when the rooms are
+    // updated
+    private void assignRoomsToUsersAtStart(ArrayList<Room> allRooms) {
         // First we get a list of all the users
-        if(allRooms.size() == 0)
-        {
+        if (allRooms.size() == 0) {
             return;
         }
 
-        //First remove all users from all rooms
-        for (Room r: allRooms) 
-        {
+        // First remove all users from all rooms
+        for (Room r : allRooms) {
             r.setUsers(new ArrayList<>());
         }
 
         List<User> users = UserController.getUsers();
-        
-        for (User u: users) 
-        {
+
+        for (User u : users) {
             // We will assign the users to random rooms
             // We will use the Random class to generate random numbers
             allRooms.get(0).addUsers(u.getUsername());
@@ -207,27 +198,31 @@ public class RoomController {
         System.out.println("User added to first room: " + user.getUsername());
     }
 
-    public static void updateUsersInRooms ()
-    {
-         //First remove all users from all rooms
-         for (Room r: roomList) 
-         {
-             r.setUsers(new ArrayList<>());
-         }
+    public static void updateUsersInRooms() {
+        // First remove all users from all rooms
+        for (Room r : roomList) {
+            r.setUsers(new ArrayList<>());
+        }
 
-            List<User> users = UserController.getUsers();
+        List<User> users = UserController.getUsers();
 
-            if (users.size() == 0 || roomList.size() == 0)
-            {
-                return;
+        if (users.size() == 0 || roomList.size() == 0) {
+            return;
+        }
+        for (User u : users) {
+            // We will assign the users to random rooms
+            // We will use the Random class to generate random numbers
+            roomList.get(u.getRoomIndex()).addUsers(u.getUsername());
+
+        }
+    }
+
+    public static Room findRoomById(String id) {
+        for (Room room : roomList) {
+            if (room.getId().equals(id)) {
+                return room;
             }
-            for (User u: users) 
-            {
-                // We will assign the users to random rooms
-                // We will use the Random class to generate random numbers
-                roomList.get(u.getRoomIndex()).addUsers(u.getUsername());
-
-            }
+        }
+        return null; // Or throw an exception if the room is not found
     }
 }
-
