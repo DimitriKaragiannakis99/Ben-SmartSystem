@@ -3,57 +3,66 @@ import axios from "axios";
 
 const RoomZones = () => {
   const [rooms, setRooms] = useState([]);
-  const [selectedRooms, setSelectedRooms] = useState([]);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [zoneName, setZoneName] = useState("");
+  const [selectedRoomIds, setSelectedRoomIds] = useState([]);
+  const [zones, setZones] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/rooms")
-      .then((response) => {
-        setRooms(response.data.map((room) => ({ ...room })));
-      })
-      .catch((error) => {
-        console.error("Error fetching room information", error);
-      });
+    const fetchRoomsAndZones = async () => {
+      try {
+        const roomResponse = await axios.get("http://localhost:8080/api/rooms");
+        setRooms(roomResponse.data);
+
+        const zoneResponse = await axios.get("http://localhost:8080/api/zones");
+        setZones(zoneResponse.data);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+
+    fetchRoomsAndZones();
   }, []);
 
+  
+
   const handleCheckboxChange = (roomId) => {
-    setSelectedRooms((prevSelectedRooms) =>
-      prevSelectedRooms.includes(roomId)
-        ? prevSelectedRooms.filter((id) => id !== roomId)
-        : [...prevSelectedRooms, roomId]
-    );
+    setSelectedRoomIds(prev => {
+      if (prev.includes(roomId)) {
+        return prev.filter(id => id !== roomId);
+      } else {
+        return [...prev, roomId];
+      }
+    });
   };
 
   const handleAddToZone = () => {
-    if (selectedRooms.length === 0) {
+    if (selectedRoomIds.length === 0) {
       alert("Please select at least one room.");
       return;
     }
     const zoneName = prompt("Enter a zone name:");
     if (zoneName) {
-      // Construct the Zone object with the name and the list of Room objects
+      const selectedRooms = rooms.filter(room => selectedRoomIds.includes(room.id));
       const zone = {
         name: zoneName,
-        rooms: selectedRooms, // Ensure this matches the structure expected by your backend
+        rooms: selectedRooms.map(room => room.name), // Convert IDs to names
       };
 
-      console.log(zone);
-
-      // Use Axios to send a POST request
-      axios
-        .post("http://localhost:8080/api/zones", zone)
-        .then((response) => {
-          console.log("Success:", response.data);
-          // Handle success (e.g., showing a success message, clearing selections)
-          setIsPopupOpen(false);
-          setZoneName("");
-          setSelectedRooms([]); // Optionally clear selected rooms if necessary
+      axios.post("http://localhost:8080/api/zones", {
+        name: zoneName,
+        rooms: selectedRoomIds // Send IDs to backend
+      })
+        .then(response => {
+          const newZone = {
+            name: zoneName,
+            rooms: selectedRooms.map(room => room.name), // Convert IDs to names
+            id: response.data
+          };
+          setZones(prevZones => [...prevZones, newZone]);
+          setSelectedRoomIds([]);
         })
-        .catch((error) => {
-          console.error("Error:", error);
-          // Handle error (e.g., showing an error message)
+        .catch(error => {
+          console.error("Error creating zone:", error);
+          alert("Error creating zone: " + error.response.data);
         });
     }
   };
@@ -61,12 +70,12 @@ const RoomZones = () => {
   return (
     <div>
       <ul>
-        {rooms.map((room) => (
+        {rooms.map(room => (
           <li key={room.id}>
             <label>
               <input
                 type="checkbox"
-                checked={selectedRooms.includes(room.id)}
+                checked={selectedRoomIds.includes(room.id)}
                 onChange={() => handleCheckboxChange(room.id)}
               />
               {room.name}
@@ -74,7 +83,21 @@ const RoomZones = () => {
           </li>
         ))}
       </ul>
-      <button onClick={handleAddToZone}>Add to Zone</button>
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleAddToZone}>
+        Add to Zone
+      </button>
+      {zones.map(zone => (
+        <div key={zone.id}>
+          <strong>{zone.name}</strong>
+          {zone.rooms && (
+            <ul>
+              {zone.rooms.map(roomName => (
+                <li key={roomName}>{roomName}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
     </div>
   );
 };

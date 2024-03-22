@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -21,4 +22,8 @@ public class Zone {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "zone_id")
     private List<Room> rooms;
+
+    public List<String> getRoomNames() {
+        return rooms.stream().map(Room::getName).collect(Collectors.toList());
+    }
 }
