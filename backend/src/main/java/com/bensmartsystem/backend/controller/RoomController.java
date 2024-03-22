@@ -77,10 +77,11 @@ public class RoomController {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsLightOn(!room.getIsLightOn());
+                SimulationEventManager.getInstance().Notify("LightToggled");
                 return ResponseEntity.ok(room);
             }
         }
-        SimulationEventManager.getInstance().Notify("LightToggled");
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
@@ -89,10 +90,11 @@ public class RoomController {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsWindowOpen(!room.getIsWindowOpen());
+                SimulationEventManager.getInstance().Notify("windowToggled");
                 return ResponseEntity.ok(room);
             }
         }
-        SimulationEventManager.getInstance().Notify("windowToggled");
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
@@ -101,10 +103,11 @@ public class RoomController {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsDoorOpen(!room.getIsDoorOpen());
+                SimulationEventManager.getInstance().Notify("doorToggled");
                 return ResponseEntity.ok(room);
             }
         }
-        SimulationEventManager.getInstance().Notify("doorToggled");
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
