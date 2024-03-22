@@ -1,5 +1,6 @@
 package com.bensmartsystem.backend.repository;
 
+import com.bensmartsystem.backend.model.Room;
 import com.bensmartsystem.backend.model.Zone;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,25 @@ public class ZoneRepository {
                 .filter(zone -> zone.getId().equals(id))
                 .findFirst()
                 .orElse(null);
+    }
+
+    // Update a room's temperature within a zone
+    public boolean updateRoomTemperature(Long zoneId, String roomId, double newTemperature) {
+        Zone zone = findById(zoneId);
+        if (zone == null) {
+            return false;
+        }
+
+        boolean updated = false;
+        for (Room room : zone.getRooms()) {
+            if (room.getId().equals(roomId)) {
+                room.setTemperature(newTemperature);
+                updated = true;
+                break;
+            }
+        }
+
+        return updated;
     }
 
 }

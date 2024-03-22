@@ -22,12 +22,10 @@ const RoomZones = () => {
     fetchRoomsAndZones();
   }, []);
 
-  
-
   const handleCheckboxChange = (roomId) => {
-    setSelectedRoomIds(prev => {
+    setSelectedRoomIds((prev) => {
       if (prev.includes(roomId)) {
-        return prev.filter(id => id !== roomId);
+        return prev.filter((id) => id !== roomId);
       } else {
         return [...prev, roomId];
       }
@@ -41,28 +39,63 @@ const RoomZones = () => {
     }
     const zoneName = prompt("Enter a zone name:");
     if (zoneName) {
-      const selectedRooms = rooms.filter(room => selectedRoomIds.includes(room.id));
+      const selectedRooms = rooms.filter((room) =>
+        selectedRoomIds.includes(room.id)
+      );
       const zone = {
         name: zoneName,
-        rooms: selectedRooms.map(room => room.name), // Convert IDs to names
+        rooms: selectedRooms.map((room) => room.name),
       };
 
-      axios.post("http://localhost:8080/api/zones", {
-        name: zoneName,
-        rooms: selectedRoomIds // Send IDs to backend
-      })
-        .then(response => {
+      axios
+        .post("http://localhost:8080/api/zones", {
+          name: zoneName,
+          rooms: selectedRoomIds,
+        })
+        .then((response) => {
           const newZone = {
             name: zoneName,
-            rooms: selectedRooms.map(room => room.name), // Convert IDs to names
-            id: response.data
+            rooms: selectedRooms.map((room) => room.name),
+            id: response.data,
           };
-          setZones(prevZones => [...prevZones, newZone]);
+          setZones((prevZones) => [...prevZones, newZone]);
           setSelectedRoomIds([]);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Error creating zone:", error);
           alert("Error creating zone: " + error.response.data);
+        });
+    }
+  };
+
+  const handleModifyTemperature = (zoneId) => {
+    const cleanedZoneId = zoneId.replace(/\D/g, "");
+    const newTemperature = prompt("Enter the new temperature:");
+    if (
+      newTemperature !== null &&
+      newTemperature.trim() !== "" &&
+      newTemperature >= -40 &&
+      newTemperature <= 40
+    ) {
+      axios
+        .put(`http://localhost:8080/api/zones/${cleanedZoneId}/temperature`, {
+          temperature: newTemperature,
+        })
+        .then((response) => {
+          setZones((prevZones) =>
+            prevZones.map((zone) => {
+              if (zone.id === zoneId) {
+                return { ...zone, temperature: newTemperature };
+              } else {
+                return zone;
+              }
+            })
+          );
+          alert("Temperature updated successfully.");
+        })
+        .catch((error) => {
+          console.error("Error updating temperature:", error);
+          alert("Error updating temperature.");
         });
     }
   };
@@ -70,7 +103,7 @@ const RoomZones = () => {
   return (
     <div>
       <ul>
-        {rooms.map(room => (
+        {rooms.map((room) => (
           <li key={room.id}>
             <label>
               <input
@@ -83,15 +116,24 @@ const RoomZones = () => {
           </li>
         ))}
       </ul>
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleAddToZone}>
+      <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        onClick={handleAddToZone}
+      >
         Add to Zone
       </button>
-      {zones.map(zone => (
+      {zones.map((zone) => (
         <div key={zone.id}>
           <strong>{zone.name}</strong>
+          <button
+            onClick={() => handleModifyTemperature(zone.id)}
+            className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
+          >
+            Modify Temperature
+          </button>
           {zone.rooms && (
             <ul>
-              {zone.rooms.map(roomName => (
+              {zone.rooms.map((roomName) => (
                 <li key={roomName}>{roomName}</li>
               ))}
             </ul>

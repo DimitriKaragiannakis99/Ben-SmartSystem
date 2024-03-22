@@ -59,4 +59,29 @@ public class ZoneController {
 
         return ResponseEntity.ok(zonesWithRoomNames);
     }
+
+    @PutMapping("/{zoneId}/temperature")
+    public ResponseEntity<?> updateZoneTemperature(@PathVariable Long zoneId,
+            @RequestBody Map<String, Double> payload) {
+        Double newTemperature = payload.get("temperature");
+        if (newTemperature == null) {
+            return ResponseEntity.badRequest().body("Temperature is required");
+        }
+
+        Zone zone = zoneRepository.findById(zoneId);
+        if (zone == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<Room> rooms = zone.getRooms();
+        if (rooms == null || rooms.isEmpty()) {
+            return ResponseEntity.badRequest().body("No rooms found in the zone");
+        }
+
+        rooms.forEach(room -> {
+            zoneRepository.updateRoomTemperature(zoneId, room.getId(), newTemperature);
+        });
+
+        return ResponseEntity.ok().body("Temperature updated for all rooms in the zone");
+    }
 }

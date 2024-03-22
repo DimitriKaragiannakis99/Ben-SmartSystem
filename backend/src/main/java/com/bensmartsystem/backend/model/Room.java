@@ -18,6 +18,7 @@ public class Room {
     // TODO: Change this to User Object
     private List<String> users;
     private List<String> roomComponents;
+    private double temperature;
     private boolean isWindowBlocked;
     private boolean isLightOn;
     private boolean isWindowOpen;
@@ -32,6 +33,7 @@ public class Room {
         this.users = new ArrayList<>();
         this.name = name;
         this.roomComponents = roomComponents;
+        this.temperature = 19.0;
         this.isWindowBlocked = false;
         this.isLightOn = false;
         this.isWindowOpen = false;
@@ -47,6 +49,7 @@ public class Room {
         this.users = users;
         this.name = name;
         this.roomComponents = roomComponents;
+        this.temperature = 19.0;
         this.isWindowBlocked = false;
         this.isLightOn = false;
         this.isWindowOpen = false;
@@ -58,8 +61,9 @@ public class Room {
     }
 
     public Room(String name, List<String> users, List<String> roomComponents, boolean isWindowBlocked,
-            boolean isLightOn, boolean isWindowOpen, boolean isDoorOpen,boolean isAutoLightOn,boolean isAutoLockOn) {
+            boolean isLightOn, boolean isWindowOpen, boolean isDoorOpen, boolean isAutoLightOn, boolean isAutoLockOn) {
         this.id = UUID.randomUUID().toString();
+        this.temperature = 19.0;
         this.users = users;
         this.name = name;
         this.roomComponents = roomComponents;
@@ -87,6 +91,7 @@ public class Room {
         this.name = incomingRoom.name;
         this.users = incomingRoom.users;
         this.roomComponents = incomingRoom.roomComponents;
+        this.temperature = incomingRoom.temperature;
         this.isWindowBlocked = incomingRoom.isWindowBlocked;
         this.isLightOn = incomingRoom.isLightOn;
         this.isWindowOpen = incomingRoom.isWindowOpen;
@@ -165,36 +170,44 @@ public class Room {
         this.isDoorOpen = isDoorOpen;
     }
 
-    public boolean getIsAutoLightOn(){
+    public boolean getIsAutoLightOn() {
         return isAutoLightOn;
     }
 
-    public void setIsAutoLightOn(boolean isAutoLightOn){
+    public void setIsAutoLightOn(boolean isAutoLightOn) {
         this.isAutoLightOn = isAutoLightOn;
 
     }
 
-    public boolean getIsAutoLockOn(){
+    public boolean getIsAutoLockOn() {
         return isAutoLockOn;
     }
 
-    public void setIsAutoLockOn(boolean isAutoLockOn){
+    public void setIsAutoLockOn(boolean isAutoLockOn) {
         this.isAutoLockOn = isAutoLockOn;
     }
 
-    public boolean getIsHeaterOn(){
+    public boolean getIsHeaterOn() {
         return isHeaterOn;
     }
 
-    public void setIsHeaterOn(boolean isHeaterOn){
+    public void setIsHeaterOn(boolean isHeaterOn) {
         this.isHeaterOn = isHeaterOn;
     }
 
-    public boolean getIsAcOn(){
+    public boolean getIsAcOn() {
         return isAcOn;
     }
 
-    public void setIsAcOn(boolean isAcOn){
+    public void setIsAcOn(boolean isAcOn) {
         this.isAcOn = isAcOn;
+    }
+
+    public double getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(double temperature) {
+        this.temperature = temperature;
     }
 }
