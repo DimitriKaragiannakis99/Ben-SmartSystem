@@ -20,6 +20,7 @@ public class TimeController
         //Print to the console the newuser added
         System.out.println("New Time set" + time.getHour() + " " + time.getDay() + " " + time.getMonth());
         currentTime = time;
+        SimulationEventManager.getInstance().Notify("timeChanged");
     }
 
     @GetMapping("/getTime")

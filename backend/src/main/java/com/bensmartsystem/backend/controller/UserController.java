@@ -56,6 +56,8 @@ public class UserController {
         //Now just add it to the first room 
         RoomController.assignUserToFirstRoom(user);
 
+        // Notify the SimulationEventManager that a new user has been added
+        SimulationEventManager.getInstance().Notify("UserAdded");
     }
 
     @GetMapping("/delete/{id}")
@@ -71,7 +73,7 @@ public class UserController {
     //             System.out.println("User deleted: " + id);
     //         }
     //     }
-
+    SimulationEventManager.getInstance().Notify("UserDeleted");
     }
     
     @GetMapping("/all")
@@ -88,6 +90,8 @@ public class UserController {
         // First just remove the old one and then just add entity
         users.removeIf((User user) -> user.getId().equals(id ));
         users.add(entity);
+
+        SimulationEventManager.getInstance().Notify("UserUpdated");
     }
 
 }
