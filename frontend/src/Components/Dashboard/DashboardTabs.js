@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import SHC from '../SHC';
-import SHS from '../SHS';
+import React, { useState } from "react";
+import SHC from "../SHC";
+import SHS from "../SHS";
+import RoomZones from "./RoomZones";
 
 const DashboardTabs = () => {
-  const [activeTab, setActiveTab] = useState('tab1');
+  const [activeTab, setActiveTab] = useState("tab1");
 
   return (
     <div>
@@ -11,9 +12,9 @@ const DashboardTabs = () => {
         <li className="-mb-px mr-1">
           <button
             className={`bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-blue-500 font-semibold ${
-              activeTab === 'tab1' ? 'active' : ''
+              activeTab === "tab1" ? "active" : ""
             }`}
-            onClick={() => setActiveTab('tab1')}
+            onClick={() => setActiveTab("tab1")}
           >
             SHC
           </button>
@@ -21,17 +22,40 @@ const DashboardTabs = () => {
         <li className="-mb-px mr-1">
           <button
             className={`bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-blue-500 font-semibold ${
-              activeTab === 'tab2' ? 'active' : ''
+              activeTab === "tab2" ? "active" : ""
             }`}
-            onClick={() => setActiveTab('tab2')}
+            onClick={() => setActiveTab("tab2")}
           >
             SHS
           </button>
         </li>
+        <li className="-mb-px mr-1">
+          <button
+            className={`bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-blue-500 font-semibold ${
+              activeTab === "tab3" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("tab3")}
+          >
+            SHH
+          </button>
+        </li>
       </ul>
       <div className="p-4">
-        {activeTab === 'tab1' && <div><SHC /></div>}
-        {activeTab === 'tab2' && <div><SHS /></div>}
+        {activeTab === "tab1" && (
+          <div>
+            <SHC />
+          </div>
+        )}
+        {activeTab === "tab2" && (
+          <div>
+            <SHS />
+          </div>
+        )}
+        {activeTab === "tab3" && (
+          <div>
+            <RoomZones />
+          </div>
+        )}
       </div>
     </div>
   );

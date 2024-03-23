@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -29,13 +30,11 @@ public class RoomController {
     @Getter
     private static final ArrayList<Room> roomList = new ArrayList<>();
 
-
-
     @GetMapping("/rooms")
     public ResponseEntity<ArrayList<Room>> getAllRooms() {
         System.out.println(roomList);
         // Return a new ArrayList to avoid exposing the internal storage structure
-        //In here we will assign the users to random roomsfor the first time
+        // In here we will assign the users to random roomsfor the first time
         updateUsersInRooms();
         return ResponseEntity.ok(roomList);
     }
@@ -49,24 +48,21 @@ public class RoomController {
                 if (existingRoom.getId().equals(incomingRoom.getId())) {
                     // Update the existing room with the new values
                     existingRoom.updateFrom(incomingRoom);
-                    
-            // For each user in the incoming room, update the user's roomID
-                for (String username : incomingRoom.getUsers()) {
-                for (User user : UserController.getUsers()) {
-                    if (user.getUsername().equals(username)) {
-                        user.setRoomIndex(i);
+
+                    // For each user in the incoming room, update the user's roomID
+                    for (String username : incomingRoom.getUsers()) {
+                        for (User user : UserController.getUsers()) {
+                            if (user.getUsername().equals(username)) {
+                                user.setRoomIndex(i);
+                            }
+                        }
                     }
-                }
-            }
-                    
-                    
+
                     break; // Break out of the loop once the matching room is updated
                 }
             }
 
-           
         }
-
 
         // Return a response indicating the operation was successful
         return ResponseEntity.ok("Rooms data saved successfully");
@@ -109,6 +105,44 @@ public class RoomController {
         }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
+    }
+
+    @PostMapping("/toggleHeater")
+    public ResponseEntity<?> toggleHeater(@RequestParam String roomId) {
+        for (Room room : roomList) {
+            if (room.getId().equals(roomId)) {
+                room.setIsHeaterOn(!room.getIsHeaterOn());
+                return ResponseEntity.ok(room);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
+    }
+
+    @PostMapping("/toggleAc")
+    public ResponseEntity<?> toggleAc(@RequestParam String roomId) {
+        for (Room room : roomList) {
+            if (room.getId().equals(roomId)) {
+                room.setIsAcOn(!room.getIsAcOn());
+                return ResponseEntity.ok(room);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
+    }
+
+    @PutMapping("/rooms/{roomId}/temperature")
+    public ResponseEntity<?> updateRoomTemperature(@PathVariable String roomId, @RequestBody Map<String, Double> payload) {
+        Double newTemperature = payload.get("temperature");
+        if (newTemperature == null) {
+            return ResponseEntity.badRequest().body("Temperature is required");
+        }
+    
+        Room room = findRoomById(roomId);
+        if (room == null) {
+            return ResponseEntity.notFound().build();
+        }
+    
+        room.setTemperature(newTemperature);
+        return ResponseEntity.ok().body("Temperature updated for room with ID: " + roomId);
     }
 
     // This has the logic for retrieving the .txt file from the front-end, parsing
@@ -163,28 +197,33 @@ public class RoomController {
         SimulationEventManager.getInstance().Notify("userChangedRoom");
     }
 
-    public static void updateUsersInRooms ()
-    {
-         //First remove all users from all rooms
-         for (Room r: roomList) 
-         {
-             r.setUsers(new ArrayList<>());
-         }
+    public static void updateUsersInRooms() {
+        // First remove all users from all rooms
+        for (Room r : roomList) {
+            r.setUsers(new ArrayList<>());
+        }
 
-            List<User> users = UserController.getUsers();
+        List<User> users = UserController.getUsers();
 
-            if (users.size() == 0 || roomList.size() == 0)
-            {
-                return;
-            }
-            for (User u: users) 
-            {
-                // We will assign the users to random rooms
-                // We will use the Random class to generate random numbers
-                roomList.get(u.getRoomIndex()).addUsers(u.getUsername());
+        if (users.size() == 0 || roomList.size() == 0) {
+            return;
+        }
+        for (User u : users) {
+            // We will assign the users to random rooms
+            // We will use the Random class to generate random numbers
+            roomList.get(u.getRoomIndex()).addUsers(u.getUsername());
 
+        }
+    }
+
+    public static Room findRoomById(String id) {
+        for (Room room : roomList) {
+            if (room.getId().equals(id)) {
+                return room;
             }
             SimulationEventManager.getInstance().Notify("usersUpdatedInRooms");
+            }
+            return null;
+        }
     }
-}
 
