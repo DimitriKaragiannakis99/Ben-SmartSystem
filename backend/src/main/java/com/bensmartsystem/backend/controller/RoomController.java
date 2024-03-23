@@ -40,7 +40,6 @@ public class RoomController {
         return ResponseEntity.ok(roomList);
     }
 
-
     @PostMapping("/saveRooms")
     public ResponseEntity<String> saveRooms(@RequestBody ArrayList<Room> rms) {
         for (Room incomingRoom : rms) {
@@ -78,9 +77,11 @@ public class RoomController {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsLightOn(!room.getIsLightOn());
+                SimulationEventManager.getInstance().Notify("LightToggled");
                 return ResponseEntity.ok(room);
             }
         }
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
@@ -89,9 +90,11 @@ public class RoomController {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsWindowOpen(!room.getIsWindowOpen());
+                SimulationEventManager.getInstance().Notify("windowToggled");
                 return ResponseEntity.ok(room);
             }
         }
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
@@ -100,9 +103,11 @@ public class RoomController {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsDoorOpen(!room.getIsDoorOpen());
+                SimulationEventManager.getInstance().Notify("doorToggled");
                 return ResponseEntity.ok(room);
             }
         }
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
@@ -149,40 +154,13 @@ public class RoomController {
         }
     }
 
-    // This method assigns the users to the first room in the list
-    //This should run only once when the server starts or when the rooms are updated
-    private void assignRoomsToUsersAtStart(ArrayList<Room> allRooms) 
-    {
-        // First we get a list of all the users
-        if(allRooms.size() == 0)
-        {
-            return;
-        }
-
-        //First remove all users from all rooms
-        for (Room r: allRooms) 
-        {
-            r.setUsers(new ArrayList<>());
-        }
-
-        List<User> users = UserController.getUsers();
-        
-        for (User u: users) 
-        {
-            // We will assign the users to random rooms
-            // We will use the Random class to generate random numbers
-            allRooms.get(0).addUsers(u.getUsername());
-
-        }
-
-    }
-
     // This method assigns a given user to the first room
     public static void assignUserToFirstRoom(User user) {
         if (roomList.size() > 0) {
             roomList.get(0).addUsers(user.getUsername());
         }
         System.out.println("User added to first room: " + user.getUsername());
+        SimulationEventManager.getInstance().Notify("userChangedRoom");
     }
 
     public static void updateUsersInRooms ()
@@ -206,6 +184,7 @@ public class RoomController {
                 roomList.get(u.getRoomIndex()).addUsers(u.getUsername());
 
             }
+            SimulationEventManager.getInstance().Notify("usersUpdatedInRooms");
     }
 }
 
