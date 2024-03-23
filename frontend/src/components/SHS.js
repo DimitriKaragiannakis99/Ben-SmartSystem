@@ -50,6 +50,12 @@ const columns = [
 		type: "boolean",
 		width: 150,
 	},
+	{
+		field: "shhAccess",
+		headerName: "SHH Access",
+		type: "boolean",
+		width: 150,
+	},
 ];
 
 //! Harcoded data for now
@@ -174,6 +180,20 @@ function setSimulationTime(hour, day, month) {
 }
 
 function UserManagementTab() {
+	
+	useEffect(() => {
+		axios
+		  .get("http://localhost:8080/api/rooms")
+		  .then((response) => {
+			setRooms(response.data);
+			console.log(response.data);
+		  })
+		  .catch((error) => {
+			console.error("Error fetching room information", error);
+		  });
+	  }, []);
+	
+	
 	// Hooks for the current user
 	const [currentUser, setCurrentUser] = React.useState("Simulator");
 

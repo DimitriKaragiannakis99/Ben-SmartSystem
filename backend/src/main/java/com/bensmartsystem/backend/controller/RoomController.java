@@ -29,7 +29,6 @@ public class RoomController {
     // ConcurrentHashMap<>();
     @Getter
     private static final ArrayList<Room> roomList = new ArrayList<>();
-
     @GetMapping("/rooms")
     public ResponseEntity<ArrayList<Room>> getAllRooms() {
         System.out.println(roomList);
@@ -214,6 +213,7 @@ public class RoomController {
             roomList.get(u.getRoomIndex()).addUsers(u.getUsername());
 
         }
+        SimulationEventManager.getInstance().Notify("usersUpdatedInRooms");
     }
 
     public static Room findRoomById(String id) {
@@ -221,8 +221,8 @@ public class RoomController {
             if (room.getId().equals(id)) {
                 return room;
             }
-            SimulationEventManager.getInstance().Notify("usersUpdatedInRooms");
             }
+            System.out.println("Room not found with id: " + id);
             return null;
         }
     }
