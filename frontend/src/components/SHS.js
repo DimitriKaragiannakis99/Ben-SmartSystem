@@ -181,19 +181,7 @@ function setSimulationTime(hour, day, month) {
 
 function UserManagementTab() {
 	
-	useEffect(() => {
-		axios
-		  .get("http://localhost:8080/api/rooms")
-		  .then((response) => {
-			setRooms(response.data);
-			console.log(response.data);
-		  })
-		  .catch((error) => {
-			console.error("Error fetching room information", error);
-		  });
-	  }, []);
-	
-	
+
 	// Hooks for the current user
 	const [currentUser, setCurrentUser] = React.useState("Simulator");
 
@@ -202,6 +190,7 @@ function UserManagementTab() {
 
 	useEffect(() => {
 		setUsers([...readUsers()]);
+		updateCurrentUser();
 	}, []);
 
 	// TODO: Fix this, sometimes it doesnt update the users
@@ -314,7 +303,26 @@ function UserManagementTab() {
 			//In here we will just open the dialog box with the user information
 			logAsUser(selectedIds[0], setCurrentUser);
 			localStorage.setItem("currentUserId", selectedIds[0]);
+			// Now we will just update that information in the backend
+			axios.get("http://localhost:8080/api/users/setCurrent/" + selectedIds[0]).catch((error) => {
+				console.error("Error sending User Info", error);
+			});
+
 		}
+	}
+
+	function updateCurrentUser() {
+		//In here we will just update the current user in the backend
+		axios.get('http://localhost:8080/api/users/getCurrent').then(
+			(response) => {
+				 console.log(response.data);
+				setCurrentUser(response.data);
+				localStorage.setItem("currentUserId", response.data);
+			}
+		).catch((error) => {
+			console.error("Error sending User Info", error);
+		});
+	
 	}
 
 	return (

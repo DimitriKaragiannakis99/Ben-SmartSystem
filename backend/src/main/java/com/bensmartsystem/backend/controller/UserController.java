@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import lombok.Getter;
+import lombok.Setter;
 
 
 
@@ -24,19 +25,31 @@ public class UserController {
     @Getter
     private static final List<User> users = new ArrayList<>();
 
+    @Getter
+    private static User currentUser = null;
+
     public UserController() {
         // Hardcoded user data
         users.add(new User("1L", "Parents", "{\"remoteAccess\":true,\"doorAccess\":true,\"windowAccess\":true,\"lightAccess\":true,\"shhAccess\":true}"));
         users.add(new User("2L", "Chidren", "{\"remoteAccess\":false,\"doorAccess\":true,\"windowAccess\":true,\"lightAccess\":true,\"shhAccess\":true}"));
         users.add(new User("3L", "Guests", "{\"remoteAccess\":false,\"doorAccess\":true,\"windowAccess\":true,\"lightAccess\":true,\"shhAccess\":true}"));
         users.add(new User("4L", "Strangers", "{\"remoteAccess\":false,\"doorAccess\":false,\"windowAccess\":false,\"lightAccess\":false,\"shhAccess\":false}"));
+    
+        // Assigj the current user to the first
+        currentUser = users.get(0);
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUserById(@PathVariable String userId) {
         for (User user : users) {
             if (user.getId().equals(userId)) {
-                String roomName = RoomController.getRoomList().get(user.getRoomIndex()).getName();
+                //Check first if the get room index is not out of bounds
+                String roomName = "No_room_assigned";
+                if (RoomController.getRoomList() != null && (user.getRoomIndex() < RoomController.getRoomList().size()) && RoomController.getRoomList().get(user.getRoomIndex())  != null){
+                    //Get the room name
+                    roomName = RoomController.getRoomList().get(user.getRoomIndex()).getName();
+                }
+
                 Map<String, Object> userData = new HashMap<>();
                 userData.put("id", user.getId());
                 userData.put("username", user.getUsername());
@@ -94,6 +107,23 @@ public class UserController {
         users.add(entity);
 
         SimulationEventManager.getInstance().Notify("UserUpdated");
+    }
+
+    @GetMapping("/setCurrent/{id}")
+    public void setCurrentUser(@PathVariable String id) {
+        for (User user : users) {
+            if (user.getId().equals(id)) {
+                currentUser = user;
+                break;
+            }
+        }
+
+        SimulationEventManager.getInstance().Notify("CurrentUserChanged");
+    }
+
+    @GetMapping("/getCurrent")
+    public ResponseEntity<?> getCurrentUserName() {
+        return ResponseEntity.ok(currentUser.getUsername());
     }
 
 }

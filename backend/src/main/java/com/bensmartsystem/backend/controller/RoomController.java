@@ -2,6 +2,9 @@ package com.bensmartsystem.backend.controller;
 
 import com.bensmartsystem.backend.model.Room;
 import com.bensmartsystem.backend.model.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +18,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import java.util.Map;
+import java.util.HashMap;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -70,7 +73,7 @@ public class RoomController {
     @PostMapping("/toggleLight")
     public ResponseEntity<?> toggleLight(@RequestParam String roomId) {
         for (Room room : roomList) {
-            if (room.getId().equals(roomId)) {
+            if (room.getId().equals(roomId) && checkPermissions("lightAccess", roomList.indexOf(room))) {
                 room.setIsLightOn(!room.getIsLightOn());
                 SimulationEventManager.getInstance().Notify("LightToggled");
                 return ResponseEntity.ok(room);
@@ -83,7 +86,7 @@ public class RoomController {
     @PostMapping("/toggleWindow")
     public ResponseEntity<?> toggleWindow(@RequestParam String roomId) {
         for (Room room : roomList) {
-            if (room.getId().equals(roomId)) {
+            if (room.getId().equals(roomId) && checkPermissions("windowAccess", roomList.indexOf(room))) {
                 room.setIsWindowOpen(!room.getIsWindowOpen());
                 SimulationEventManager.getInstance().Notify("windowToggled");
                 return ResponseEntity.ok(room);
@@ -96,7 +99,7 @@ public class RoomController {
     @PostMapping("/toggleDoor")
     public ResponseEntity<?> toggleDoor(@RequestParam String roomId) {
         for (Room room : roomList) {
-            if (room.getId().equals(roomId)) {
+            if (room.getId().equals(roomId) && checkPermissions("doorAccess", roomList.indexOf(room))) {
                 room.setIsDoorOpen(!room.getIsDoorOpen());
                 SimulationEventManager.getInstance().Notify("doorToggled");
                 return ResponseEntity.ok(room);
@@ -139,8 +142,14 @@ public class RoomController {
         if (room == null) {
             return ResponseEntity.notFound().build();
         }
+
+        if (!checkPermissions("shhAccess", roomList.indexOf(room))) {
+            SimulationEventManager.getInstance().Notify("InvalidPermission");
+            return ResponseEntity.badRequest().body("You do not have permission to change the temperature in this room");
+        }
     
         room.setTemperature(newTemperature);
+        SimulationEventManager.getInstance().Notify("desiredtemperatureUpdated");
         return ResponseEntity.ok().body("Temperature updated for room with ID: " + roomId);
     }
 
@@ -213,7 +222,7 @@ public class RoomController {
             roomList.get(u.getRoomIndex()).addUsers(u.getUsername());
 
         }
-        SimulationEventManager.getInstance().Notify("usersUpdatedInRooms");
+                    SimulationEventManager.getInstance().Notify("usersUpdatedInRooms");
     }
 
     public static Room findRoomById(String id) {
@@ -225,5 +234,57 @@ public class RoomController {
             System.out.println("Room not found with id: " + id);
             return null;
         }
+    
+    //Add here the checking of the permissions
+    public static boolean checkPermissions(String givenPermission, int targetRoomIndex) 
+    {
+        //First get the current user's and their permissions
+        //Then check if the given permission is in the list of permissions
+        //If it is then return true
+        //Otherwise return false
+
+        //Get the current user
+        User currentUser = UserController.getCurrentUser();
+
+        // Get the current room of the user to check if it needs remote access
+        int roomIndex = currentUser.getRoomIndex();
+        //Convert that index to a string
+
+        System.out.println("Room index: " + roomIndex + " Target room index: " + targetRoomIndex);
+        // Get the permissions of the current user
+        String permissions = currentUser.getPermissions();
+        // Check if the given permission is in the list of permissions
+        
+        Map<String, Object> mapping;
+        try {
+            mapping = new ObjectMapper().readValue(permissions, HashMap.class);
+            boolean needsRemoteAccess = !(roomIndex == targetRoomIndex);
+            boolean hasRemoteAccess = ((mapping.containsKey("remoteAccess") && (boolean) mapping.get("remoteAccess") == true));
+
+
+            // System.out.println("Needs remote access: " + needsRemoteAccess);
+            // System.out.println("Has remote access: " + hasRemoteAccess);
+            if (mapping.containsKey(givenPermission) && (boolean) mapping.get(givenPermission) == true && (needsRemoteAccess == false || hasRemoteAccess == true)){
+            
+                SimulationEventManager.getInstance().Notify("ValidPermission");
+                return true;
+            } else 
+            {
+                SimulationEventManager.getInstance().Notify("InvalidPermission");
+                return false;
+            }
+        
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+  
+
+    }
+    
     }
 
