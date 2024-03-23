@@ -11,11 +11,8 @@ import org.springframework.http.HttpStatus;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
+
 import lombok.Getter;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -105,6 +102,8 @@ public class RoomController {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsHeaterOn(!room.getIsHeaterOn());
+                //Use heating method here:
+                //heating(room, 28);
                 return ResponseEntity.ok(room);
             }
         }
@@ -116,6 +115,8 @@ public class RoomController {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsAcOn(!room.getIsAcOn());
+                //Use cooling method here
+                //cooling(room, 19);
                 return ResponseEntity.ok(room);
             }
         }
@@ -170,7 +171,7 @@ public class RoomController {
     // updated
     private void assignRoomsToUsersAtStart(ArrayList<Room> allRooms) {
         // First we get a list of all the users
-        if (allRooms.size() == 0) {
+        if (allRooms.isEmpty()) {
             return;
         }
 
@@ -184,7 +185,7 @@ public class RoomController {
         for (User u : users) {
             // We will assign the users to random rooms
             // We will use the Random class to generate random numbers
-            allRooms.get(0).addUsers(u.getUsername());
+            allRooms.getFirst().addUsers(u.getUsername());
 
         }
 
@@ -192,7 +193,7 @@ public class RoomController {
 
     // This method assigns a given user to the first room
     public static void assignUserToFirstRoom(User user) {
-        if (roomList.size() > 0) {
+        if (!roomList.isEmpty()) {
             roomList.get(0).addUsers(user.getUsername());
         }
         System.out.println("User added to first room: " + user.getUsername());
@@ -206,7 +207,7 @@ public class RoomController {
 
         List<User> users = UserController.getUsers();
 
-        if (users.size() == 0 || roomList.size() == 0) {
+        if (users.isEmpty() || roomList.isEmpty()) {
             return;
         }
         for (User u : users) {
@@ -224,5 +225,30 @@ public class RoomController {
             }
         }
         return null; // Or throw an exception if the room is not found
+    }
+
+    //HAVC Temp algorithm implementation
+    public static void heating(Room room, int desiredTemperature){
+        Timer timer = new Timer(true);
+        timer.schedule(new TimerTask() {
+            public void run() {
+                if (room.getTemperature() >= desiredTemperature) {
+                    return;
+                }
+                room.setTemperature(room.getTemperature()+ 0.1);
+            }
+        }, 0, 1000);
+    }
+
+    public static void cooling(Room room, int desiredTemperature){
+        Timer timer = new Timer(true);
+        timer.schedule(new TimerTask() {
+            public void run() {
+                if (room.getTemperature() >= desiredTemperature) {
+                    return;
+                }
+                room.setTemperature(room.getTemperature()- 0.1);
+            }
+        }, 0, 1000);
     }
 }
