@@ -84,4 +84,6 @@ public class ZoneController {
 
         return ResponseEntity.ok().body("Temperature updated for all rooms in the zone");
     }
+
+    
 }

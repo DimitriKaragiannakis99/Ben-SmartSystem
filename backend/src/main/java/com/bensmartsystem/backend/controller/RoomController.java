@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -120,6 +121,22 @@ public class RoomController {
             }
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
+    }
+
+    @PutMapping("/rooms/{roomId}/temperature")
+    public ResponseEntity<?> updateRoomTemperature(@PathVariable String roomId, @RequestBody Map<String, Double> payload) {
+        Double newTemperature = payload.get("temperature");
+        if (newTemperature == null) {
+            return ResponseEntity.badRequest().body("Temperature is required");
+        }
+    
+        Room room = findRoomById(roomId);
+        if (room == null) {
+            return ResponseEntity.notFound().build();
+        }
+    
+        room.setTemperature(newTemperature);
+        return ResponseEntity.ok().body("Temperature updated for room with ID: " + roomId);
     }
 
     // This has the logic for retrieving the .txt file from the front-end, parsing

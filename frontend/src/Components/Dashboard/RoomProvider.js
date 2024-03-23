@@ -78,8 +78,19 @@ const RoomProvider = ({ children }) => {
       });
   }
 
+  const updateRoomTemperature = (roomId, newTemperature) => {
+    setRooms((prevRooms) =>
+      prevRooms.map((room) => {
+        if (room.id === roomId) {
+          return { ...room, temperature: `${newTemperature} (overridden)` };
+        }
+        return room;
+      })
+    );
+  };
+
   return (
-    <RoomContext.Provider value={{ rooms, toggleLight, toggleWindowBlocked, toggleWindow, toggleDoor, isSimulationOn, setSimulationOn }}>
+    <RoomContext.Provider value={{ rooms, toggleLight, toggleWindowBlocked, toggleWindow, toggleDoor, isSimulationOn, setSimulationOn, updateRoomTemperature }}>
       {children}
     </RoomContext.Provider>
   );

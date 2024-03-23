@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { RoomContext } from "./RoomProvider";
 
 const RoomZones = () => {
   const [rooms, setRooms] = useState([]);
   const [selectedRoomIds, setSelectedRoomIds] = useState([]);
   const [zones, setZones] = useState([]);
+  const { updateRoomTemperature } = useContext(RoomContext);
 
   useEffect(() => {
     const fetchRoomsAndZones = async () => {
@@ -100,6 +102,29 @@ const RoomZones = () => {
     }
   };
 
+  const handleModifyRoomOverriddenTemperature = (roomId) => {
+    const newTemperature = prompt("Enter the new temperature:");
+    if (
+      newTemperature !== null &&
+      newTemperature.trim() !== "" &&
+      newTemperature >= -40 &&
+      newTemperature <= 40
+    ) {
+      axios
+        .put(`http://localhost:8080/api/rooms/${roomId}/temperature`, {
+          temperature: newTemperature,
+        })
+        .then(() => {
+          updateRoomTemperature(roomId, newTemperature);
+          alert("Temperature updated successfully.");
+        })
+        .catch((error) => {
+          console.error("Error updating temperature:", error);
+          alert("Error updating temperature.");
+        });
+    }
+  };
+
   return (
     <div>
       <ul>
@@ -113,6 +138,14 @@ const RoomZones = () => {
               />
               {room.name}
             </label>
+            {room.temperature && (
+              <button
+                onClick={() => handleModifyRoomOverriddenTemperature(room.id)}
+                className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
+              >
+                Modify Temperature
+              </button>
+            )}
           </li>
         ))}
       </ul>
