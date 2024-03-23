@@ -73,9 +73,11 @@ public class RoomController {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsLightOn(!room.getIsLightOn());
+                SimulationEventManager.getInstance().Notify("LightToggled");
                 return ResponseEntity.ok(room);
             }
         }
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
@@ -84,9 +86,11 @@ public class RoomController {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsWindowOpen(!room.getIsWindowOpen());
+                SimulationEventManager.getInstance().Notify("windowToggled");
                 return ResponseEntity.ok(room);
             }
         }
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
@@ -95,9 +99,11 @@ public class RoomController {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsDoorOpen(!room.getIsDoorOpen());
+                SimulationEventManager.getInstance().Notify("doorToggled");
                 return ResponseEntity.ok(room);
             }
         }
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
@@ -120,6 +126,7 @@ public class RoomController {
                 return ResponseEntity.ok(room);
             }
         }
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
@@ -213,6 +220,7 @@ public class RoomController {
             roomList.get(0).addUsers(user.getUsername());
         }
         System.out.println("User added to first room: " + user.getUsername());
+        SimulationEventManager.getInstance().Notify("userChangedRoom");
     }
 
     public static void updateUsersInRooms() {
@@ -231,7 +239,8 @@ public class RoomController {
             // We will use the Random class to generate random numbers
             roomList.get(u.getRoomIndex()).addUsers(u.getUsername());
 
-        }
+            }
+            SimulationEventManager.getInstance().Notify("usersUpdatedInRooms");
     }
 
     public static Room findRoomById(String id) {
