@@ -1,36 +1,35 @@
 package com.bensmartsystem.backend.model;
+import org.springframework.stereotype.Component;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.Calendar;
 
-@Setter
-@Getter
+
+@Component
 @Entity
-public class Time
+public class Time 
 {
+    @Getter
+    @Setter
     private int hour;
-    private int minute;
-    private int second;
+    @Getter
+    @Setter
+    private int day;
+    @Getter
+    @Setter
+    private int month;
 
-    //Initializes clock on current time
-    public Time() {
-        Calendar currentTime = Calendar.getInstance();
-        this.hour = currentTime.get(Calendar.HOUR_OF_DAY);
-        this.minute = currentTime.get(Calendar.MINUTE);
-        this.second = currentTime.get(Calendar.SECOND);
+
+    public Time(int hour, int day, int month) {
+        this.hour = hour;
+        this.day = day;
+        this.month = month;
     }
 
-    public void tick(){
-        this.second++;
-        if(this.second == 60){
-            second = 0;
-            minute++;
-            if(this.minute == 60){
-                minute = 0;
-                this.hour = (this.hour + 1) % 24;
-            }
-        }
+    public Time() {
+        this.hour = 0;
+        this.day = 0;
+        this.month = 0;
     }
 
 }
