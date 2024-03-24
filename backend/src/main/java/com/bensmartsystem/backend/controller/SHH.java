@@ -15,7 +15,7 @@ import java.util.TimerTask;
 @RequestMapping("/api/temp")
 public class SHH {
 
-    int outsideTemp = 18;
+    int outsideTemp = 17;
 
     //HAVC Temp algorithm implementation
     public static void heating(Room room){
@@ -71,11 +71,15 @@ public class SHH {
     }
 
     @PostMapping("/HVAC-off")
-    public ResponseEntity<String> HVAC_off(@RequestParam Room room) {
+    public ResponseEntity<String> HVAC_off(@RequestParam String roomID) {
+        Room room = RoomController.findRoomById(roomID);
+        if(room == null){
+            return ResponseEntity.ok("No room was provided");
+        }
         Timer timer = new Timer(true);
         if (room.getTemperature() < outsideTemp){
             //Need to heat
-            while(room.getTemperature() < outsideTemp){
+            if(room.getTemperature() < outsideTemp){
                 timer.schedule(new TimerTask() {
                     public void run() {
                         if(room.getTemperature() == outsideTemp){
@@ -88,7 +92,7 @@ public class SHH {
         }
         else if(room.getTemperature() > outsideTemp){
             //Need to cool
-            while(room.getTemperature() > outsideTemp){
+            if(room.getTemperature() > outsideTemp){
                 timer.schedule(new TimerTask() {
                     public void run() {
                         if(room.getTemperature() == outsideTemp){
@@ -99,7 +103,7 @@ public class SHH {
                 }, 0, 1000);
             }
         }
-        return  ResponseEntity.ok("HVAC off");
+        return  ResponseEntity.ok("HVAC was not turned off");
     }
 
 

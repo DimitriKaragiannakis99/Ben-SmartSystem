@@ -11,7 +11,7 @@ function RoomInfo() {
       fetchRoomTemperatures();
     };
 
-    fetchRoomTemperatures(); // Fetch room temperatures initially
+    fetchRoomTemperatures();
     intervalRef.current = setInterval(intervalHandler, 1000);
     return () => clearInterval(intervalRef.current); //cleanup on unmount
   }, [roomTemperatures]);
@@ -36,7 +36,7 @@ function RoomInfo() {
 
   const fetchRoomTemperatures = () => {
     axios
-      .get("http://localhost:8080/api/rooms")
+      .get("http://localhost:8080/api/getAllRooms")
       .then((response) => {
         console.log(response.data);
         setRoomTemperatures(response.data);
@@ -60,8 +60,17 @@ function RoomInfo() {
       });
   };
 
-  const turn_HVAC_off = () => {
-    console.log("HVAC off");
+  const turn_HVAC_off = (roomid) => {
+    axios
+      .get("http://localhost:8080/api/temp/HVAC-off", {
+        params: { roomID: roomid },
+      })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Error turning off HVAC", error);
+      });
   };
 
   return (
