@@ -28,9 +28,9 @@ public class RoomController {
 
     @GetMapping("/rooms")
     public ResponseEntity<ArrayList<Room>> getAllRooms() {
-        System.out.println(roomList);
+//        System.out.println(roomList);
         // Return a new ArrayList to avoid exposing the internal storage structure
-        // In here we will assign the users to random roomsfor the first time
+        // In here we will assign the users to random rooms for the first time
         updateUsersInRooms();
         return ResponseEntity.ok(roomList);
     }
@@ -102,8 +102,10 @@ public class RoomController {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsHeaterOn(!room.getIsHeaterOn());
-                //Use heating method here:
-                //heating(room, 28);
+                //Check if heater is on:
+                while(room.getIsHeaterOn()){
+                    SHH.heating(room, 28);
+                }
                 return ResponseEntity.ok(room);
             }
         }
@@ -115,8 +117,9 @@ public class RoomController {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsAcOn(!room.getIsAcOn());
-                //Use cooling method here
-                //cooling(room, 19);
+                while(room.getIsAcOn()){
+                   SHH.cooling(room, 19);
+                }
                 return ResponseEntity.ok(room);
             }
         }
@@ -194,7 +197,7 @@ public class RoomController {
     // This method assigns a given user to the first room
     public static void assignUserToFirstRoom(User user) {
         if (!roomList.isEmpty()) {
-            roomList.get(0).addUsers(user.getUsername());
+            roomList.getFirst().addUsers(user.getUsername());
         }
         System.out.println("User added to first room: " + user.getUsername());
     }
@@ -225,30 +228,5 @@ public class RoomController {
             }
         }
         return null; // Or throw an exception if the room is not found
-    }
-
-    //HAVC Temp algorithm implementation
-    public static void heating(Room room, int desiredTemperature){
-        Timer timer = new Timer(true);
-        timer.schedule(new TimerTask() {
-            public void run() {
-                if (room.getTemperature() >= desiredTemperature) {
-                    return;
-                }
-                room.setTemperature(room.getTemperature()+ 0.1);
-            }
-        }, 0, 1000);
-    }
-
-    public static void cooling(Room room, int desiredTemperature){
-        Timer timer = new Timer(true);
-        timer.schedule(new TimerTask() {
-            public void run() {
-                if (room.getTemperature() >= desiredTemperature) {
-                    return;
-                }
-                room.setTemperature(room.getTemperature()- 0.1);
-            }
-        }, 0, 1000);
     }
 }
