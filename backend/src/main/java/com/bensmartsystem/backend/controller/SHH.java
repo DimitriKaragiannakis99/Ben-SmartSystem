@@ -3,22 +3,26 @@ package com.bensmartsystem.backend.controller;
 import com.bensmartsystem.backend.model.Room;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+@CrossOrigin
+@RestController
+@RequestMapping("/api/temp")
 public class SHH {
 
+    int outsideTemp = 18;
 
     //HAVC Temp algorithm implementation
-    public static void heating(Room room, int desiredTemperature){
+    public static void heating(Room room){
         Timer timer = new Timer(true);
         timer.schedule(new TimerTask() {
             public void run() {
-                if (room.getTemperature() >= desiredTemperature) {
+                if (room.getTemperature() >= room.getTemperature()) {
                     return; // pause the HVAC
                 }
                 room.setTemperature(room.getTemperature()+ 0.1);
@@ -26,11 +30,11 @@ public class SHH {
         }, 0, 1000);
     }
 
-    public static void cooling(Room room, int desiredTemperature){
+    public static void cooling(Room room){
         Timer timer = new Timer(true);
         timer.schedule(new TimerTask() {
             public void run() {
-                if (room.getTemperature() >= desiredTemperature) {
+                if (room.getTemperature() >= room.getDesiredTemperature()) {
                     return;
                 }
                 room.setTemperature(room.getTemperature()- 0.1);
@@ -39,20 +43,60 @@ public class SHH {
     }
 
     //Should be called continuously to verify whether the temp drops bellow zero
-    public static void checkTemp(Room room){
+    @GetMapping("/checkTemp")
+    public ResponseEntity<String> checkTemp(Room room){
         if (room.getTemperature() <= 0){
             //Must log to console
-            System.out.println("Temperature is below zero, pipes may burst!");
+            return new ResponseEntity<>("Temperature is below zero, pipes may burst!", HttpStatus.OK);
         }
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
-//    @PostMapping("/HVAC-off")
-//    public ResponseEntity<String> HVAC_off(@RequestBody ArrayList<Room> roomList) {
-//        for (Room room : roomList) {
-//            //Start decreasing room temp to match outside
-//        }
-//        return
-//    }
+    public static void HVAC_on(ArrayList<Room> roomsList){
+        for(Room room : roomsList){
+            if(room.getTemperature() < room.getDesiredTemperature()){
+                heating(room);
+            }
+            else if(room.getTemperature() > room.getDesiredTemperature()){
+                cooling(room);
+            }
+        }
+
+    }
+
+    @PostMapping("/HVAC-off")
+    public ResponseEntity<String> HVAC_off(@RequestBody ArrayList<Room> roomList) {
+        for(Room room : roomList){
+            Timer timer = new Timer(true);
+            if (room.getTemperature() < outsideTemp){
+                //Need to heat
+                while(room.getTemperature() < outsideTemp){
+                    timer.schedule(new TimerTask() {
+                        public void run() {
+                            if(room.getTemperature() == outsideTemp){
+                                return;
+                            }
+                            room.setTemperature(room.getTemperature()+ 0.05);
+                        }
+                    }, 0, 1000);
+                }
+            }
+            else if(room.getTemperature() > outsideTemp){
+                //Need to cool
+               while(room.getTemperature() > outsideTemp){
+                   timer.schedule(new TimerTask() {
+                       public void run() {
+                           if(room.getTemperature() == outsideTemp){
+                               return;
+                           }
+                           room.setTemperature(room.getTemperature()- 0.05);
+                       }
+                   }, 0, 1000);
+               }
+            }
+        }
+        return new ResponseEntity<>("HVAC off", HttpStatus.OK);
+    }
 
 
 }

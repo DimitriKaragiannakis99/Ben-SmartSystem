@@ -103,7 +103,7 @@ const RoomZones = () => {
   };
 
   const handleModifyRoomOverriddenTemperature = (roomId) => {
-    const newTemperature = prompt("Enter the new temperature:");
+    const newTemperature = prompt("Set the new desired temperature:");
     if (
       newTemperature !== null &&
       newTemperature.trim() !== "" &&
@@ -116,7 +116,7 @@ const RoomZones = () => {
         })
         .then(() => {
           updateRoomTemperature(roomId, newTemperature);
-          alert("Temperature updated successfully.");
+          alert("Desired Temperature updated successfully.");
         })
         .catch((error) => {
           console.error("Error updating temperature:", error);

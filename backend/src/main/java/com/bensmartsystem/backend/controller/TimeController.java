@@ -9,22 +9,21 @@ public class TimeController
     private Time currentTime = new Time();
 
     public TimeController() {
-        // Hardcoded time data
-        currentTime.setHour(12);
-        currentTime.setDay(1);
-        currentTime.setMonth(1);
+
     }
 
     @PostMapping("/setTime")
     public void setTime(@RequestBody Time time) {
-        //Print to the console the newuser added
-        System.out.println("New Time set" + time.getHour() + " " + time.getDay() + " " + time.getMonth());
+        //Print to the console the new user added
+        System.out.println("New Time set" + time.getHour() + " " + time.getMinute() + " " + time.getSecond());
         currentTime = time;
+        currentTime.tick();
         SimulationEventManager.getInstance().Notify("timeChanged");
     }
 
     @GetMapping("/getTime")
     public Time getTime() {
+        currentTime.tick();
         return this.currentTime;
     }
     

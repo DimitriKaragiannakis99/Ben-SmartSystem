@@ -143,8 +143,8 @@ public class RoomController {
             return ResponseEntity.notFound().build();
         }
 
-        room.setTemperature(newTemperature);
-        return ResponseEntity.ok().body("Temperature updated for room with ID: " + roomId);
+        room.setDesiredTemperature(newTemperature);
+        return ResponseEntity.ok().body("Desired Temperature updated for room with ID: " + roomId);
     }
 
     // This has the logic for retrieving the .txt file from the front-end, parsing
