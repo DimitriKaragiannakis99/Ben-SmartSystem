@@ -156,8 +156,8 @@ public class RoomController {
 
     // This method assigns a given user to the first room
     public static void assignUserToFirstRoom(User user) {
-        if (roomList.size() > 0) {
-            roomList.get(0).addUsers(user.getUsername());
+        if (!roomList.isEmpty()) {
+            roomList.getFirst().addUsers(user.getUsername());
         }
         System.out.println("User added to first room: " + user.getUsername());
         SimulationEventManager.getInstance().Notify("userChangedRoom");
@@ -173,7 +173,7 @@ public class RoomController {
 
             List<User> users = UserController.getUsers();
 
-            if (users.size() == 0 || roomList.size() == 0)
+            if (users.isEmpty() || roomList.isEmpty())
             {
                 return;
             }
