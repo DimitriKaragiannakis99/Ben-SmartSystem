@@ -32,7 +32,7 @@ public class RoomController {
 
     @GetMapping("/rooms")
     public ResponseEntity<ArrayList<Room>> getAllRooms() {
-        System.out.println(roomList);
+        //System.out.println(roomList);
         // Return a new ArrayList to avoid exposing the internal storage structure
         // In here we will assign the users to random roomsfor the first time
         updateUsersInRooms();

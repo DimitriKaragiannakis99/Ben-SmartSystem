@@ -22,7 +22,7 @@ public class SHH {
         Timer timer = new Timer(true);
         timer.schedule(new TimerTask() {
             public void run() {
-                if (room.getTemperature() >= room.getTemperature()) {
+                if (room.getTemperature() >= room.getDesiredTemperature()) {
                     return; // pause the HVAC
                 }
                 room.setTemperature(room.getTemperature()+ 0.1);
@@ -34,7 +34,7 @@ public class SHH {
         Timer timer = new Timer(true);
         timer.schedule(new TimerTask() {
             public void run() {
-                if (room.getTemperature() >= room.getDesiredTemperature()) {
+                if (room.getTemperature() <= room.getDesiredTemperature()) {
                     return;
                 }
                 room.setTemperature(room.getTemperature()- 0.1);
@@ -52,50 +52,54 @@ public class SHH {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
-    public static void HVAC_on(ArrayList<Room> roomsList){
-        for(Room room : roomsList){
-            if(room.getTemperature() < room.getDesiredTemperature()){
-                heating(room);
-            }
-            else if(room.getTemperature() > room.getDesiredTemperature()){
-                cooling(room);
-            }
+    @GetMapping ("/HVAC-on")
+    public ResponseEntity<String> HVAC_on(@RequestParam String roomID){
+        Room room = RoomController.findRoomById(roomID);
+        if(room == null){
+            return ResponseEntity.ok("No room was provided");
         }
+        if(room.getTemperature() < room.getDesiredTemperature()){
+            heating(room);
+            return ResponseEntity.ok("Heater turned on");
+        }
+        else if(room.getTemperature() > room.getDesiredTemperature()){
+            cooling(room);
+            return ResponseEntity.ok("AC turned on");
+        }
+        return ResponseEntity.ok("HVAC was not turned on");
 
     }
 
     @PostMapping("/HVAC-off")
-    public ResponseEntity<String> HVAC_off(@RequestBody ArrayList<Room> roomList) {
-        for(Room room : roomList){
-            Timer timer = new Timer(true);
-            if (room.getTemperature() < outsideTemp){
-                //Need to heat
-                while(room.getTemperature() < outsideTemp){
-                    timer.schedule(new TimerTask() {
-                        public void run() {
-                            if(room.getTemperature() == outsideTemp){
-                                return;
-                            }
-                            room.setTemperature(room.getTemperature()+ 0.05);
+    public ResponseEntity<String> HVAC_off(@RequestParam Room room) {
+        Timer timer = new Timer(true);
+        if (room.getTemperature() < outsideTemp){
+            //Need to heat
+            while(room.getTemperature() < outsideTemp){
+                timer.schedule(new TimerTask() {
+                    public void run() {
+                        if(room.getTemperature() == outsideTemp){
+                            return;
                         }
-                    }, 0, 1000);
-                }
-            }
-            else if(room.getTemperature() > outsideTemp){
-                //Need to cool
-               while(room.getTemperature() > outsideTemp){
-                   timer.schedule(new TimerTask() {
-                       public void run() {
-                           if(room.getTemperature() == outsideTemp){
-                               return;
-                           }
-                           room.setTemperature(room.getTemperature()- 0.05);
-                       }
-                   }, 0, 1000);
-               }
+                        room.setTemperature(room.getTemperature()+ 0.05);
+                    }
+                }, 0, 1000);
             }
         }
-        return new ResponseEntity<>("HVAC off", HttpStatus.OK);
+        else if(room.getTemperature() > outsideTemp){
+            //Need to cool
+            while(room.getTemperature() > outsideTemp){
+                timer.schedule(new TimerTask() {
+                    public void run() {
+                        if(room.getTemperature() == outsideTemp){
+                            return;
+                        }
+                        room.setTemperature(room.getTemperature()- 0.05);
+                    }
+                }, 0, 1000);
+            }
+        }
+        return  ResponseEntity.ok("HVAC off");
     }
 
 

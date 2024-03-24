@@ -6,10 +6,15 @@ function RoomInfo() {
   let intervalRef = useRef();
 
   useEffect(() => {
-    fetchRoomTemperatures();
-    intervalRef.current = setInterval(checkTemp, 1000);
+    const intervalHandler = () => {
+      checkTemp();
+      fetchRoomTemperatures();
+    };
+
+    fetchRoomTemperatures(); // Fetch room temperatures initially
+    intervalRef.current = setInterval(intervalHandler, 1000);
     return () => clearInterval(intervalRef.current); //cleanup on unmount
-  }, []);
+  }, [roomTemperatures]);
 
   //Method to check room temp continously
   const checkTemp = () => {
@@ -41,9 +46,23 @@ function RoomInfo() {
       });
   };
 
-  const turn_HVAC_on = () => {};
+  //Function must send a get request to backend
+  const turn_HVAC_on = (roomid) => {
+    axios
+      .get("http://localhost:8080/api/temp/HVAC-on", {
+        params: { roomID: roomid },
+      })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Error turning on HVAC", error);
+      });
+  };
 
-  const turn_HVAC_off = () => {};
+  const turn_HVAC_off = () => {
+    console.log("HVAC off");
+  };
 
   return (
     <div className="inline-grid grid-cols-1 gap-4">
@@ -61,6 +80,22 @@ function RoomInfo() {
             Heater: {room.isHeaterOn ? "On" : "Off"}
           </div>
           <div className="text-xl">AC: {room.isAcOn ? "On" : "Off"}</div>
+          <div>
+            <button
+              className="px-4 py-2 mt-2 border border-gray-300 bg-indigo-500 text-white rounded hover:bg-blue-700 transition-colors mr-2"
+              onClick={() => turn_HVAC_on(room.id)}
+              disabled={room.isAcOn || room.isHeaterOn}
+            >
+              Turn HVAC On
+            </button>
+            <button
+              className="px-4 py-2 mt-2 border border-gray-300 bg-blue-500 text-white rounded hover:bg-blue-700 transition-colors mr-2"
+              onClick={() => turn_HVAC_off(room.id)}
+              disabled={!room.isAcOn && !room.isHeaterOn}
+            >
+              Turn HVAC Off
+            </button>
+          </div>
         </div>
       ))}
     </div>
