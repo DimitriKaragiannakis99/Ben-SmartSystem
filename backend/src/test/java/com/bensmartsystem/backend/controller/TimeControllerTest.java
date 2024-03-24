@@ -10,11 +10,7 @@ public class TimeControllerTest {
 
     private TimeController timeController;
 
-    @BeforeEach
-    void setUp() {
-        
-        timeController = new TimeController();
-    }
+
 
     @Test
     void getTime_ReturnsInitialTime() {

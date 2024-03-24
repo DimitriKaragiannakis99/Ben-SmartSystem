@@ -1,8 +1,11 @@
 package com.bensmartsystem.backend.model;
+import org.springframework.stereotype.Component;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+
+@Component
 @Entity
 public class Time 
 {

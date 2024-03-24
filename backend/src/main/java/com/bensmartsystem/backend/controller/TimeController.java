@@ -1,4 +1,5 @@
 package com.bensmartsystem.backend.controller;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.bensmartsystem.backend.model.Time;
 @RestController
@@ -6,13 +7,15 @@ import com.bensmartsystem.backend.model.Time;
 @RequestMapping("/api/time")
 public class TimeController 
 {
-    private Time currentTime = new Time();
+    private Time currentTime;
 
-    public TimeController() {
+    @Autowired
+    public TimeController(Time currentTime) {
         // Hardcoded time data
         currentTime.setHour(12);
         currentTime.setDay(1);
         currentTime.setMonth(1);
+        this.currentTime = currentTime;
     }
 
     @PostMapping("/setTime")
