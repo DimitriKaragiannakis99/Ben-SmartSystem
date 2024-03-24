@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { RoomContext } from "./RoomProvider";
+import ScheduleTemperatureModal from "./ScheduleTempModal";
 
 const RoomZones = () => {
   const [rooms, setRooms] = useState([]);
   const [selectedRoomIds, setSelectedRoomIds] = useState([]);
   const [zones, setZones] = useState([]);
   const { updateRoomTemperature } = useContext(RoomContext);
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchRoomsAndZones = async () => {
@@ -69,6 +71,7 @@ const RoomZones = () => {
         });
     }
   };
+
 
   const handleModifyTemperature = (zoneId) => {
     const cleanedZoneId = zoneId.replace(/\D/g, "");
@@ -155,15 +158,29 @@ const RoomZones = () => {
       >
         Add to Zone
       </button>
+      <div className="border-b border-gray-500 pt-4"></div>
       {zones.map((zone) => (
         <div key={zone.id}>
           <strong>{zone.name}</strong>
+          <div className="flex">
           <button
             onClick={() => handleModifyTemperature(zone.id)}
-            className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
+            className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded mr-1"
           >
             Modify Temperature
           </button>
+          <button
+            onClick={() => setIsScheduleModalOpen(true)}
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-1"
+          >
+            Schedule Temperature
+          </button>
+          <ScheduleTemperatureModal
+            isOpen={isScheduleModalOpen}
+            onClose={() => setIsScheduleModalOpen(false)}
+            zoneId={zone.id} 
+          />
+          </div>
           {zone.rooms && (
             <ul>
               {zone.rooms.map((roomName) => (
