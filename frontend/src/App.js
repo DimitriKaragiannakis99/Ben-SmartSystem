@@ -4,10 +4,12 @@ import EditSimulation from "./components/EditSimulationComponent";
 import SmartHomeDashboard from "./SmartHomeDashboard";
 import HomeLayout from "./components/HomeLayout";
 import EditSimulationPage from "./components/Dashboard/EditSimulationPage";
+import OutputConsoleProvider from "./components/OutputConsoleProvider";
 
 export default function App() {
   return (
     <div className="bg-white">
+      <OutputConsoleProvider>
       <Router>
         <div>
           <Routes>
@@ -17,6 +19,7 @@ export default function App() {
           </Routes>
         </div>
       </Router>
+      </OutputConsoleProvider>
     </div>
   );
 }

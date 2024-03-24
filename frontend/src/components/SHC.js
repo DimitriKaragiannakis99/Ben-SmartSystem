@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { RoomContext } from "./Dashboard/RoomProvider";
+import { OutputConsoleContext } from "./OutputConsoleProvider";
 
 function SHC() {
   const { toggleLight, toggleWindow, toggleDoor } = useContext(RoomContext); // Destructure toggleLight, toggleWindow, and toggleDoor functions
@@ -8,7 +9,9 @@ function SHC() {
   const [simulatorUser, setSimulatorUser] = useState("parent");
   const [selectedRooms, setSelectedRooms] = useState({});
   const [selectedComponent, setSelectedComponent] = useState("");
-  const [consoleMessages, setConsoleMessages] = useState([]);
+  
+  // added OutputConsoleContext
+  const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
 
 	// state for auto lights
 	const [autoLight, setAutoLight] = useState(false);
@@ -28,16 +31,7 @@ function SHC() {
       });
   }, []);
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/console")
-      .then((response) => {
-        setConsoleMessages(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching room information", error);
-      });
-  }, []);
+
 
   const handleRoomCheckChange = (roomName) => {
     setSelectedRooms((prevSelectedRooms) => ({
@@ -86,7 +80,8 @@ function SHC() {
       ", "
     )} was ${actionText} by ${simulatorUser} request.`;
 
-    setConsoleMessages((prevMessages) => [...prevMessages, message]);
+    // updating OutputConsole context
+    updateConsoleMessages(prevMessages => [...prevMessages, message]);
 
     if (selectedComponent === "light") {
       selectedRoomNames.forEach((roomName) => {
@@ -124,8 +119,8 @@ function SHC() {
 		const actionText = action === "on" ? "activated" : "deactivated";
 		const message = `[${currentTime}] [Auto Lights] was ${actionText} by ${simulatorUser} request.`;
 
-		// Add message to the console
-		setConsoleMessages((prevMessages) => [...prevMessages, message]);
+		 // updating OutputConsole context
+     updateConsoleMessages(prevMessages => [...prevMessages, message]);
 	};
 
 	const handleAutoLock = (action) => {
@@ -140,8 +135,8 @@ function SHC() {
 		const actionText = action === "on" ? "activated" : "deactivated";
 		const message = `[${currentTime}] [Auto Locks] was ${actionText} by ${simulatorUser} request.`;
 
-		// Add message to the console
-		setConsoleMessages((prevMessages) => [...prevMessages, message]);
+		 // updating OutputConsole context
+     updateConsoleMessages(prevMessages => [...prevMessages, message]);
 	};
 
   return (
