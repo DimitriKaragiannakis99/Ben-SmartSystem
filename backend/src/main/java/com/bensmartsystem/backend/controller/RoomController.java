@@ -113,34 +113,37 @@ public class RoomController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
-    @PostMapping("/toggleHVAC")
+    @PostMapping("/toggleHeater")
     public ResponseEntity<?> toggleHeater(@RequestParam String roomId) {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
-                room.setIsHVACOn(!room.getIsHVACOn());
+                room.setIsHeaterOn(!room.getIsHeaterOn());
                 return ResponseEntity.ok(room);
             }
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
-    @PutMapping("/rooms/{roomId}/temperature")
-    public ResponseEntity<?> updateRoomTemperature(@PathVariable String roomId,
-                                                @RequestBody Map<String, Object> payload) {
-        Object temperatureObj = payload.get("temperature");
-        if (!(temperatureObj instanceof Number)) {
-            return ResponseEntity.badRequest().body("Temperature must be a number");
+    @PostMapping("/toggleAc")
+    public ResponseEntity<?> toggleAc(@RequestParam String roomId) {
+        for (Room room : roomList) {
+            if (room.getId().equals(roomId)) {
+                room.setIsAcOn(!room.getIsAcOn());
+                return ResponseEntity.ok(room);
+            }
         }
 
-        Double newTemperature;
-        if (temperatureObj instanceof Integer) {
-            newTemperature = ((Integer) temperatureObj).doubleValue();
-        } else {
-            newTemperature = (Double) temperatureObj;
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
+    }
+
+    @PutMapping("/rooms/{roomId}/temperature")
+    public ResponseEntity<?> updateRoomTemperature(@PathVariable String roomId,
+            @RequestBody Map<String, Double> payload) {
+        Double newTemperature = payload.get("temperature");
+        if (newTemperature == null) {
+            return ResponseEntity.badRequest().body("Temperature is required");
         }
-        
-        Boolean isOverridden = (Boolean) payload.getOrDefault("overridden", false);
-        
+
         Room room = findRoomById(roomId);
         if (room == null) {
             return ResponseEntity.notFound().build();
@@ -155,8 +158,6 @@ public class RoomController {
         SimulationEventManager.getInstance().Notify("desiredtemperatureUpdated");
         return ResponseEntity.ok().body("Temperature updated for room with ID: " + roomId);
     }
-
-
 
     // This has the logic for retrieving the .txt file from the front-end, parsing
     // the info and adding it to the hashmap.

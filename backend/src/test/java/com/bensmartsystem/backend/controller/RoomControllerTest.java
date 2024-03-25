@@ -87,6 +87,17 @@ class RoomControllerTest {
     }
 
     @Test
+    void toggleAc() {
+        Room room = new Room("Dining Room", Arrays.asList("Light", "AC"), Arrays.asList("User6"));
+        RoomController.getRoomList().add(room);
+        ResponseEntity<?> response = roomController.toggleAc(room.getId());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Room updatedRoom = (Room) response.getBody();
+        assertNotNull(updatedRoom);
+        assertTrue(updatedRoom.getIsAcOn());
+    }
+
+    @Test
     void updateRoomTemperature() {
         Room room = new Room("Bedroom", Arrays.asList("Light", "Window"), Arrays.asList("User2"));
         RoomController.getRoomList().add(room);
@@ -105,15 +116,13 @@ class RoomControllerTest {
 
     @Test
     void updateRoomTemperatureRoomNotFound() {
-        ResponseEntity<?> response = roomController.updateRoomTemperature("nonexistent_room_id",
-                Map.of("temperature", 22.0));
+        ResponseEntity<?> response = roomController.updateRoomTemperature("nonexistent_room_id", Map.of("temperature", 22.0));
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
     void uploadRoomLayout() {
-        MultipartFile file = new MockMultipartFile("room_layout.txt",
-                "Room1:Light,Window:User1\nRoom2:Light,Door:User2".getBytes(StandardCharsets.UTF_8));
+        MultipartFile file = new MockMultipartFile("room_layout.txt", "Room1:Light,Window:User1\nRoom2:Light,Door:User2".getBytes(StandardCharsets.UTF_8));
         ResponseEntity<String> response = roomController.uploadRoomLayout(file);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Room layout uploaded successfully", response.getBody());
@@ -130,8 +139,7 @@ class RoomControllerTest {
 
     @Test
     void uploadRoomLayoutErrorProcessingFile() {
-        MultipartFile file = new MockMultipartFile("room_layout.txt",
-                "Room1:Light,Window:User1\nRoom2:Light,Door".getBytes(StandardCharsets.UTF_8));
+        MultipartFile file = new MockMultipartFile("room_layout.txt", "Room1:Light,Window:User1\nRoom2:Light,Door".getBytes(StandardCharsets.UTF_8));
         ResponseEntity<String> response = roomController.uploadRoomLayout(file);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Room layout uploaded successfully", response.getBody());

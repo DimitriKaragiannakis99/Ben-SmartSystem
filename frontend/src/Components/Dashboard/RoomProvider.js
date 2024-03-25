@@ -7,7 +7,6 @@ const RoomProvider = ({ children }) => {
   const [rooms, setRooms] = useState([]);
 
   const [isSimulationOn, setSimulationOn] = useState(false);
-  const [isSHHOn, setIsSHHOn] = useState(false);
 
   useEffect(() => {
     axios.get('http://localhost:8080/api/rooms')
@@ -79,33 +78,19 @@ const RoomProvider = ({ children }) => {
       });
   }
 
-  const toggleHVAC = (roomId) => {
-    axios.post(`http://localhost:8080/api/toggleHVAC?roomId=${roomId}`)
-      .then(() => {
-        setRooms(prevRooms =>
-          prevRooms.map(room =>
-            room.id === roomId ? { ...room, isHVACOn: !room.isHVACOn } : room,
-          ),
-        );
-      })
-      .catch((error) => {
-        console.error('Error toggling HVAC', error);
-      });
-  }
-
-  const updateRoomTemperature = (roomId, newTemperature, isOverridden) => {
+  const updateRoomTemperature = (roomId, newTemperature) => {
     setRooms((prevRooms) =>
       prevRooms.map((room) => {
         if (room.id === roomId) {
-          return { ...room, desiredTemperature: newTemperature, isTemperatureOverridden: isOverridden };
+          return { ...room, temperature: `${newTemperature} (overridden)` };
         }
         return room;
       })
     );
-  };  
+  };
 
   return (
-    <RoomContext.Provider value={{ rooms, toggleLight, toggleWindowBlocked, toggleWindow, toggleDoor, isSimulationOn, setSimulationOn, isSHHOn, setIsSHHOn, updateRoomTemperature, toggleHVAC }}>
+    <RoomContext.Provider value={{ rooms, toggleLight, toggleWindowBlocked, toggleWindow, toggleDoor, isSimulationOn, setSimulationOn, updateRoomTemperature }}>
       {children}
     </RoomContext.Provider>
   );

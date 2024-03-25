@@ -21,6 +21,7 @@ class ZoneControllerTest {
 
     @BeforeEach
     void setUp() {
+        zoneController = new ZoneController();
         roomController = new RoomController();
         
         Room room1 = new Room("Living Room", Arrays.asList("Light", "Window"), Arrays.asList("User1"));

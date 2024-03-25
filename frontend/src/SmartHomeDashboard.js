@@ -5,10 +5,8 @@ import DashboardTabs from './components/Dashboard/DashboardTabs';
 import RoomProvider from './components/Dashboard/RoomProvider';
 
 
-
 const SmartHomeDashboard = () => {
   return (
-  
     <RoomProvider>
     <div className='flex h-screen'>
         <div className='w-1/4'>
@@ -24,7 +22,6 @@ const SmartHomeDashboard = () => {
         </div>
     </div>
     </RoomProvider>
-    
   );
 };
 
