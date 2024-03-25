@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
+import { OutputConsoleContext } from "../OutputConsoleProvider"
 
 const ScheduleTemperatureModal = ({ isOpen, onClose, zoneId }) => {
   const [selectedTimes, setSelectedTimes] = useState([]);
   const [temperature, setTemperature] = useState('');
+
+    	  // added OutputConsoleContext
+const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
 
   const handleTimeSelection = (time) => {
     setSelectedTimes((prev) =>
@@ -25,6 +29,11 @@ const ScheduleTemperatureModal = ({ isOpen, onClose, zoneId }) => {
           temperature: parseFloat(temperature),
         }),
       });
+
+      const currentTime = new Date().toLocaleTimeString();
+      const message = `[${currentTime}] the desired ${temperature}C in ${selectedTimes}  has been changed in zone id ${cleanedZoneId}`;
+      // updating OutputConsole context
+      updateConsoleMessages(message);
 
       if (!response.ok) {
         // Handle HTTP errors

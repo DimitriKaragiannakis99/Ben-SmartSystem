@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { OutputConsoleContext } from "./OutputConsoleProvider";
 
 function UserFigure({ name }) {
   return (
@@ -22,6 +23,10 @@ const RoomEditPage = () => {
   const [objects, setObjects] = useState(initialObjects);
   const [rooms, setRooms] = useState([]);
   const [windowBlocked, setWindowBlocked] = useState({});
+
+  // adding OutputConsoleContext
+  const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
+
 
   useEffect(() => {
     // Fetch room information from the backend endpoint using axios
@@ -75,7 +80,14 @@ const RoomEditPage = () => {
     setWindowBlocked((prev) => ({ ...prev, [windowId]: false }));
 
     const updatedRooms = rooms.map((room) => {
+      
       if (`${room.id}-window` === windowId) {
+        
+        // updating OutputConsoleContext when window is unblocked
+       const currentTime = new Date().toLocaleTimeString();
+       const message = `[${currentTime}] The window in ${room.name} was unblocked by Parent request.`;
+       updateConsoleMessages(message);
+        
         return { ...room, isWindowBlocked: false };
       }
       return room;
@@ -159,6 +171,12 @@ const RoomEditPage = () => {
       const roomId = windowId.replace("-window", "");
       const updatedRooms = rooms.map((room) => {
         if (room.id === roomId) {
+          
+           // updating OutputConsoleContext when window is blocked
+           const currentTime = new Date().toLocaleTimeString();
+           const message = `[${currentTime}] The window in ${room.name} was blocked by Parent request.`;
+           updateConsoleMessages(message);
+          
           return { ...room, isWindowBlocked: true };
         }
         return room;
@@ -170,6 +188,23 @@ const RoomEditPage = () => {
   };
 
   const handleSave = () => {
+    console.log("Saving rooms:", rooms);
+   
+   // updating OutputConsoleContext with new locations of users
+    rooms.forEach(room => {
+      if (room.users.length > 0) {
+        const currentTime = new Date().toLocaleTimeString();
+        room.users.forEach(user => {
+          const message = `[${currentTime}] ${user} was placed in ${room.name} by Parent request.`;
+          console.log(message);
+          // Use the functional update form to ensure the state is correctly updated
+          updateConsoleMessages(message);
+        });
+      }
+    });
+   
+   
+   
     // Send a POST request to the backend API endpoint
     axios
       .post("http://localhost:8080/api/saveRooms", rooms)
