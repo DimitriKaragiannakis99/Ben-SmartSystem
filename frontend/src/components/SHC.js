@@ -4,9 +4,9 @@ import { RoomContext } from "./Dashboard/RoomProvider";
 import { OutputConsoleContext } from "./OutputConsoleProvider";
 
 function SHC() {
-  const { toggleLight, toggleWindow, toggleDoor } = useContext(RoomContext); // Destructure toggleLight, toggleWindow, and toggleDoor functions
+  const { toggleLight, toggleWindow, toggleDoor,currentSimUser, fetchCurrentSimUser } = useContext(RoomContext); // Destructure toggleLight, toggleWindow, and toggleDoor functions
   const [rooms, setRooms] = useState([]);
-  const [simulatorUser, setSimulatorUser] = useState("parent");
+  const [simulatorUser, setSimulatorUser] = useState("Parents");
   const [selectedRooms, setSelectedRooms] = useState({});
   const [selectedComponent, setSelectedComponent] = useState("");
   
@@ -74,6 +74,8 @@ function SHC() {
 
     console.log(selectedComponent);
 
+    console.log(consoleMessages)
+
     const currentTime = new Date().toLocaleTimeString();
     const actionText = action === "open" ? "opened" : "closed";
     const message = `[${currentTime}] [${selectedComponent}] in ${selectedRoomNames.join(
@@ -81,7 +83,8 @@ function SHC() {
     )} was ${actionText} by ${simulatorUser} request.`;
 
     // updating OutputConsole context
-    updateConsoleMessages(prevMessages => [...prevMessages, message]);
+    updateConsoleMessages(message);
+    
 
     if (selectedComponent === "light") {
       selectedRoomNames.forEach((roomName) => {
@@ -120,7 +123,7 @@ function SHC() {
 		const message = `[${currentTime}] [Auto Lights] was ${actionText} by ${simulatorUser} request.`;
 
 		 // updating OutputConsole context
-     updateConsoleMessages(prevMessages => [...prevMessages, message]);
+     updateConsoleMessages(message);
 	};
 
 	const handleAutoLock = (action) => {
@@ -136,7 +139,7 @@ function SHC() {
 		const message = `[${currentTime}] [Auto Locks] was ${actionText} by ${simulatorUser} request.`;
 
 		 // updating OutputConsole context
-     updateConsoleMessages(prevMessages => [...prevMessages, message]);
+     updateConsoleMessages(message);
 	};
 
   return (

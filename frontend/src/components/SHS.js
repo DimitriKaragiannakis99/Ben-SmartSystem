@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useContext} from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -17,8 +17,11 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimeField } from "@mui/x-date-pickers/DateTimeField";
+import { OutputConsoleContext } from "./OutputConsoleProvider";
 
 import axios from "axios";
+
+
 
 // Data for the table\
 //   TODO: Dinamically change this so we get all modules and permission types from backend
@@ -160,9 +163,12 @@ function EditUser(id, userName, permissions) {
 }
 
 function logAsUser(id, setter) {
-  //We will just read the user from the local storage
+
+//We will just read the user from the local storage
   console.log("User: " + id + " has been logged in");
   setter(id);
+
+
 }
 
 function setHouseLocation(id, location) {}
@@ -187,6 +193,9 @@ function UserManagementTab() {
 
 	// Hooks to read the users from the local storage
 	const [users, setUsers] = React.useState([]);
+
+	  // added OutputConsoleContext
+const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
 
 	useEffect(() => {
 		setUsers([...readUsers()]);
@@ -290,6 +299,12 @@ function UserManagementTab() {
 
 	function logAsSelectedUser(selectedIds) {
 		console.log(selectedIds);
+
+		const currentTime = new Date().toLocaleTimeString();
+		const message = `[${currentTime}] the user ${selectedIds} has been logged in`;
+		// updating OutputConsole context
+		updateConsoleMessages(message);
+
 		if (selectedIds.length > 1) {
 			console.log("You can only login as one user at a time");
 			//Open a dialog box that says that you can only edit one user at a time

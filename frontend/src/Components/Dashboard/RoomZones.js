@@ -3,6 +3,7 @@ import axios from "axios";
 import { RoomContext } from "./RoomProvider";
 import ScheduleTemperatureModal from "./ScheduleTempModal";
 import SHH from "../SHH";
+import { OutputConsoleContext } from "../OutputConsoleProvider"
 
 const RoomZones = () => {
   const [rooms, setRooms] = useState([]);
@@ -11,6 +12,9 @@ const RoomZones = () => {
   const { updateRoomTemperature } = useContext(RoomContext);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const { isSHHOn, setIsSHHOn } = useContext(RoomContext);
+
+  	  // added OutputConsoleContext
+const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
 
   useEffect(() => {
     const fetchRoomsAndZones = async () => {
@@ -97,6 +101,11 @@ const RoomZones = () => {
           setZones((prevZones) =>
             prevZones.map((zone) => {
               if (zone.id === zoneId) {
+                const currentTime = new Date().toLocaleTimeString();
+                const message = `[${currentTime}] the desired temperature ${newTemperature}C in rooms of zone ${zone.name} has been changed `;
+                // updating OutputConsole context
+                updateConsoleMessages(message);
+      
                 return { ...zone, temperature: newTemperature };
               } else {
                 return zone;
@@ -122,6 +131,8 @@ const RoomZones = () => {
       newTemperature <= 40
     ) {
       const temperatureAsNumber = parseFloat(newTemperature);
+
+  
       axios
         .put(`http://localhost:8080/api/rooms/${roomId}/temperature`, {
           temperature: temperatureAsNumber,
@@ -129,6 +140,13 @@ const RoomZones = () => {
         })
         .then(() => {
           updateRoomTemperature(roomId, temperatureAsNumber, true);
+          const roomName = rooms.find(room => room.id === roomId)?.name;
+
+          const currentTime = new Date().toLocaleTimeString();
+          const message = `[${currentTime}] the desired temperature ${temperatureAsNumber}C in room ${roomName} has been overridden`;
+          // updating OutputConsole context
+          updateConsoleMessages(message);
+
           alert("Desired Temperature updated successfully.");
         })
         .catch((error) => {

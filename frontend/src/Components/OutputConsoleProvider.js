@@ -18,9 +18,32 @@ const OutputConsoleProvider = ({ children }) => {
       });
   }, []);
 
-  const updateConsoleMessages = (newMessages) => {
-    setConsoleMessages(newMessages);
-  };
+  const updateConsoleMessages = (newMessage) => {
+    setConsoleMessages(prevMessages => {
+        const updatedMessages = [...prevMessages, newMessage];
+
+        // Optionally, log messages here if needed
+        updatedMessages.forEach((message, index) => {
+            console.log(`Message ${index}:`, message);
+        });
+
+        
+         axios.post("http://localhost:8080/api/console/update", updatedMessages, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            console.log("Console messages updated successfully:", response.data);
+        })
+        .catch(error => {
+            console.error("Error updating console messages:", error);
+        }); 
+
+        return updatedMessages; 
+    });
+};
+
 
 
 

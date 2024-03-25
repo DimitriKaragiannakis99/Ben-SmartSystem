@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import { RoomContext } from "./Dashboard/RoomProvider";
+import { OutputConsoleContext } from "./OutputConsoleProvider"
 
 function RoomInfo() {
-  const { toggleHVAC, isSHHOn } = useContext(RoomContext);
+  const { toggleHVAC, isSHHOn,rooms } = useContext(RoomContext);
   const [roomTemperatures, setRoomTemperatures] = useState([]);
   let intervalRef = useRef();
+    	  // added OutputConsoleContext
+const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
 
   useEffect(() => {
     const intervalHandler = () => {
@@ -54,6 +57,11 @@ function RoomInfo() {
       })
       .then((response) => {
         console.log("hvac on");
+        const roomName = rooms.find(room => room.id === roomid)?.name;
+        const currentTime = new Date().toLocaleTimeString();
+        const message = `[${currentTime}] the HVAC has been turned on in ${roomName} `;
+        // updating OutputConsole context
+        updateConsoleMessages(message);
         clearInterval(intervalRef.current);
         toggleHVAC(roomid);
       })
@@ -69,6 +77,11 @@ function RoomInfo() {
       })
       .then((response) => {
         console.log("hvac off");
+        const roomName = rooms.find(room => room.id === roomid)?.name;
+        const currentTime = new Date().toLocaleTimeString();
+        const message = `[${currentTime}] the HVAC has been turned off in ${roomName} `;
+         // updating OutputConsole context
+         updateConsoleMessages(message);
         clearInterval(intervalRef.current);
         toggleHVAC(roomid);
       })

@@ -86,7 +86,7 @@ const RoomEditPage = () => {
         // updating OutputConsoleContext when window is unblocked
        const currentTime = new Date().toLocaleTimeString();
        const message = `[${currentTime}] The window in ${room.name} was unblocked by Parent request.`;
-       updateConsoleMessages(prevMessages => [...prevMessages, message]);
+       updateConsoleMessages(message);
         
         return { ...room, isWindowBlocked: false };
       }
@@ -175,7 +175,7 @@ const RoomEditPage = () => {
            // updating OutputConsoleContext when window is blocked
            const currentTime = new Date().toLocaleTimeString();
            const message = `[${currentTime}] The window in ${room.name} was blocked by Parent request.`;
-           updateConsoleMessages(prevMessages => [...prevMessages, message]);
+           updateConsoleMessages(message);
           
           return { ...room, isWindowBlocked: true };
         }
@@ -198,7 +198,7 @@ const RoomEditPage = () => {
           const message = `[${currentTime}] ${user} was placed in ${room.name} by Parent request.`;
           console.log(message);
           // Use the functional update form to ensure the state is correctly updated
-          updateConsoleMessages(prevMessages => [...prevMessages, message]);
+          updateConsoleMessages(message);
         });
       }
     });
