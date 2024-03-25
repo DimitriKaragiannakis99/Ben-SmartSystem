@@ -3,7 +3,7 @@ import axios from "axios";
 import { RoomContext } from "./Dashboard/RoomProvider";
 
 function RoomInfo() {
-  const { toggleHVAC } = useContext(RoomContext);
+  const { toggleHVAC, isSHHOn } = useContext(RoomContext);
   const [roomTemperatures, setRoomTemperatures] = useState([]);
   let intervalRef = useRef();
 
@@ -76,6 +76,10 @@ function RoomInfo() {
         console.error("Error turning off HVAC", error);
       });
   };
+
+  if (!isSHHOn) {
+    return <div className="bg-blue-100 min-h-screen">SHH is off.</div>;
+  }
 
   return (
     <div className="inline-grid grid-cols-1 gap-4">

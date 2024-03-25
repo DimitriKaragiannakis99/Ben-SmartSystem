@@ -7,6 +7,7 @@ const RoomProvider = ({ children }) => {
   const [rooms, setRooms] = useState([]);
 
   const [isSimulationOn, setSimulationOn] = useState(false);
+  const [isSHHOn, setIsSHHOn] = useState(false);
 
   useEffect(() => {
     axios.get('http://localhost:8080/api/rooms')
@@ -104,7 +105,7 @@ const RoomProvider = ({ children }) => {
   };  
 
   return (
-    <RoomContext.Provider value={{ rooms, toggleLight, toggleWindowBlocked, toggleWindow, toggleDoor, isSimulationOn, setSimulationOn, updateRoomTemperature }}>
+    <RoomContext.Provider value={{ rooms, toggleLight, toggleWindowBlocked, toggleWindow, toggleDoor, isSimulationOn, setSimulationOn, isSHHOn, setIsSHHOn, updateRoomTemperature, toggleHVAC }}>
       {children}
     </RoomContext.Provider>
   );
