@@ -51,6 +51,10 @@ function RoomInfo() {
       .get("http://localhost:8080/api/temp/HVAC-on", {
         params: { roomID: roomid },
       })
+      .then((response) => {
+        console.log("hvac on");
+        clearInterval(intervalRef.current);
+      })
       .catch((error) => {
         console.error("Error turning on HVAC", error);
       });
@@ -60,6 +64,10 @@ function RoomInfo() {
     axios
       .get("http://localhost:8080/api/temp/HVAC-off", {
         params: { roomID: roomid },
+      })
+      .then((response) => {
+        console.log("hvac off");
+        clearInterval(intervalRef.current);
       })
       .catch((error) => {
         console.error("Error turning off HVAC", error);

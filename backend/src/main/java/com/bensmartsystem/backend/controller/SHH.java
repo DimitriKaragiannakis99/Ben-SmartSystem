@@ -16,11 +16,18 @@ import java.util.TimerTask;
 public class SHH {
 
     static double outsideTemp = 17;
+    private static Timer timerInstance;
+
+    private static synchronized Timer getTimerInstance() {
+        if (timerInstance == null) {
+            timerInstance = new Timer(true);
+        }
+        return timerInstance;
+    }
 
     //HAVC Temp algorithm implementation
     public static void heating(Room room){
-        Timer timer = new Timer(true);
-        timer.schedule(new TimerTask() {
+        getTimerInstance().schedule(new TimerTask() {
             public void run() {
                 if (room.getTemperature() >= room.getDesiredTemperature() || !room.getIsHeaterOn()) {
                     return; // pause the HVAC
@@ -31,8 +38,7 @@ public class SHH {
     }
 
     public static void hvac_off_heat(Room room){
-        Timer timer = new Timer(true);
-        timer.schedule(new TimerTask() {
+        getTimerInstance().schedule(new TimerTask() {
             public void run() {
                 if (room.getTemperature() >= outsideTemp || room.getIsHeaterOn() || room.getIsAcOn()) {
                     return; // pause the HVAC
@@ -43,8 +49,7 @@ public class SHH {
     }
 
     public static void cooling(Room room){
-        Timer timer = new Timer(true);
-        timer.schedule(new TimerTask() {
+        getTimerInstance().schedule(new TimerTask() {
             public void run() {
                 if (room.getTemperature() <= room.getDesiredTemperature() || !room.getIsAcOn()) {
                     return;
@@ -55,8 +60,7 @@ public class SHH {
     }
 
     public static void hvac_off_cool(Room room){
-        Timer timer = new Timer(true);
-        timer.schedule(new TimerTask() {
+        getTimerInstance().schedule(new TimerTask() {
             public void run() {
                 if (room.getTemperature() <= outsideTemp || room.getIsHeaterOn() || room.getIsAcOn()) {
                     return;
@@ -116,6 +120,4 @@ public class SHH {
         }
         return  ResponseEntity.ok("HVAC was not turned off");
     }
-
-
 }
