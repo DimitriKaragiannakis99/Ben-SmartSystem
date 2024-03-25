@@ -34,7 +34,12 @@ public class UserController {
     public ResponseEntity<?> getUserById(@PathVariable String userId) {
         for (User user : users) {
             if (user.getId().equals(userId)) {
-                String roomName = RoomController.getRoomList().get(user.getRoomIndex()).getName();
+                //Check first if the get room index is not out of bounds
+                String roomName = "No_room_assigned";
+                if (RoomController.getRoomList() != null && (user.getRoomIndex() < RoomController.getRoomList().size()) && RoomController.getRoomList().get(user.getRoomIndex())  != null){
+                    //Get the room name
+                    roomName = RoomController.getRoomList().get(user.getRoomIndex()).getName();
+                }
                 Map<String, Object> userData = new HashMap<>();
                 userData.put("id", user.getId());
                 userData.put("username", user.getUsername());
