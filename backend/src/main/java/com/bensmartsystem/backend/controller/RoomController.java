@@ -83,7 +83,7 @@ public class RoomController {
     @PostMapping("/toggleLight")
     public ResponseEntity<?> toggleLight(@RequestParam String roomId) {
         for (Room room : roomList) {
-            if (room.getId().equals(roomId)) {
+            if (room.getId().equals(roomId) && checkPermissions("lightAccess", roomList.indexOf(room))) {
                 room.setIsLightOn(!room.getIsLightOn());
                 SimulationEventManager.getInstance().Notify("LightToggled");
                 return ResponseEntity.ok(room);
@@ -96,7 +96,7 @@ public class RoomController {
     @PostMapping("/toggleWindow")
     public ResponseEntity<?> toggleWindow(@RequestParam String roomId) {
         for (Room room : roomList) {
-            if (room.getId().equals(roomId)) {
+            if (room.getId().equals(roomId) && checkPermissions("windowAccess", roomList.indexOf(room))) {
                 room.setIsWindowOpen(!room.getIsWindowOpen());
                 SimulationEventManager.getInstance().Notify("windowToggled");
                 return ResponseEntity.ok(room);
@@ -109,7 +109,7 @@ public class RoomController {
     @PostMapping("/toggleDoor")
     public ResponseEntity<?> toggleDoor(@RequestParam String roomId) {
         for (Room room : roomList) {
-            if (room.getId().equals(roomId)) {
+            if (room.getId().equals(roomId) && checkPermissions("doorAccess", roomList.indexOf(room))) {
                 room.setIsDoorOpen(!room.getIsDoorOpen());
                 SimulationEventManager.getInstance().Notify("doorToggled");
                 return ResponseEntity.ok(room);
@@ -122,7 +122,7 @@ public class RoomController {
     @PostMapping("/toggleHVAC")
     public ResponseEntity<?> toggleHeater(@RequestParam String roomId) {
         for (Room room : roomList) {
-            if (room.getId().equals(roomId)) {
+            if (room.getId().equals(roomId) && checkPermissions("shhAccess", roomList.indexOf(room))) {
                 room.setIsHVACOn(!room.getIsHVACOn());
                 return ResponseEntity.ok(room);
             }
