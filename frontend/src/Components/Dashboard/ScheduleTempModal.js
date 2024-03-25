@@ -11,7 +11,6 @@ const ScheduleTemperatureModal = ({ isOpen, onClose, zoneId }) => {
   };
 
   const handleSubmit = async () => {
-    console.log(zoneId)
     const cleanedZoneId = typeof zoneId === 'string' ?zoneId.replace(/\D/g, "") : zoneId;
     const endpoint = `/api/zones/${cleanedZoneId}/scheduleTemperature`;
     try {
@@ -33,7 +32,6 @@ const ScheduleTemperatureModal = ({ isOpen, onClose, zoneId }) => {
       }
 
       const data = await response.json();
-      console.log('Success:', data);
 
       onClose(); // Close the modal upon successful submission
     } catch (error) {

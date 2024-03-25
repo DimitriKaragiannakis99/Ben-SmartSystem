@@ -32,10 +32,15 @@ public class RoomController {
 
     @GetMapping("/rooms")
     public ResponseEntity<ArrayList<Room>> getAllRooms() {
-        System.out.println(roomList);
+        //System.out.println(roomList);
         // Return a new ArrayList to avoid exposing the internal storage structure
-        // In here we will assign the users to random roomsfor the first time
+        // In here we will assign the users to random rooms for the first time
         updateUsersInRooms();
+        return ResponseEntity.ok(roomList);
+    }
+
+    @GetMapping("/getAllRooms")
+    public ResponseEntity<ArrayList<Room>> getRooms() {
         return ResponseEntity.ok(roomList);
     }
 
@@ -131,20 +136,33 @@ public class RoomController {
     }
 
     @PutMapping("/rooms/{roomId}/temperature")
-    public ResponseEntity<?> updateRoomTemperature(@PathVariable String roomId, @RequestBody Map<String, Double> payload) {
-        Double newTemperature = payload.get("temperature");
-        if (newTemperature == null) {
-            return ResponseEntity.badRequest().body("Temperature is required");
+    public ResponseEntity<?> updateRoomTemperature(@PathVariable String roomId,
+                                                @RequestBody Map<String, Object> payload) {
+        Object temperatureObj = payload.get("temperature");
+        if (!(temperatureObj instanceof Number)) {
+            return ResponseEntity.badRequest().body("Temperature must be a number");
         }
-    
+
+        Double newTemperature;
+        if (temperatureObj instanceof Integer) {
+            newTemperature = ((Integer) temperatureObj).doubleValue();
+        } else {
+            newTemperature = (Double) temperatureObj;
+        }
+        
+        Boolean isOverridden = (Boolean) payload.getOrDefault("overridden", false);
+        
         Room room = findRoomById(roomId);
         if (room == null) {
             return ResponseEntity.notFound().build();
         }
-    
-        room.setTemperature(newTemperature);
-        return ResponseEntity.ok().body("Temperature updated for room with ID: " + roomId);
+
+        room.setDesiredTemperature(newTemperature);
+        room.setTemperatureOverridden(isOverridden);
+        return ResponseEntity.ok().body("Desired Temperature updated for room with ID: " + roomId);
     }
+
+
 
     // This has the logic for retrieving the .txt file from the front-end, parsing
     // the info and adding it to the hashmap.
@@ -216,8 +234,8 @@ public class RoomController {
 
     // This method assigns a given user to the first room
     public static void assignUserToFirstRoom(User user) {
-        if (roomList.size() > 0) {
-            roomList.get(0).addUsers(user.getUsername());
+        if (!roomList.isEmpty()) {
+            roomList.getFirst().addUsers(user.getUsername());
         }
         System.out.println("User added to first room: " + user.getUsername());
         SimulationEventManager.getInstance().Notify("userChangedRoom");
@@ -231,7 +249,7 @@ public class RoomController {
 
         List<User> users = UserController.getUsers();
 
-        if (users.size() == 0 || roomList.size() == 0) {
+        if (users.isEmpty() || roomList.isEmpty()) {
             return;
         }
         for (User u : users) {
@@ -239,8 +257,8 @@ public class RoomController {
             // We will use the Random class to generate random numbers
             roomList.get(u.getRoomIndex()).addUsers(u.getUsername());
 
-            }
-            SimulationEventManager.getInstance().Notify("usersUpdatedInRooms");
+        }
+        SimulationEventManager.getInstance().Notify("usersUpdatedInRooms");
     }
 
     public static Room findRoomById(String id) {

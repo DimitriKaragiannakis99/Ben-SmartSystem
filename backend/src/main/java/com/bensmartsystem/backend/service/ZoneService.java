@@ -31,7 +31,7 @@ public class ZoneService {
 
         // Update the temperature for each room in the zone
 
-        rooms.forEach(room -> room.setTemperature(temperature));
+        rooms.forEach(room -> room.setDesiredTemperature(temperature));
         
 
 

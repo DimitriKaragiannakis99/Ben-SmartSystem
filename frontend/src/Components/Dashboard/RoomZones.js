@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { RoomContext } from "./RoomProvider";
 import ScheduleTemperatureModal from "./ScheduleTempModal";
+import SHH from "../SHH";
 
 const RoomZones = () => {
   const [rooms, setRooms] = useState([]);
@@ -75,7 +76,7 @@ const RoomZones = () => {
 
   const handleModifyTemperature = (zoneId) => {
     const cleanedZoneId = zoneId.replace(/\D/g, "");
-    const newTemperature = prompt("Enter the new temperature:");
+    const newTemperature = prompt("Set the new desired temperature:");
     if (
       newTemperature !== null &&
       newTemperature.trim() !== "" &&
@@ -96,7 +97,7 @@ const RoomZones = () => {
               }
             })
           );
-          alert("Temperature updated successfully.");
+          alert("Desired Temperature updated successfully.");
         })
         .catch((error) => {
           console.error("Error updating temperature:", error);
@@ -106,20 +107,23 @@ const RoomZones = () => {
   };
 
   const handleModifyRoomOverriddenTemperature = (roomId) => {
-    const newTemperature = prompt("Enter the new temperature:");
+    const newTemperature = prompt("Set the new desired temperature:");
     if (
       newTemperature !== null &&
       newTemperature.trim() !== "" &&
+      !isNaN(newTemperature) &&
       newTemperature >= -40 &&
       newTemperature <= 40
     ) {
+      const temperatureAsNumber = parseFloat(newTemperature);
       axios
         .put(`http://localhost:8080/api/rooms/${roomId}/temperature`, {
-          temperature: newTemperature,
+          temperature: temperatureAsNumber,
+          overridden: true,
         })
         .then(() => {
-          updateRoomTemperature(roomId, newTemperature);
-          alert("Temperature updated successfully.");
+          updateRoomTemperature(roomId, temperatureAsNumber, true);
+          alert("Desired Temperature updated successfully.");
         })
         .catch((error) => {
           console.error("Error updating temperature:", error);
@@ -127,9 +131,12 @@ const RoomZones = () => {
         });
     }
   };
+  
+  
 
   return (
     <div>
+      <div>
       <ul>
         {rooms.map((room) => (
           <li key={room.id}>
@@ -190,6 +197,10 @@ const RoomZones = () => {
           )}
         </div>
       ))}
+      </div>
+      <div>
+        <SHH />
+      </div>
     </div>
   );
 };

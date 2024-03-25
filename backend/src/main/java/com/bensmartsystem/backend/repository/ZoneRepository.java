@@ -56,7 +56,7 @@ public class ZoneRepository {
         boolean updated = false;
         for (Room room : zone.getRooms()) {
             if (room.getId().equals(roomId)) {
-                room.setTemperature(newTemperature);
+                room.setDesiredTemperature(newTemperature);
                 updated = true;
                 break;
             }
