@@ -3,6 +3,7 @@ package com.bensmartsystem.backend.controller;
 import com.bensmartsystem.backend.model.Room;
 import com.bensmartsystem.backend.model.User;
 
+import lombok.Setter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,11 +25,13 @@ import java.util.Map;
 @RequestMapping("/api")
 public class RoomController {
 
-    // ConcurrentHashMap for thread-safe in-memory storage
-    // private static final ConcurrentHashMap<String, Room> rooms = new
-    // ConcurrentHashMap<>();
     @Getter
     private static final ArrayList<Room> roomList = new ArrayList<>();
+
+    //For testing purposes
+    public void addRoom(Room room){
+        roomList.add(room);
+    }
 
     @GetMapping("/rooms")
     public ResponseEntity<ArrayList<Room>> getAllRooms() {
@@ -200,7 +203,7 @@ public class RoomController {
     // updated
     private void assignRoomsToUsersAtStart(ArrayList<Room> allRooms) {
         // First we get a list of all the users
-        if (allRooms.size() == 0) {
+        if (allRooms.isEmpty()) {
             return;
         }
 

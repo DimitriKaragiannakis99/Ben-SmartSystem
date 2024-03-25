@@ -38,7 +38,6 @@ function RoomInfo() {
     axios
       .get("http://localhost:8080/api/getAllRooms")
       .then((response) => {
-        console.log(response.data);
         setRoomTemperatures(response.data);
       })
       .catch((error) => {
@@ -52,9 +51,6 @@ function RoomInfo() {
       .get("http://localhost:8080/api/temp/HVAC-on", {
         params: { roomID: roomid },
       })
-      .then((response) => {
-        console.log(response.data);
-      })
       .catch((error) => {
         console.error("Error turning on HVAC", error);
       });
@@ -64,9 +60,6 @@ function RoomInfo() {
     axios
       .get("http://localhost:8080/api/temp/HVAC-off", {
         params: { roomID: roomid },
-      })
-      .then((response) => {
-        console.log(response.data);
       })
       .catch((error) => {
         console.error("Error turning off HVAC", error);
@@ -81,14 +74,15 @@ function RoomInfo() {
           className="bg-gray-100 p-4 rounded-md border border-gray-300"
         >
           <div className="text-lg font-bold">{room.name}</div>
-          <div className="text-xl">{room.temperature} °C</div>
+          <div className="text-xl">
+            {parseFloat(room.temperature).toFixed(2)} °C
+          </div>
           <div className="text-xl">
             Desired Room Temp: {room.desiredTemperature} °C
           </div>
           <div className="text-xl">
-            Heater: {room.isHeaterOn ? "On" : "Off"}
+            HVAC: {room.isHeaterOn || room.isAcOn ? "ON" : "OFF"}
           </div>
-          <div className="text-xl">AC: {room.isAcOn ? "On" : "Off"}</div>
           <div>
             <button
               className="px-4 py-2 mt-2 border border-gray-300 bg-indigo-500 text-white rounded hover:bg-blue-700 transition-colors mr-2"
