@@ -29,7 +29,7 @@ public class SHH {
     public static void heating(Room room){
         getTimerInstance().schedule(new TimerTask() {
             public void run() {
-                if (room.getTemperature() >= room.getDesiredTemperature() || !room.getIsHeaterOn()) {
+                if (room.getTemperature() >= room.getDesiredTemperature() || !room.getIsHVACOn()) {
                     return; // pause the HVAC
                 }
                 room.setTemperature(room.getTemperature()+ 0.1);
@@ -40,7 +40,7 @@ public class SHH {
     public static void hvac_off_heat(Room room){
         getTimerInstance().schedule(new TimerTask() {
             public void run() {
-                if (room.getTemperature() >= outsideTemp || room.getIsHeaterOn() || room.getIsAcOn()) {
+                if (room.getTemperature() >= outsideTemp || room.getIsHVACOn()) {
                     return; // pause the HVAC
                 }
                 room.setTemperature(room.getTemperature()+ 0.05);
@@ -51,7 +51,7 @@ public class SHH {
     public static void cooling(Room room){
         getTimerInstance().schedule(new TimerTask() {
             public void run() {
-                if (room.getTemperature() <= room.getDesiredTemperature() || !room.getIsAcOn()) {
+                if (room.getTemperature() <= room.getDesiredTemperature() || !room.getIsHVACOn()) {
                     return;
                 }
                 room.setTemperature(room.getTemperature()- 0.1);
@@ -62,7 +62,7 @@ public class SHH {
     public static void hvac_off_cool(Room room){
         getTimerInstance().schedule(new TimerTask() {
             public void run() {
-                if (room.getTemperature() <= outsideTemp || room.getIsHeaterOn() || room.getIsAcOn()) {
+                if (room.getTemperature() <= outsideTemp || room.getIsHVACOn()) {
                     return;
                 }
                 room.setTemperature(room.getTemperature()- 0.05);
@@ -87,12 +87,12 @@ public class SHH {
             return ResponseEntity.ok("No room was provided");
         }
         if(room.getTemperature() < room.getDesiredTemperature()){
-            room.setIsHeaterOn(true);
+            room.setIsHVACOn(true);
             heating(room);
             return ResponseEntity.ok("Heater turned on");
         }
         else if(room.getTemperature() > room.getDesiredTemperature()){
-            room.setIsAcOn(true);
+            room.setIsHVACOn(true);
             cooling(room);
             return ResponseEntity.ok("AC turned on");
         }
@@ -107,14 +107,14 @@ public class SHH {
             return ResponseEntity.ok("No room was provided");
         }
         if(room.getTemperature() < outsideTemp){
-            room.setIsHeaterOn(false);
-            room.setIsAcOn(false);
+            room.setIsHVACOn(false);
+            room.setIsHVACOn(false);
             hvac_off_heat(room);
             return  ResponseEntity.ok("HVAC was turned off");
         }
         else if(room.getTemperature() > outsideTemp){
-            room.setIsHeaterOn(false);
-            room.setIsAcOn(false);
+            room.setIsHVACOn(false);
+            room.setIsHVACOn(false);
             hvac_off_cool(room);
             return  ResponseEntity.ok("HVAC was turned off");
         }

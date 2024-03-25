@@ -78,6 +78,20 @@ const RoomProvider = ({ children }) => {
       });
   }
 
+  const toggleHVAC = (roomId) => {
+    axios.post(`http://localhost:8080/api/toggleHVAC?roomId=${roomId}`)
+      .then(() => {
+        setRooms(prevRooms =>
+          prevRooms.map(room =>
+            room.id === roomId ? { ...room, isHVACOn: !room.isHVACOn } : room,
+          ),
+        );
+      })
+      .catch((error) => {
+        console.error('Error toggling HVAC', error);
+      });
+  }
+
   const updateRoomTemperature = (roomId, newTemperature, isOverridden) => {
     setRooms((prevRooms) =>
       prevRooms.map((room) => {

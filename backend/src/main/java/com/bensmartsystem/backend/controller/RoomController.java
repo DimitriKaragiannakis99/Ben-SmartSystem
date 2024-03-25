@@ -115,26 +115,14 @@ public class RoomController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
-    @PostMapping("/toggleHeater")
+    @PostMapping("/toggleHVAC")
     public ResponseEntity<?> toggleHeater(@RequestParam String roomId) {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
-                room.setIsHeaterOn(!room.getIsHeaterOn());
+                room.setIsHVACOn(!room.getIsHVACOn());
                 return ResponseEntity.ok(room);
             }
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
-    }
-
-    @PostMapping("/toggleAc")
-    public ResponseEntity<?> toggleAc(@RequestParam String roomId) {
-        for (Room room : roomList) {
-            if (room.getId().equals(roomId)) {
-                room.setIsAcOn(!room.getIsAcOn());
-                return ResponseEntity.ok(room);
-            }
-        }
-
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 

@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
+import { RoomContext } from "./Dashboard/RoomProvider";
 
 function RoomInfo() {
+  const { toggleHVAC } = useContext(RoomContext);
   const [roomTemperatures, setRoomTemperatures] = useState([]);
   let intervalRef = useRef();
 
@@ -53,6 +55,7 @@ function RoomInfo() {
       .then((response) => {
         console.log("hvac on");
         clearInterval(intervalRef.current);
+        toggleHVAC(roomid);
       })
       .catch((error) => {
         console.error("Error turning on HVAC", error);
@@ -67,6 +70,7 @@ function RoomInfo() {
       .then((response) => {
         console.log("hvac off");
         clearInterval(intervalRef.current);
+        toggleHVAC(roomid);
       })
       .catch((error) => {
         console.error("Error turning off HVAC", error);
