@@ -19,7 +19,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/zones")
 public class ZoneController {
 
-    private final ZoneRepository zoneRepository = new ZoneRepository();
+    private final ZoneRepository zoneRepository;
+
+    // Constructor injection
+    public ZoneController(ZoneRepository zoneRepository) {
+        this.zoneRepository = zoneRepository;
+    }
 
     @PostMapping
     public ResponseEntity<String> createZone(@RequestBody Map<String, Object> payload) {
@@ -60,6 +65,35 @@ public class ZoneController {
         return ResponseEntity.ok(zonesWithRoomNames);
     }
 
+
+
+    @PostMapping("/{zoneId}/scheduleTemperature")
+    public ResponseEntity<?> scheduleTemperature(@PathVariable Long zoneId, @RequestBody Map<String, Object> payload) {
+        List<String> timesOfDay = (List<String>) payload.get("timeOfDay");
+        Double temperature = ((Number) payload.get("temperature")).doubleValue();
+
+        if (timesOfDay == null || timesOfDay.isEmpty() || temperature == null) {
+            return ResponseEntity.badRequest().body("Time of day and temperature are required");
+        }
+
+        Zone zone = zoneRepository.findById(zoneId);
+        if (zone == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Apply the temperature for each selected time of day
+        timesOfDay.forEach(timeOfDay -> zone.setTemperatureForTime(timeOfDay, temperature));
+
+        zoneRepository.update(zone); 
+
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Scheduled temperature set for the selected times");
+        return ResponseEntity.ok().body(response);
+    }
+
+
+
     @PutMapping("/{zoneId}/temperature")
     public ResponseEntity<?> updateZoneTemperature(@PathVariable Long zoneId,
             @RequestBody Map<String, Double> payload) {
@@ -83,6 +117,22 @@ public class ZoneController {
         });
 
         return ResponseEntity.ok().body("Temperature updated for all rooms in the zone");
+    }
+
+    public boolean applyTemperatureToZone(Zone zone, double temperature) {
+
+
+        List<Room> rooms = zone.getRooms();
+        if (rooms == null || rooms.isEmpty()) {
+            System.err.println("No rooms found in zone with ID: " + zone.getId());
+            return false;
+        }
+
+        // Update the temperature for each room in the zone
+        rooms.forEach(room -> room.setTemperature(temperature));
+
+
+        return true;
     }
 
     
