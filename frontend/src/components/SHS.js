@@ -8,9 +8,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import {
-	DataGrid,
-	GridToolbarContainer,
-	useGridApiContext,
+  DataGrid,
+  GridToolbarContainer,
+  useGridApiContext,
 } from "@mui/x-data-grid";
 import dayjs from "dayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
@@ -50,35 +50,41 @@ const columns = [
 		type: "boolean",
 		width: 150,
 	},
+	{
+		field: "shhAccess",
+		headerName: "SHH Access",
+		type: "boolean",
+		width: 150,
+	},
 ];
 
 //! Harcoded data for now
 const rows = [
-	{
-		id: 1,
-		name: "Parent",
-		remoteAccess: true,
-		doorAccess: true,
-		windowAccess: true,
-		lightAccess: true,
-	},
-	{ id: 2, name: "Child", doorAccess: true },
+  {
+    id: 1,
+    name: "Parent",
+    remoteAccess: true,
+    doorAccess: true,
+    windowAccess: true,
+    lightAccess: true,
+  },
+  { id: 2, name: "Child", doorAccess: true },
 ];
 
 //This just generates the user ID
 function getUID() {
-	// Get the timestamp and convert
-	// it into alphanumeric input
-	return Date.now().toString(36);
+  // Get the timestamp and convert
+  // it into alphanumeric input
+  return Date.now().toString(36);
 }
 
 //TODO: Change all this so the logic is in the backend
 //In here we have the functionality to add/remove and edit user profile information
 //We will first add the user information
 function AddUser(userName, permissions) {
-	//We use the userName as the unique identifier for the user
+  //We use the userName as the unique identifier for the user
 
-	/*
+  /*
 The permissions are going to be a dictionary with the following structure:
     var permissions = 
     {
@@ -89,91 +95,93 @@ The permissions are going to be a dictionary with the following structure:
 This means that the user can only open doors but not windows or lights
 */
 
-	//We will just save the userName and the permissions in the local storage
-	//I guess we will set the ID here by just using the length of the local storage
-	let id = getUID();
+  //We will just save the userName and the permissions in the local storage
+  //I guess we will set the ID here by just using the length of the local storage
+  let id = getUID();
 
-	// This also adds it to the local storage
-	localStorage.setItem(
-		id,
-		JSON.stringify({ name: userName, permissions: permissions })
-	);
+  // This also adds it to the local storage
+  localStorage.setItem(
+    id,
+    JSON.stringify({ name: userName, permissions: permissions })
+  );
 
-	// TODO: Check if this works, after doing the retreival from the backend
-	//Add the user here to the backend using axios
-	axios
-		.post("http://localhost:8080/api/users/add", {
-			id: id,
-			username: userName,
-			permissions: JSON.stringify(permissions),
-		})
-		.catch((error) => {
-			console.error("Error sending User Info", error);
-		});
+  // TODO: Check if this works, after doing the retreival from the backend
+  //Add the user here to the backend using axios
+  axios
+    .post("http://localhost:8080/api/users/add", {
+      id: id,
+      username: userName,
+      permissions: JSON.stringify(permissions),
+    })
+    .catch((error) => {
+      console.error("Error sending User Info", error);
+    });
 
-	//Print to the console the user information
-	// console.log("Added User: " + userName + "| Permissions: " + JSON.stringify(permissions));
-	return true;
+  //Print to the console the user information
+  // console.log("Added User: " + userName + "| Permissions: " + JSON.stringify(permissions));
+  return true;
 }
 
 function RemoveUser(id) {
-	//We will just remove the user from the local storage
-	localStorage.removeItem(id);
+  //We will just remove the user from the local storage
+  localStorage.removeItem(id);
 
-	// We will also remove the user from the backend
-	axios.get("http://localhost:8080/api/users/delete/" + id).catch((error) => {
-		console.error("Error sending User Info", error);
-	});
-	//Print to the console the user information
-	console.log("User: " + id + " has been removed");
-	return true;
+  // We will also remove the user from the backend
+  axios.get("http://localhost:8080/api/users/delete/" + id).catch((error) => {
+    console.error("Error sending User Info", error);
+  });
+  //Print to the console the user information
+  console.log("User: " + id + " has been removed");
+  return true;
 }
 
 function EditUser(id, userName, permissions) {
-	//We will just save the userName and the permissions in the local storage
-	localStorage.setItem(
-		id,
-		JSON.stringify({ name: userName, permissions: permissions })
-	);
+  //We will just save the userName and the permissions in the local storage
+  localStorage.setItem(
+    id,
+    JSON.stringify({ name: userName, permissions: permissions })
+  );
 
-	// Update in the backend
-	axios
-		.post("http://localhost:8080/api/users/update/" + id, {
-			id: id,
-			username: userName,
-			permissions: JSON.stringify(permissions),
-		})
-		.catch((error) => {
-			console.error("Error sending User Info", error);
-		});
-	//Print to the console the user information
-	console.log(
-		"Updated User ID: " + id + " Permissions: " + JSON.stringify(permissions)
-	);
-	return true;
+  // Update in the backend
+  axios
+    .post("http://localhost:8080/api/users/update/" + id, {
+      id: id,
+      username: userName,
+      permissions: JSON.stringify(permissions),
+    })
+    .catch((error) => {
+      console.error("Error sending User Info", error);
+    });
+  //Print to the console the user information
+  console.log(
+    "Updated User ID: " + id + " Permissions: " + JSON.stringify(permissions)
+  );
+  return true;
 }
 
 function logAsUser(id, setter) {
-	//We will just read the user from the local storage
-	console.log("User: " + id + " has been logged in");
-	setter(id);
+  //We will just read the user from the local storage
+  console.log("User: " + id + " has been logged in");
+  setter(id);
 }
 
 function setHouseLocation(id, location) {}
 
 function setSimulationTime(hour, day, month) {
-	axios
-		.post("http://localhost:8080/api/time/setTime", {
-			hour: hour,
-			day: day,
-			month: month,
-		})
-		.catch((error) => {
-			console.error("Error sending time Info", error);
-		});
+  axios
+    .post("http://localhost:8080/api/time/setTime", {
+      hour: hour,
+      day: day,
+      month: month,
+    })
+    .catch((error) => {
+      console.error("Error sending time Info", error);
+    });
 }
 
 function UserManagementTab() {
+	
+
 	// Hooks for the current user
 	const [currentUser, setCurrentUser] = React.useState("Simulator");
 
@@ -182,6 +190,7 @@ function UserManagementTab() {
 
 	useEffect(() => {
 		setUsers([...readUsers()]);
+		updateCurrentUser();
 	}, []);
 
 	// TODO: Fix this, sometimes it doesnt update the users
@@ -294,7 +303,26 @@ function UserManagementTab() {
 			//In here we will just open the dialog box with the user information
 			logAsUser(selectedIds[0], setCurrentUser);
 			localStorage.setItem("currentUserId", selectedIds[0]);
+			// Now we will just update that information in the backend
+			axios.get("http://localhost:8080/api/users/setCurrent/" + selectedIds[0]).catch((error) => {
+				console.error("Error sending User Info", error);
+			});
+
 		}
+	}
+
+	function updateCurrentUser() {
+		//In here we will just update the current user in the backend
+		axios.get('http://localhost:8080/api/users/getCurrent').then(
+			(response) => {
+				 console.log(response.data);
+				setCurrentUser(response.data);
+				localStorage.setItem("currentUserId", response.data);
+			}
+		).catch((error) => {
+			console.error("Error sending User Info", error);
+		});
+	
 	}
 
 	return (
@@ -557,13 +585,14 @@ function UserManagementTab() {
 			</div>
 		</div>
 	);
+
 }
 
 export default function UserManagement() {
-	return (
-		//Just create a simple button that creates a user
-		<div>
-			<UserManagementTab />
-		</div>
-	);
+  return (
+    //Just create a simple button that creates a user
+    <div>
+      <UserManagementTab />
+    </div>
+  );
 }
