@@ -5,6 +5,7 @@ import SmartHomeDashboard from "./SmartHomeDashboard";
 import HomeLayout from "./components/HomeLayout";
 import EditSimulationPage from "./components/Dashboard/EditSimulationPage";
 
+
 export default function App() {
   return (
     <div className="bg-white">
