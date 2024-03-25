@@ -1,10 +1,14 @@
 import React from 'react'
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 
 
 function OutsideTemperatureUpload() {
+    const navigate = useNavigate();
     const handleFileUpload = async (event) => {
+       
+       
         const file = event.target.files[0];
         console.log("Uploaded file:", file);
     
@@ -25,6 +29,8 @@ function OutsideTemperatureUpload() {
     
           // Handle response from backend
           console.log("Response from backend server:", response);
+          navigate("/");
+          
          
         } catch (error) {
           console.error("Error uploading file:", error);
@@ -32,8 +38,9 @@ function OutsideTemperatureUpload() {
     };
 
     const handleUploadButtonClick = () => {
-        document.getElementById("fileInput").click();
+        document.getElementById("fileInput").click(); 
       };
+
       return (
         <div className="bg-blue-100 h-screen flex justify-center items-center">
           <div className="bg-purple-300 p-6 rounded-lg w-108 h-50 grid place-items-center">
