@@ -30,6 +30,8 @@ public class Room {
     private boolean isAutoLightOn;
     private boolean isAutoLockOn;
     private boolean isHVAC;
+    private boolean isHeaterOn;
+    private boolean isAcOn;
 
     public Room(String name, List<String> roomComponents) {
         this.id = UUID.randomUUID().toString();
@@ -44,6 +46,8 @@ public class Room {
         this.isAutoLightOn = false;
         this.isAutoLockOn = false;
         this.isHVAC = false;
+        this.isHeaterOn = false;
+        this.isAcOn = false;
     }
 
     public Room(String name, List<String> roomComponents, List<String> users) {
@@ -59,6 +63,8 @@ public class Room {
         this.isAutoLightOn = false;
         this.isAutoLockOn = false;
         this.isHVAC = false;
+        this.isHeaterOn = false;
+        this.isAcOn = false;
     }
 
     public Room(String name, List<String> users, List<String> roomComponents, boolean isWindowBlocked,
@@ -100,6 +106,8 @@ public class Room {
         this.isAutoLightOn = incomingRoom.isAutoLightOn;
         this.isAutoLockOn = incomingRoom.isAutoLockOn;
         this.isHVAC = incomingRoom.isHVAC;
+        this.isHeaterOn = incomingRoom.isHeaterOn;
+        this.isAcOn = incomingRoom.isAcOn;
     }
 
     public String getId() {
@@ -201,6 +209,22 @@ public class Room {
 
     public void setIsHVACOn(boolean isHVAC) {
         this.isHVAC = isHVAC;
+    }
+
+    public boolean getIsHeaterOn() {
+        return isHeaterOn;
+    }
+
+    public void setIsHeaterOn(boolean isHeaterOn) {
+        this.isHeaterOn = isHeaterOn;
+    }
+
+    public boolean getIsAcOn() {
+        return isAcOn;
+    }
+
+    public void setIsAcOn(boolean isAcOn) {
+        this.isAcOn = isAcOn;
     }
 
     public double getTemperature() {
