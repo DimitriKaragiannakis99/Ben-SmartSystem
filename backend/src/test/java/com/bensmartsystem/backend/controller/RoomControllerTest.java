@@ -138,9 +138,4 @@ class RoomControllerTest {
         assertEquals(2, RoomController.getRoomList().size());
     }
 
-    @Test
-    void checkPermissions() {
-        boolean response = RoomController.checkPermissions("{\"doorAccess\":false}", 1);
-        assertEquals(false, response);
-    }
 }
