@@ -38,18 +38,10 @@ function DoorFigure() {
   );
 }
 
-function HeaterFigure() {
+function HVACFigure() {
   return (
     <div className="text-center m-2.5">
-      <img src="/images/heater.png" alt="Heater" className="w-12 h-auto" />
-    </div>
-  );
-}
-
-function AcFigure() {
-  return (
-    <div className="text-center m-2.5">
-      <img src="/images/ac.png" alt="AC" className="w-12 h-auto" />
+      <img src="/images/heater.jpg" alt="Heater" className="w-12 h-auto" />
     </div>
   );
 }
@@ -93,6 +85,7 @@ const HouseView = () => {
                   {room.isLightOn && <LightbulbFigure />}
                   {room.isWindowOpen && <WindowFigure />}
                   {room.isDoorOpen && <DoorFigure />}
+                  {room.isHVACOn && <HVACFigure />}
                 </div>
               </div>
             </div>

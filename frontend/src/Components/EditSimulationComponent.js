@@ -170,7 +170,6 @@ const RoomEditPage = () => {
   };
 
   const handleSave = () => {
-    console.log("Saving rooms:", rooms);
     // Send a POST request to the backend API endpoint
     axios
       .post("http://localhost:8080/api/saveRooms", rooms)
