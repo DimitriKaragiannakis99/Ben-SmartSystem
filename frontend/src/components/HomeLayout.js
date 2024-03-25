@@ -3,6 +3,7 @@ import axios from "axios";
 const HomeLayout = ({ onSubmission }) => {
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
+    console.log("Uploaded file:", file);
 
     //Handle file
     const formData = new FormData();
@@ -22,6 +23,7 @@ const HomeLayout = ({ onSubmission }) => {
       );
 
       // Handle response from backend
+      console.log("Response from backend server:", response);
       onSubmission(response.data); //Pass the data to the callback function
     } catch (error) {
       console.error("Error uploading file:", error);

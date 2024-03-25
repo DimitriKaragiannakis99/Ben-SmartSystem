@@ -38,10 +38,6 @@ const Profile = () => {
     navigate("/edit-rooms");
   };
 
-  const handleUploadTemperatures = () => {
-    navigate("/uploadTemps");
-  };
-
   return (
     <div className="flex flex-col items-center h-full">
       <h1 className="text-3xl font-bold underline mb-20">Simulation</h1>
@@ -53,12 +49,6 @@ const Profile = () => {
         onClick={handleClick}
       >
         Edit Simulation
-      </button>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mb-16"
-        onClick={handleUploadTemperatures}
-      >
-        Upload Temperatures
       </button>
       {showSimulation && <EditSimulation />}
       <div className="mb-16">

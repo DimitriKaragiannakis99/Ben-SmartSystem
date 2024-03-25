@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { RoomContext } from "./Dashboard/RoomProvider";
 
 function RoomInfo() {
-  const { toggleHVAC, isSHHOn } = useContext(RoomContext);
   const [roomTemperatures, setRoomTemperatures] = useState([]);
   let intervalRef = useRef();
 
@@ -27,6 +25,7 @@ function RoomInfo() {
           response.data.includes("Temperature is below zero, pipes may burst!")
         ) {
           // this should be logged on console if alert is triggered
+          console.log(response);
           clearInterval(intervalRef.current);
         }
       })
@@ -55,7 +54,6 @@ function RoomInfo() {
       .then((response) => {
         console.log("hvac on");
         clearInterval(intervalRef.current);
-        toggleHVAC(roomid);
       })
       .catch((error) => {
         console.error("Error turning on HVAC", error);
@@ -70,16 +68,11 @@ function RoomInfo() {
       .then((response) => {
         console.log("hvac off");
         clearInterval(intervalRef.current);
-        toggleHVAC(roomid);
       })
       .catch((error) => {
         console.error("Error turning off HVAC", error);
       });
   };
-
-  if (!isSHHOn) {
-    return <div className="bg-blue-100 min-h-screen">SHH is off.</div>;
-  }
 
   return (
     <div className="inline-grid grid-cols-1 gap-4">
@@ -93,10 +86,7 @@ function RoomInfo() {
             {parseFloat(room.temperature).toFixed(2)} °C
           </div>
           <div className="text-xl">
-            Desired Room Temp:{" "}
-            {room.isTemperatureOverridden
-              ? `${room.desiredTemperature} (overridden)`
-              : room.desiredTemperature}
+            Desired Room Temp: {room.desiredTemperature} °C
           </div>
           <div className="text-xl">
             HVAC: {room.isHeaterOn || room.isAcOn ? "ON" : "OFF"}

@@ -6,9 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.springframework.stereotype.Repository;
-
-@Repository
 public class ZoneRepository {
 
     private final List<Zone> zones = new ArrayList<>();
@@ -19,18 +16,6 @@ public class ZoneRepository {
         zone.setId(counter.incrementAndGet());
         zones.add(zone);
         return zone;
-    }
-
-    public boolean update(Zone zone){
-        for (Zone z : zones){
-            if (z.getId().equals(zone.getId())){
-                z.setName(zone.getName());
-                z.setRooms(zone.getRooms());
-                z.setTemperatureSchedule(zone.getTemperatureSchedule());
-                return true;
-            }
-        }
-        return false;
     }
 
     // Returns all zones
@@ -56,7 +41,7 @@ public class ZoneRepository {
         boolean updated = false;
         for (Room room : zone.getRooms()) {
             if (room.getId().equals(roomId)) {
-                room.setDesiredTemperature(newTemperature);
+                room.setTemperature(newTemperature);
                 updated = true;
                 break;
             }
