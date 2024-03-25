@@ -4,6 +4,7 @@ import EditSimulation from "./components/EditSimulationComponent";
 import SmartHomeDashboard from "./SmartHomeDashboard";
 import HomeLayout from "./components/HomeLayout";
 import EditSimulationPage from "./components/Dashboard/EditSimulationPage";
+import OutsideTemperatureUpload from "./components/OutsideTemperatureUpload";
 
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
             <Route path="/" element={<SmartHomeDashboard />} />
             <Route path="/edit-rooms" element={<EditSimulationPage />} />
             <Route path="/home-layout" element={<HomeLayout />} />
+            <Route path="/uploadTemps" element={<OutsideTemperatureUpload  />} />
           </Routes>
         </div>
       </Router>
