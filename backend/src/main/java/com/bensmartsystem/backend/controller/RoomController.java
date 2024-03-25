@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.Setter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,17 +28,20 @@ import java.util.HashMap;
 @RequestMapping("/api")
 public class RoomController {
 
-    // ConcurrentHashMap for thread-safe in-memory storage
-    // private static final ConcurrentHashMap<String, Room> rooms = new
-    // ConcurrentHashMap<>();
     @Getter
     private static final ArrayList<Room> roomList = new ArrayList<>();
+  
     @GetMapping("/rooms")
     public ResponseEntity<ArrayList<Room>> getAllRooms() {
-        System.out.println(roomList);
+        //System.out.println(roomList);
         // Return a new ArrayList to avoid exposing the internal storage structure
-        // In here we will assign the users to random roomsfor the first time
+        // In here we will assign the users to random rooms for the first time
         updateUsersInRooms();
+        return ResponseEntity.ok(roomList);
+    }
+
+    @GetMapping("/getAllRooms")
+    public ResponseEntity<ArrayList<Room>> getRooms() {
         return ResponseEntity.ok(roomList);
     }
 
@@ -128,16 +132,18 @@ public class RoomController {
                 return ResponseEntity.ok(room);
             }
         }
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
     @PutMapping("/rooms/{roomId}/temperature")
-    public ResponseEntity<?> updateRoomTemperature(@PathVariable String roomId, @RequestBody Map<String, Double> payload) {
+    public ResponseEntity<?> updateRoomTemperature(@PathVariable String roomId,
+            @RequestBody Map<String, Double> payload) {
         Double newTemperature = payload.get("temperature");
         if (newTemperature == null) {
             return ResponseEntity.badRequest().body("Temperature is required");
         }
-    
+
         Room room = findRoomById(roomId);
         if (room == null) {
             return ResponseEntity.notFound().build();
@@ -198,8 +204,8 @@ public class RoomController {
 
     // This method assigns a given user to the first room
     public static void assignUserToFirstRoom(User user) {
-        if (roomList.size() > 0) {
-            roomList.get(0).addUsers(user.getUsername());
+        if (!roomList.isEmpty()) {
+            roomList.getFirst().addUsers(user.getUsername());
         }
         System.out.println("User added to first room: " + user.getUsername());
         SimulationEventManager.getInstance().Notify("userChangedRoom");
@@ -213,7 +219,7 @@ public class RoomController {
 
         List<User> users = UserController.getUsers();
 
-        if (users.size() == 0 || roomList.size() == 0) {
+        if (users.isEmpty() || roomList.isEmpty()) {
             return;
         }
         for (User u : users) {
@@ -222,7 +228,9 @@ public class RoomController {
             roomList.get(u.getRoomIndex()).addUsers(u.getUsername());
 
         }
+
                     SimulationEventManager.getInstance().Notify("usersUpdatedInRooms");
+
     }
 
     public static Room findRoomById(String id) {

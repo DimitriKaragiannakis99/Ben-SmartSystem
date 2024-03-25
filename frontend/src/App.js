@@ -4,6 +4,7 @@ import EditSimulation from "./components/EditSimulationComponent";
 import SmartHomeDashboard from "./SmartHomeDashboard";
 import HomeLayout from "./components/HomeLayout";
 import EditSimulationPage from "./components/Dashboard/EditSimulationPage";
+import SHH from "./components/SHH";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
             <Route path="/" element={<SmartHomeDashboard />} />
             <Route path="/edit-rooms" element={<EditSimulationPage />} />
             <Route path="/home-layout" element={<HomeLayout />} />
+            <Route path="/shh" element={<SHH />} />
           </Routes>
         </div>
       </Router>

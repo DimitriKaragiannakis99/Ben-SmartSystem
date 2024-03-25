@@ -49,7 +49,6 @@ public class UserController {
                     //Get the room name
                     roomName = RoomController.getRoomList().get(user.getRoomIndex()).getName();
                 }
-
                 Map<String, Object> userData = new HashMap<>();
                 userData.put("id", user.getId());
                 userData.put("username", user.getUsername());
@@ -124,6 +123,7 @@ public class UserController {
     @GetMapping("/getCurrent")
     public ResponseEntity<?> getCurrentUserName() {
         return ResponseEntity.ok(currentUser.getUsername());
+
     }
 
 }
