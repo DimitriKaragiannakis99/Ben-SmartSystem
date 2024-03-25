@@ -5,8 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,21 +14,21 @@ import java.util.TimerTask;
 public class SHH {
 
     static double outsideTemp = 17;
-    private static Timer timerInstance;
-
-    private static synchronized Timer getTimerInstance() {
-        if (timerInstance == null) {
-            timerInstance = new Timer(true);
-        }
-        return timerInstance;
-    }
-
-    //HAVC Temp algorithm implementation
+    
     public static void heating(Room room){
-        getTimerInstance().schedule(new TimerTask() {
+        Timer task = new Timer(true);
+        task.schedule(new TimerTask() {
             public void run() {
                 if (room.getTemperature() >= room.getDesiredTemperature() || !room.getIsHeaterOn()) {
-                    return; // pause the HVAC
+                    //check if heater is still on if yes -> pause hvac don't turn off
+                    if(!room.getIsHeaterOn()){
+                        task.cancel();
+                        return; // turn off heating
+                    }
+                    else{
+                        //pause heating -> go to outside temp until threshold
+                        hvac_paused(room);
+                    }
                 }
                 room.setTemperature(room.getTemperature()+ 0.1);
             }
@@ -38,9 +36,11 @@ public class SHH {
     }
 
     public static void hvac_off_heat(Room room){
-        getTimerInstance().schedule(new TimerTask() {
+        Timer task = new Timer(true);
+        task.schedule(new TimerTask() {
             public void run() {
                 if (room.getTemperature() >= outsideTemp || room.getIsHeaterOn() || room.getIsAcOn()) {
+                    task.cancel();
                     return; // pause the HVAC
                 }
                 room.setTemperature(room.getTemperature()+ 0.05);
@@ -49,10 +49,18 @@ public class SHH {
     }
 
     public static void cooling(Room room){
-        getTimerInstance().schedule(new TimerTask() {
+        Timer task = new Timer(true);
+        task.schedule(new TimerTask() {
             public void run() {
                 if (room.getTemperature() <= room.getDesiredTemperature() || !room.getIsAcOn()) {
-                    return;
+                    if(!room.getIsAcOn()){
+                        task.cancel();
+                        return; // turn off cooling
+                    }
+                    else{
+                        //pause cooling -> go to outside temp until threshold
+                        hvac_paused(room);
+                    }
                 }
                 room.setTemperature(room.getTemperature()- 0.1);
             }
@@ -60,9 +68,11 @@ public class SHH {
     }
 
     public static void hvac_off_cool(Room room){
-        getTimerInstance().schedule(new TimerTask() {
+        Timer task = new Timer(true);
+        task.schedule(new TimerTask() {
             public void run() {
                 if (room.getTemperature() <= outsideTemp || room.getIsHeaterOn() || room.getIsAcOn()) {
+                    task.cancel();
                     return;
                 }
                 room.setTemperature(room.getTemperature()- 0.05);
@@ -119,5 +129,33 @@ public class SHH {
             return  ResponseEntity.ok("HVAC was turned off");
         }
         return  ResponseEntity.ok("HVAC was not turned off");
+    }
+
+    private static boolean heat_or_cool(Room room){
+        return room.getTemperature() > outsideTemp;
+    }
+
+    public static void hvac_paused(Room room){
+        Timer task = new Timer(true);
+        task.schedule(new TimerTask() {
+            public void run() {
+                if (heat_or_cool(room)) {
+                    if(room.getTemperature() <= room.getDesiredTemperature()-0.25){
+                        task.cancel();
+                        return; // stop pause
+                    }
+                    //cool
+                    room.setTemperature(room.getTemperature()- 0.05);
+                }
+                else {
+                    if(room.getTemperature() >= room.getDesiredTemperature()+0.25){
+                        task.cancel();
+                        return; // stop pause
+                    }
+                    //heat
+                    room.setTemperature(room.getTemperature()+ 0.05);
+                }
+            }
+        }, 0, 1000);
     }
 }
