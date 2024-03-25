@@ -51,6 +51,8 @@ function RoomInfo() {
         params: { roomID: roomid },
       })
       .then((response) => {
+        console.log("hvac on");
+        clearInterval(intervalRef.current);
       })
       .catch((error) => {
         console.error("Error turning on HVAC", error);
@@ -63,6 +65,8 @@ function RoomInfo() {
         params: { roomID: roomid },
       })
       .then((response) => {
+        console.log("hvac off");
+        clearInterval(intervalRef.current);
       })
       .catch((error) => {
         console.error("Error turning off HVAC", error);
@@ -77,14 +81,18 @@ function RoomInfo() {
           className="bg-gray-100 p-4 rounded-md border border-gray-300"
         >
           <div className="text-lg font-bold">{room.name}</div>
-          <div className="text-xl">{room.temperature} °C</div>
           <div className="text-xl">
-          Desired Room Temp: {room.isTemperatureOverridden ? `${room.desiredTemperature} (overridden)` : room.desiredTemperature}
+            {parseFloat(room.temperature).toFixed(2)} °C
           </div>
           <div className="text-xl">
-            Heater: {room.isHeaterOn ? "On" : "Off"}
+            Desired Room Temp:{" "}
+            {room.isTemperatureOverridden
+              ? `${room.desiredTemperature} (overridden)`
+              : room.desiredTemperature}
           </div>
-          <div className="text-xl">AC: {room.isAcOn ? "On" : "Off"}</div>
+          <div className="text-xl">
+            HVAC: {room.isHeaterOn || room.isAcOn ? "ON" : "OFF"}
+          </div>
           <div>
             <button
               className="px-4 py-2 mt-2 border border-gray-300 bg-indigo-500 text-white rounded hover:bg-blue-700 transition-colors mr-2"

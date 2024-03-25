@@ -491,27 +491,39 @@ function UserManagementTab() {
                     event.preventDefault();
                     const formData = new FormData(event.currentTarget);
                     const formJson = Object.fromEntries(formData.entries());
-                    const time = formJson.time;
+                    //In here we will send handle the data
+                    const text = formJson.dateTime.toString();
+                    console.log(formJson.dateTime.toString());
+                    let day = text.split("/")[1];
+                    let month = text.split("/")[0];
+                    let hour = text.split("/")[2].split(" ")[1].split(":")[0];
 
-                    if (time) {
-                      const [hour, minute, second] = time.split(":");
-                      setSimulationTime(hour, minute, second);
-                    }
+                    //  console.log("Day: " + day + " Month: " + month + " Year: " + year + " Time: " + time);
+
+                    setSimulationTime(hour, day, month);
                     handleCloseT();
                   },
                 }}
               >
-                <DialogTitle>Change Simulation Time</DialogTitle>
+                <DialogTitle>Change Simulation Date/Time</DialogTitle>
                 <DialogContent>
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="time"
-                    label="Time (hour : minute : second)"
-                    type="text"
-                    fullWidth
-                    required
-                  />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer
+                      components={[
+                        "DateTimeField",
+                        "DateTimeField",
+                        "DateTimeField",
+                      ]}
+                    >
+                      <DateTimeField
+                        label="Enter Date and Time"
+                        format="L HH:mm"
+                        name="dateTime"
+                        id="dateTime"
+                        required
+                      />
+                    </DemoContainer>
+                  </LocalizationProvider>
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={handleCloseE}>Cancel</Button>

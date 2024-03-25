@@ -20,7 +20,7 @@ public class TimeController
 
     @PostMapping("/setTime")
     public void setTime(@RequestBody Time time) {
-        //Print to the console the newuser added
+        //Print to the console the new user added
         System.out.println("New Time set" + time.getHour() + " " + time.getDay() + " " + time.getMonth());
         currentTime = time;
         SimulationEventManager.getInstance().Notify("timeChanged");

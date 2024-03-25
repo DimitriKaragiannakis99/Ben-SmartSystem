@@ -26,24 +26,26 @@ public class TemperatureScheduler {
         List<Zone> allZones = zoneService.findAllZones();
 
         allZones.stream()
-            .filter(zone -> zone.getTemperatureForTime(currentTimeSlot) != Zone.defaultTemperature) // Filter zones with specific schedules
-            .forEach(zone -> {
-                double scheduledTemperature = zone.getTemperatureForTime(currentTimeSlot);
-                if (zoneService.applyTemperatureToZone(zone.getId(), scheduledTemperature)) { 
-                    System.out.println("Updated zone " + zone.getId() + " to temperature " + scheduledTemperature);
-                }
-            });
+                .filter(zone -> zone.getTemperatureForTime(currentTimeSlot) != Zone.defaultTemperature) // Filter zones
+                                                                                                        // with specific
+                                                                                                        // schedules
+                .forEach(zone -> {
+                    double scheduledTemperature = zone.getTemperatureForTime(currentTimeSlot);
+                    if (zoneService.applyTemperatureToZone(zone.getId(), scheduledTemperature)) {
+                        System.out.println("Updated zone " + zone.getId() + " to temperature " + scheduledTemperature);
+                    }
+                });
     }
 
-        private String determineCurrentTimeSlot() {
-            // Use currentTime, which is your singleton managed by Spring
-            int hour = time.getHour();
-            if (hour >= 5 && hour < 12) {
-                return "morning";
-            } else if (hour >= 12 && hour < 17) {
-                return "afternoon";
-            } else {
-                return "evening";
-            }
+    private String determineCurrentTimeSlot() {
+        // Use currentTime, which is your singleton managed by Spring
+        int hour = time.getHour();
+        if (hour >= 5 && hour < 12) {
+            return "morning";
+        } else if (hour >= 12 && hour < 17) {
+            return "afternoon";
+        } else {
+            return "evening";
         }
+    }
 }
