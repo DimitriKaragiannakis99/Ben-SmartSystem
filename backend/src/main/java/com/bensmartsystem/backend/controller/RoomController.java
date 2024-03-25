@@ -115,45 +115,45 @@ public class RoomController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
-    @PostMapping("/toggleHeater")
+    @PostMapping("/toggleHVAC")
     public ResponseEntity<?> toggleHeater(@RequestParam String roomId) {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
-                room.setIsHeaterOn(!room.getIsHeaterOn());
+                room.setIsHVACOn(!room.getIsHVACOn());
                 return ResponseEntity.ok(room);
             }
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
-    }
-
-    @PostMapping("/toggleAc")
-    public ResponseEntity<?> toggleAc(@RequestParam String roomId) {
-        for (Room room : roomList) {
-            if (room.getId().equals(roomId)) {
-                room.setIsAcOn(!room.getIsAcOn());
-                return ResponseEntity.ok(room);
-            }
-        }
-
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
     @PutMapping("/rooms/{roomId}/temperature")
     public ResponseEntity<?> updateRoomTemperature(@PathVariable String roomId,
-            @RequestBody Map<String, Double> payload) {
-        Double newTemperature = payload.get("temperature");
-        if (newTemperature == null) {
-            return ResponseEntity.badRequest().body("Temperature is required");
+                                                @RequestBody Map<String, Object> payload) {
+        Object temperatureObj = payload.get("temperature");
+        if (!(temperatureObj instanceof Number)) {
+            return ResponseEntity.badRequest().body("Temperature must be a number");
         }
 
+        Double newTemperature;
+        if (temperatureObj instanceof Integer) {
+            newTemperature = ((Integer) temperatureObj).doubleValue();
+        } else {
+            newTemperature = (Double) temperatureObj;
+        }
+        
+        Boolean isOverridden = (Boolean) payload.getOrDefault("overridden", false);
+        
         Room room = findRoomById(roomId);
         if (room == null) {
             return ResponseEntity.notFound().build();
         }
 
         room.setDesiredTemperature(newTemperature);
+        room.setTemperatureOverridden(isOverridden);
         return ResponseEntity.ok().body("Desired Temperature updated for room with ID: " + roomId);
     }
+
+
 
     // This has the logic for retrieving the .txt file from the front-end, parsing
     // the info and adding it to the hashmap.

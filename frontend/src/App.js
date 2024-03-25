@@ -5,10 +5,15 @@ import SmartHomeDashboard from "./SmartHomeDashboard";
 import HomeLayout from "./components/HomeLayout";
 import EditSimulationPage from "./components/Dashboard/EditSimulationPage";
 import SHH from "./components/SHH";
+import OutsideTemperatureUpload from "./components/OutsideTemperatureUpload";
+import GetOutsideTemperature from "./components/GetOutsideTemperature";
+import OutsideTemperatureProvider from './components/OutsideTemperatureProvider'
+
 
 export default function App() {
   return (
     <div className="bg-white">
+      <OutsideTemperatureProvider>
       <Router>
         <div>
           <Routes>
@@ -16,9 +21,12 @@ export default function App() {
             <Route path="/edit-rooms" element={<EditSimulationPage />} />
             <Route path="/home-layout" element={<HomeLayout />} />
             <Route path="/shh" element={<SHH />} />
+            <Route path="/uploadTemps" element={<OutsideTemperatureUpload  />} />
+            <Route path="/getTemps" element={<GetOutsideTemperature  />} />
           </Routes>
         </div>
       </Router>
+      </OutsideTemperatureProvider>
     </div>
   );
 }

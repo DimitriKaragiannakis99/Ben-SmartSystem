@@ -22,12 +22,14 @@ public class Room {
     private List<String> roomComponents;
     private double temperature;
     private double desiredTemperature;
+    private boolean isTemperatureOverridden;
     private boolean isWindowBlocked;
     private boolean isLightOn;
     private boolean isWindowOpen;
     private boolean isDoorOpen;
     private boolean isAutoLightOn;
     private boolean isAutoLockOn;
+    private boolean isHVAC;
     private boolean isHeaterOn;
     private boolean isAcOn;
 
@@ -43,6 +45,7 @@ public class Room {
         this.isDoorOpen = false;
         this.isAutoLightOn = false;
         this.isAutoLockOn = false;
+        this.isHVAC = false;
         this.isHeaterOn = false;
         this.isAcOn = false;
     }
@@ -59,6 +62,7 @@ public class Room {
         this.isDoorOpen = false;
         this.isAutoLightOn = false;
         this.isAutoLockOn = false;
+        this.isHVAC = false;
         this.isHeaterOn = false;
         this.isAcOn = false;
     }
@@ -101,6 +105,7 @@ public class Room {
         this.isDoorOpen = incomingRoom.isDoorOpen;
         this.isAutoLightOn = incomingRoom.isAutoLightOn;
         this.isAutoLockOn = incomingRoom.isAutoLockOn;
+        this.isHVAC = incomingRoom.isHVAC;
         this.isHeaterOn = incomingRoom.isHeaterOn;
         this.isAcOn = incomingRoom.isAcOn;
     }
@@ -139,6 +144,14 @@ public class Room {
 
     public void setRoomComponents(List<String> roomComponents) {
         this.roomComponents = roomComponents;
+    }
+
+    public boolean getIsTemperatureOverridden() {
+        return isTemperatureOverridden;
+    }
+
+    public void setTemperatureOverridden(boolean isTemperatureOverridden) {
+        this.isTemperatureOverridden = isTemperatureOverridden;
     }
 
     public boolean getIsWindowBlocked() {
@@ -188,6 +201,14 @@ public class Room {
 
     public void setIsAutoLockOn(boolean isAutoLockOn) {
         this.isAutoLockOn = isAutoLockOn;
+    }
+
+    public boolean getIsHVACOn() {
+        return isHVAC;
+    }
+
+    public void setIsHVACOn(boolean isHVAC) {
+        this.isHVAC = isHVAC;
     }
 
     public boolean getIsHeaterOn() {
