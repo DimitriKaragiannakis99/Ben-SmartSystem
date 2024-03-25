@@ -2,6 +2,9 @@ package com.bensmartsystem.backend.controller;
 
 import com.bensmartsystem.backend.model.Room;
 import com.bensmartsystem.backend.model.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Setter;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -129,6 +133,9 @@ public class RoomController {
     @PutMapping("/rooms/{roomId}/temperature")
     public ResponseEntity<?> updateRoomTemperature(@PathVariable String roomId,
                                                 @RequestBody Map<String, Object> payload) {
+        
+
+        
         Object temperatureObj = payload.get("temperature");
         if (!(temperatureObj instanceof Number)) {
             return ResponseEntity.badRequest().body("Temperature must be a number");
@@ -148,8 +155,14 @@ public class RoomController {
             return ResponseEntity.notFound().build();
         }
 
+        if (!checkPermissions("shhAccess", roomList.indexOf(room))) {
+            SimulationEventManager.getInstance().Notify("InvalidPermission");
+            return ResponseEntity.badRequest().body("You do not have permission to change the temperature in this room");
+            }
+
         room.setDesiredTemperature(newTemperature);
         room.setTemperatureOverridden(isOverridden);
+        SimulationEventManager.getInstance().Notify("desiredtemperatureUpdated");
         return ResponseEntity.ok().body("Desired Temperature updated for room with ID: " + roomId);
     }
 
@@ -198,30 +211,6 @@ public class RoomController {
         }
     }
 
-    // This method assigns the users to the first room in the list
-    // This should run only once when the server starts or when the rooms are
-    // updated
-    private void assignRoomsToUsersAtStart(ArrayList<Room> allRooms) {
-        // First we get a list of all the users
-        if (allRooms.isEmpty()) {
-            return;
-        }
-
-        // First remove all users from all rooms
-        for (Room r : allRooms) {
-            r.setUsers(new ArrayList<>());
-        }
-
-        List<User> users = UserController.getUsers();
-
-        for (User u : users) {
-            // We will assign the users to random rooms
-            // We will use the Random class to generate random numbers
-            allRooms.get(0).addUsers(u.getUsername());
-
-        }
-
-    }
 
     // This method assigns a given user to the first room
     public static void assignUserToFirstRoom(User user) {
@@ -260,4 +249,56 @@ public class RoomController {
         }
         return null; // Or throw an exception if the room is not found
     }
+
+        //Add here the checking of the permissions
+    public static boolean checkPermissions(String givenPermission, int targetRoomIndex) 
+    {
+        //First get the current user's and their permissions
+        //Then check if the given permission is in the list of permissions
+        //If it is then return true
+        //Otherwise return false
+
+        //Get the current user
+        User currentUser = UserController.getCurrentUser();
+
+        // Get the current room of the user to check if it needs remote access
+        int roomIndex = currentUser.getRoomIndex();
+        //Convert that index to a string
+
+        System.out.println("Room index: " + roomIndex + " Target room index: " + targetRoomIndex);
+        // Get the permissions of the current user
+        String permissions = currentUser.getPermissions();
+        // Check if the given permission is in the list of permissions
+        
+        Map<String, Object> mapping;
+        try {
+            mapping = new ObjectMapper().readValue(permissions, HashMap.class);
+            boolean needsRemoteAccess = !(roomIndex == targetRoomIndex);
+            boolean hasRemoteAccess = ((mapping.containsKey("remoteAccess") && (boolean) mapping.get("remoteAccess") == true));
+
+
+            // System.out.println("Needs remote access: " + needsRemoteAccess);
+            // System.out.println("Has remote access: " + hasRemoteAccess);
+            if (mapping.containsKey(givenPermission) && (boolean) mapping.get(givenPermission) == true && (needsRemoteAccess == false || hasRemoteAccess == true)){
+            
+                SimulationEventManager.getInstance().Notify("ValidPermission");
+                return true;
+            } else 
+            {
+                SimulationEventManager.getInstance().Notify("InvalidPermission");
+                return false;
+            }
+        
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+  
+
+    }
+    
 }
