@@ -3,6 +3,7 @@ package com.bensmartsystem.backend.controller;
 import com.bensmartsystem.backend.model.Room;
 import com.bensmartsystem.backend.model.User;
 
+import lombok.Setter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,26 +18,32 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class RoomController {
 
-    // ConcurrentHashMap for thread-safe in-memory storage
-    // private static final ConcurrentHashMap<String, Room> rooms = new
-    // ConcurrentHashMap<>();
     @Getter
     private static final ArrayList<Room> roomList = new ArrayList<>();
 
-
+    //For testing purposes
+    public void addRoom(Room room){
+        roomList.add(room);
+    }
 
     @GetMapping("/rooms")
     public ResponseEntity<ArrayList<Room>> getAllRooms() {
-        System.out.println(roomList);
+        //System.out.println(roomList);
         // Return a new ArrayList to avoid exposing the internal storage structure
-        //In here we will assign the users to random roomsfor the first time
+        // In here we will assign the users to random rooms for the first time
         updateUsersInRooms();
+        return ResponseEntity.ok(roomList);
+    }
+
+    @GetMapping("/getAllRooms")
+    public ResponseEntity<ArrayList<Room>> getRooms() {
         return ResponseEntity.ok(roomList);
     }
 
@@ -49,24 +56,21 @@ public class RoomController {
                 if (existingRoom.getId().equals(incomingRoom.getId())) {
                     // Update the existing room with the new values
                     existingRoom.updateFrom(incomingRoom);
-                    
-            // For each user in the incoming room, update the user's roomID
-                for (String username : incomingRoom.getUsers()) {
-                for (User user : UserController.getUsers()) {
-                    if (user.getUsername().equals(username)) {
-                        user.setRoomIndex(i);
+
+                    // For each user in the incoming room, update the user's roomID
+                    for (String username : incomingRoom.getUsers()) {
+                        for (User user : UserController.getUsers()) {
+                            if (user.getUsername().equals(username)) {
+                                user.setRoomIndex(i);
+                            }
+                        }
                     }
-                }
-            }
-                    
-                    
+
                     break; // Break out of the loop once the matching room is updated
                 }
             }
 
-           
         }
-
 
         // Return a response indicating the operation was successful
         return ResponseEntity.ok("Rooms data saved successfully");
@@ -109,6 +113,46 @@ public class RoomController {
         }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
+    }
+
+    @PostMapping("/toggleHeater")
+    public ResponseEntity<?> toggleHeater(@RequestParam String roomId) {
+        for (Room room : roomList) {
+            if (room.getId().equals(roomId)) {
+                room.setIsHeaterOn(!room.getIsHeaterOn());
+                return ResponseEntity.ok(room);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
+    }
+
+    @PostMapping("/toggleAc")
+    public ResponseEntity<?> toggleAc(@RequestParam String roomId) {
+        for (Room room : roomList) {
+            if (room.getId().equals(roomId)) {
+                room.setIsAcOn(!room.getIsAcOn());
+                return ResponseEntity.ok(room);
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
+    }
+
+    @PutMapping("/rooms/{roomId}/temperature")
+    public ResponseEntity<?> updateRoomTemperature(@PathVariable String roomId,
+            @RequestBody Map<String, Double> payload) {
+        Double newTemperature = payload.get("temperature");
+        if (newTemperature == null) {
+            return ResponseEntity.badRequest().body("Temperature is required");
+        }
+
+        Room room = findRoomById(roomId);
+        if (room == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        room.setDesiredTemperature(newTemperature);
+        return ResponseEntity.ok().body("Desired Temperature updated for room with ID: " + roomId);
     }
 
     // This has the logic for retrieving the .txt file from the front-end, parsing
@@ -154,37 +198,66 @@ public class RoomController {
         }
     }
 
+    // This method assigns the users to the first room in the list
+    // This should run only once when the server starts or when the rooms are
+    // updated
+    private void assignRoomsToUsersAtStart(ArrayList<Room> allRooms) {
+        // First we get a list of all the users
+        if (allRooms.isEmpty()) {
+            return;
+        }
+
+        // First remove all users from all rooms
+        for (Room r : allRooms) {
+            r.setUsers(new ArrayList<>());
+        }
+
+        List<User> users = UserController.getUsers();
+
+        for (User u : users) {
+            // We will assign the users to random rooms
+            // We will use the Random class to generate random numbers
+            allRooms.get(0).addUsers(u.getUsername());
+
+        }
+
+    }
+
     // This method assigns a given user to the first room
     public static void assignUserToFirstRoom(User user) {
-        if (roomList.size() > 0) {
-            roomList.get(0).addUsers(user.getUsername());
+        if (!roomList.isEmpty()) {
+            roomList.getFirst().addUsers(user.getUsername());
         }
         System.out.println("User added to first room: " + user.getUsername());
         SimulationEventManager.getInstance().Notify("userChangedRoom");
     }
 
-    public static void updateUsersInRooms ()
-    {
-         //First remove all users from all rooms
-         for (Room r: roomList) 
-         {
-             r.setUsers(new ArrayList<>());
-         }
+    public static void updateUsersInRooms() {
+        // First remove all users from all rooms
+        for (Room r : roomList) {
+            r.setUsers(new ArrayList<>());
+        }
 
-            List<User> users = UserController.getUsers();
+        List<User> users = UserController.getUsers();
 
-            if (users.size() == 0 || roomList.size() == 0)
-            {
-                return;
+        if (users.isEmpty() || roomList.isEmpty()) {
+            return;
+        }
+        for (User u : users) {
+            // We will assign the users to random rooms
+            // We will use the Random class to generate random numbers
+            roomList.get(u.getRoomIndex()).addUsers(u.getUsername());
+
+        }
+        SimulationEventManager.getInstance().Notify("usersUpdatedInRooms");
+    }
+
+    public static Room findRoomById(String id) {
+        for (Room room : roomList) {
+            if (room.getId().equals(id)) {
+                return room;
             }
-            for (User u: users) 
-            {
-                // We will assign the users to random rooms
-                // We will use the Random class to generate random numbers
-                roomList.get(u.getRoomIndex()).addUsers(u.getUsername());
-
-            }
-            SimulationEventManager.getInstance().Notify("usersUpdatedInRooms");
+        }
+        return null; // Or throw an exception if the room is not found
     }
 }
-

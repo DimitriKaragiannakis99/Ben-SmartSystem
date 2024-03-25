@@ -10,11 +10,7 @@ public class TimeControllerTest {
 
     private TimeController timeController;
 
-    @BeforeEach
-    void setUp() {
-        
-        timeController = new TimeController();
-    }
+
 
     @Test
     void getTime_ReturnsInitialTime() {
@@ -45,4 +41,3 @@ public class TimeControllerTest {
         assertEquals(3, updatedTime.getMonth(), "Month should be updated to 3");
     }
 }
-
