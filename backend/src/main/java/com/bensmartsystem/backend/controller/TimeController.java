@@ -1,13 +1,16 @@
 package com.bensmartsystem.backend.controller;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.bensmartsystem.backend.model.Time;
+
+@Getter
 @RestController
 @CrossOrigin
 @RequestMapping("/api/time")
 public class TimeController 
 {
-    private Time currentTime;
+    private static Time currentTime;
 
     @Autowired
     public TimeController(Time currentTime) {
@@ -15,7 +18,7 @@ public class TimeController
         currentTime.setHour(12);
         currentTime.setDay(1);
         currentTime.setMonth(1);
-        this.currentTime = currentTime;
+        TimeController.currentTime = currentTime;
     }
 
     @PostMapping("/setTime")
@@ -27,8 +30,13 @@ public class TimeController
     }
 
     @GetMapping("/getTime")
-    public Time getTime() {
-        return this.currentTime;
+    public static Time getTime() {
+        return currentTime;
     }
-    
+
+    public static Time getCurrentTime(){
+        return getTime();
+    }
+
+
 }
