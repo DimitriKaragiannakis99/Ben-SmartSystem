@@ -32,4 +32,13 @@ public class Time
         this.month = 0;
     }
 
+    //This is for comparison in outside temp controller class under method get current temp
+    public String toString(){
+        if(hour < 10){
+            return("0" + hour + ":00");
+        }
+        else{
+            return (hour + ":00");
+        }
+    }
 }

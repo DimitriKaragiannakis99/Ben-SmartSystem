@@ -1,6 +1,7 @@
 package com.bensmartsystem.backend.controller;
 
 import com.bensmartsystem.backend.model.Room;
+import com.bensmartsystem.backend.model.Time;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,18 @@ import java.util.TimerTask;
 @RequestMapping("/api/temp")
 public class SHH {
 
-    static double outsideTemp = 17;
-    
+
+    public static double getCurrentOutsideTemp(){
+        return Double.parseDouble(OutsideTemperatureController.getCurrentOutTemp());
+    }
+
+    @GetMapping("/get-outside-temp")
+    public ResponseEntity<String> getOutsideTemp(){
+        return ResponseEntity.ok(OutsideTemperatureController.getCurrentOutTemp());
+    }
+
     public static void heating(Room room){
+        System.out.printf("Current outside temp: %f%n", getCurrentOutsideTemp());
         Timer task = new Timer(true);
         task.schedule(new TimerTask() {
             public void run() {
@@ -39,7 +49,7 @@ public class SHH {
         Timer task = new Timer(true);
         task.schedule(new TimerTask() {
             public void run() {
-                if (room.getTemperature() >= outsideTemp || room.getIsHeaterOn() || room.getIsAcOn()) {
+                if (room.getTemperature() >= getCurrentOutsideTemp() || room.getIsHeaterOn() || room.getIsAcOn()) {
                     task.cancel();
                     return; // pause the HVAC
                 }
@@ -71,7 +81,7 @@ public class SHH {
         Timer task = new Timer(true);
         task.schedule(new TimerTask() {
             public void run() {
-                if (room.getTemperature() <= outsideTemp || room.getIsHeaterOn() || room.getIsAcOn()) {
+                if (room.getTemperature() <= getCurrentOutsideTemp() || room.getIsHeaterOn() || room.getIsAcOn()) {
                     task.cancel();
                     return;
                 }
@@ -82,12 +92,14 @@ public class SHH {
 
     //Should be called continuously to verify whether the temp drops bellow zero
     @GetMapping("/checkTemp")
-    public ResponseEntity<String> checkTemp(Room room){
-        if (room.getTemperature() <= 0){
-            //Must log to console
-            return new ResponseEntity<>("Temperature is below zero, pipes may burst!", HttpStatus.OK);
+    public ResponseEntity<String> checkTemp(){
+        for(Room room : RoomController.getRoomList()){
+            if (room.getTemperature() <= 0){
+                //Must log to console
+                return new ResponseEntity<>("Temperature is below zero, pipes may burst!", HttpStatus.OK);
+            }
         }
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return new ResponseEntity<>("All room temps look ok!", HttpStatus.OK);
     }
 
     @GetMapping ("/HVAC-on")
@@ -116,13 +128,13 @@ public class SHH {
         if(room == null){
             return ResponseEntity.ok("No room was provided");
         }
-        if(room.getTemperature() < outsideTemp){
+        if(room.getTemperature() < getCurrentOutsideTemp()){
             room.setIsHeaterOn(false);
             room.setIsAcOn(false);
             hvac_off_heat(room);
             return  ResponseEntity.ok("HVAC was turned off");
         }
-        else if(room.getTemperature() > outsideTemp){
+        else if(room.getTemperature() > getCurrentOutsideTemp()){
             room.setIsHeaterOn(false);
             room.setIsAcOn(false);
             hvac_off_cool(room);
@@ -132,7 +144,7 @@ public class SHH {
     }
 
     private static boolean heat_or_cool(Room room){
-        return room.getTemperature() > outsideTemp;
+        return room.getTemperature() > getCurrentOutsideTemp();
     }
 
     public static void hvac_paused(Room room){

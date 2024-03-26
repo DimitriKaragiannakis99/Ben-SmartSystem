@@ -5,10 +5,12 @@ import DateTimeDisplay from "./DateTimeDisplay";
 import SimulationToggle from "./SimulationToggle";
 import EditSimulation from "../EditSimulationComponent";
 import axios from "axios";
+import { resolveDateFormat } from "@mui/x-date-pickers/internals/utils/date-utils";
 
 const Profile = () => {
   const [showSimulation, setShowSimulation] = useState(false);
   const [userLocation, setUserLocation] = useState("Unknown");
+  const [currentOutsideTemp, setCurrentOutsideTemp] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,6 +44,24 @@ const Profile = () => {
     navigate("/uploadTemps");
   };
 
+  const getOutsideTemp = () => {
+    axios
+      .get("http://localhost:8080/api/temp/get-outside-temp")
+      .then((response) => {
+        setCurrentOutsideTemp(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching outside temperatuer", error);
+      });
+  };
+
+  useEffect(() => {
+    getOutsideTemp(); // Fetch outside temperature when component mounts
+    const intervalId = setInterval(getOutsideTemp, 5000); // Update outside temperature every 5 seconds
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <div className="flex flex-col items-center h-full">
       <h1 className="text-3xl font-bold underline mb-20">Simulation</h1>
@@ -66,7 +86,7 @@ const Profile = () => {
       </div>
       <div className="mb-16">
         <p>
-          Outside Temperature: <strong>25</strong>
+          Outside Temperature: <strong>{currentOutsideTemp}</strong>
         </p>
       </div>
       <div className="mb-16">

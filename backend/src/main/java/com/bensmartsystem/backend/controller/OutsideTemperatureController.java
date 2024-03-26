@@ -4,6 +4,7 @@ package com.bensmartsystem.backend.controller;
 import com.bensmartsystem.backend.model.OutsideTemperature;
 
 
+import com.bensmartsystem.backend.model.Time;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +29,16 @@ public class OutsideTemperatureController {
         System.out.println(outsideTemperatureList);
       
         return ResponseEntity.ok(outsideTemperatureList);
+    }
+
+    public static String getCurrentOutTemp(){
+        Time currentTime = TimeController.getCurrentTime();
+        for(OutsideTemperature ot : outsideTemperatureList){
+            if(ot.getCurrentTime().equalsIgnoreCase(currentTime.toString())){
+                return ot.getCurrentTemperature();
+            }
+        }
+        return "-100";
     }
 
         
