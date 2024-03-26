@@ -9,10 +9,13 @@ import OutsideTemperatureUpload from "./components/OutsideTemperatureUpload";
 import GetOutsideTemperature from "./components/GetOutsideTemperature";
 import OutsideTemperatureProvider from './components/OutsideTemperatureProvider'
 
+import OutputConsoleProvider from "./components/OutputConsoleProvider";
 
 export default function App() {
   return (
     <div className="bg-white">
+      
+      <OutputConsoleProvider>
       <OutsideTemperatureProvider>
       <Router>
         <div>
@@ -27,6 +30,7 @@ export default function App() {
         </div>
       </Router>
       </OutsideTemperatureProvider>
+      </OutputConsoleProvider>
     </div>
   );
 }

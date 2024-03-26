@@ -8,6 +8,7 @@ const RoomProvider = ({ children }) => {
 
   const [isSimulationOn, setSimulationOn] = useState(false);
   const [isSHHOn, setIsSHHOn] = useState(false);
+  const [currentSimUser, setCurrentSimUser] = useState({ id: '', username: '' });
 
   useEffect(() => {
     axios.get('http://localhost:8080/api/rooms')
@@ -31,9 +32,11 @@ const RoomProvider = ({ children }) => {
             room.id === roomId ? { ...room, isLightOn: !room.isLightOn } : room,
           ),
         );
+        
       })
       .catch((error) => {
         console.error('Error toggling light', error);
+       
       });
   };
 
@@ -102,7 +105,9 @@ const RoomProvider = ({ children }) => {
         return room;
       })
     );
-  };  
+  }; 
+  
+
 
   return (
     <RoomContext.Provider value={{ rooms, toggleLight, toggleWindowBlocked, toggleWindow, toggleDoor, isSimulationOn, setSimulationOn, isSHHOn, setIsSHHOn, updateRoomTemperature, toggleHVAC }}>
