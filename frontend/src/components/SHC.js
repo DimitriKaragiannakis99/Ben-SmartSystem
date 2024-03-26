@@ -2,16 +2,20 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { RoomContext } from "./Dashboard/RoomProvider";
 import { OutputConsoleContext } from "./OutputConsoleProvider";
+import { CurrentUserContext } from "./CurrentUserProvider";
 
 function SHC() {
-  const { toggleLight, toggleWindow, toggleDoor,currentSimUser, fetchCurrentSimUser } = useContext(RoomContext); // Destructure toggleLight, toggleWindow, and toggleDoor functions
+  const { toggleLight, toggleWindow, toggleDoor } = useContext(RoomContext); // Destructure toggleLight, toggleWindow, and toggleDoor functions
   const [rooms, setRooms] = useState([]);
-  const [simulatorUser, setSimulatorUser] = useState("Parents");
+  
   const [selectedRooms, setSelectedRooms] = useState({});
   const [selectedComponent, setSelectedComponent] = useState("");
   
   // added OutputConsoleContext
   const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
+
+  const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
+  const [simulatorUser, setSimulatorUser] = useState(currentSimUser);
 
 	// state for auto lights
 	const [autoLight, setAutoLight] = useState(false);

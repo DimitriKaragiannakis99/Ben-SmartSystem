@@ -19,6 +19,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimeField } from "@mui/x-date-pickers/DateTimeField";
 import { OutputConsoleContext } from "./OutputConsoleProvider";
 
+import { CurrentUserContext } from "./CurrentUserProvider";
+
 import axios from "axios";
 
 
@@ -196,11 +198,21 @@ function UserManagementTab() {
 
 	  // added OutputConsoleContext
 const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
+const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
 
 	useEffect(() => {
 		setUsers([...readUsers()]);
 		updateCurrentUser();
 	}, []);
+
+	useEffect(() => {
+		if (currentSimUser) { // Check ensures not to log immediately on component mount with initial state
+		  const currentTime = new Date().toLocaleTimeString();
+		  const message = `[${currentTime}] the user ${currentSimUser} has been logged in`;
+		  // Update the console messages context or log the message as needed
+		  updateConsoleMessages(message);
+		}
+	  }, [currentSimUser]);
 
 	// TODO: Fix this, sometimes it doesnt update the users
 	function readUsers() {
@@ -300,10 +312,7 @@ const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext
 	function logAsSelectedUser(selectedIds) {
 		console.log(selectedIds);
 
-		const currentTime = new Date().toLocaleTimeString();
-		const message = `[${currentTime}] the user ${selectedIds} has been logged in`;
-		// updating OutputConsole context
-		updateConsoleMessages(message);
+		
 
 		if (selectedIds.length > 1) {
 			console.log("You can only login as one user at a time");
@@ -318,6 +327,22 @@ const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext
 			//In here we will just open the dialog box with the user information
 			logAsUser(selectedIds[0], setCurrentUser);
 			localStorage.setItem("currentUserId", selectedIds[0]);
+
+             if (selectedIds[0] === "1L"){
+				updateCurrentSimUser("Parents");
+			 }else if(selectedIds[0] === "2L"){
+				updateCurrentSimUser("Chidren");
+			 }
+			else if(selectedIds[0] === "3L"){
+				updateCurrentSimUser("Guests");
+			 }
+			 else if(selectedIds[0] === "4L"){
+				updateCurrentSimUser("Strangers");
+			 }
+
+
+		
+
 			// Now we will just update that information in the backend
 			axios.get("http://localhost:8080/api/users/setCurrent/" + selectedIds[0]).catch((error) => {
 				console.error("Error sending User Info", error);

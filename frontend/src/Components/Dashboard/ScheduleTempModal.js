@@ -1,5 +1,6 @@
 import React, { useState,useContext } from 'react';
 import { OutputConsoleContext } from "../OutputConsoleProvider"
+import { CurrentUserContext } from "../CurrentUserProvider";
 
 const ScheduleTemperatureModal = ({ isOpen, onClose, zoneId }) => {
   const [selectedTimes, setSelectedTimes] = useState([]);
@@ -7,6 +8,8 @@ const ScheduleTemperatureModal = ({ isOpen, onClose, zoneId }) => {
 
     	  // added OutputConsoleContext
 const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
+
+const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
 
   const handleTimeSelection = (time) => {
     setSelectedTimes((prev) =>
@@ -31,7 +34,7 @@ const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext
       });
 
       const currentTime = new Date().toLocaleTimeString();
-      const message = `[${currentTime}] the desired ${temperature}C in ${selectedTimes}  has been changed in zone id ${cleanedZoneId}`;
+      const message = `[${currentTime}] the desired ${temperature}C in ${selectedTimes}  has been changed in zone id ${cleanedZoneId} by ${currentSimUser}`;
       // updating OutputConsole context
       updateConsoleMessages(message);
 

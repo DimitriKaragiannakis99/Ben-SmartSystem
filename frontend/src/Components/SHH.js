@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import { RoomContext } from "./Dashboard/RoomProvider";
 import { OutputConsoleContext } from "./OutputConsoleProvider"
+import { CurrentUserContext } from "./CurrentUserProvider";
 
 function RoomInfo() {
   const { toggleHVAC, isSHHOn,rooms } = useContext(RoomContext);
@@ -9,6 +10,8 @@ function RoomInfo() {
   let intervalRef = useRef();
     	  // added OutputConsoleContext
 const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
+
+const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
 
   useEffect(() => {
     const intervalHandler = () => {
@@ -59,7 +62,7 @@ const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext
         console.log("hvac on");
         const roomName = rooms.find(room => room.id === roomid)?.name;
         const currentTime = new Date().toLocaleTimeString();
-        const message = `[${currentTime}] the HVAC has been turned on in ${roomName} `;
+        const message = `[${currentTime}] the HVAC has been turned on in ${roomName} by ${currentSimUser} `;
         // updating OutputConsole context
         updateConsoleMessages(message);
         clearInterval(intervalRef.current);
@@ -79,7 +82,7 @@ const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext
         console.log("hvac off");
         const roomName = rooms.find(room => room.id === roomid)?.name;
         const currentTime = new Date().toLocaleTimeString();
-        const message = `[${currentTime}] the HVAC has been turned off in ${roomName} `;
+        const message = `[${currentTime}] the HVAC has been turned off in ${roomName} by ${currentSimUser} `;
          // updating OutputConsole context
          updateConsoleMessages(message);
         clearInterval(intervalRef.current);

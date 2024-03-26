@@ -4,6 +4,7 @@ import { RoomContext } from "./RoomProvider";
 import ScheduleTemperatureModal from "./ScheduleTempModal";
 import SHH from "../SHH";
 import { OutputConsoleContext } from "../OutputConsoleProvider"
+import { CurrentUserContext } from "../CurrentUserProvider";
 
 const RoomZones = () => {
   const [rooms, setRooms] = useState([]);
@@ -12,6 +13,9 @@ const RoomZones = () => {
   const { updateRoomTemperature } = useContext(RoomContext);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const { isSHHOn, setIsSHHOn } = useContext(RoomContext);
+
+  const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
+  
 
   	  // added OutputConsoleContext
 const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
@@ -102,7 +106,7 @@ const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext
             prevZones.map((zone) => {
               if (zone.id === zoneId) {
                 const currentTime = new Date().toLocaleTimeString();
-                const message = `[${currentTime}] the desired temperature ${newTemperature}C in rooms of zone ${zone.name} has been changed `;
+                const message = `[${currentTime}] the desired temperature ${newTemperature}C in rooms of zone ${zone.name} has been changed by  ${currentSimUser} `;
                 // updating OutputConsole context
                 updateConsoleMessages(message);
       
@@ -143,7 +147,7 @@ const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext
           const roomName = rooms.find(room => room.id === roomId)?.name;
 
           const currentTime = new Date().toLocaleTimeString();
-          const message = `[${currentTime}] the desired temperature ${temperatureAsNumber}C in room ${roomName} has been overridden`;
+          const message = `[${currentTime}] the desired temperature ${temperatureAsNumber}C in room ${roomName} has been overridden by ${currentSimUser}`;
           // updating OutputConsole context
           updateConsoleMessages(message);
 

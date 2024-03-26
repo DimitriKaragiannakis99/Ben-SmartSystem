@@ -3,6 +3,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { OutputConsoleContext } from "./OutputConsoleProvider";
+import { CurrentUserContext } from "./CurrentUserProvider";
 
 function UserFigure({ name }) {
   return (
@@ -26,6 +27,8 @@ const RoomEditPage = () => {
 
   // adding OutputConsoleContext
   const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
+
+  const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
 
 
   useEffect(() => {
@@ -85,7 +88,8 @@ const RoomEditPage = () => {
         
         // updating OutputConsoleContext when window is unblocked
        const currentTime = new Date().toLocaleTimeString();
-       const message = `[${currentTime}] The window in ${room.name} was unblocked by Parent request.`;
+       const message = `[${currentTime}] The window in ${room.name} was unblocked by ${currentSimUser ? currentSimUser : "Parents"} request.`;
+
        updateConsoleMessages(message);
         
         return { ...room, isWindowBlocked: false };
@@ -174,7 +178,8 @@ const RoomEditPage = () => {
           
            // updating OutputConsoleContext when window is blocked
            const currentTime = new Date().toLocaleTimeString();
-           const message = `[${currentTime}] The window in ${room.name} was blocked by Parent request.`;
+           const message = `[${currentTime}] The window in ${room.name} was blocked by ${currentSimUser ? currentSimUser : "Parents"} request.`;
+
            updateConsoleMessages(message);
           
           return { ...room, isWindowBlocked: true };
@@ -195,7 +200,7 @@ const RoomEditPage = () => {
       if (room.users.length > 0) {
         const currentTime = new Date().toLocaleTimeString();
         room.users.forEach(user => {
-          const message = `[${currentTime}] ${user} was placed in ${room.name} by Parent request.`;
+          const message = `[${currentTime}] ${user} was placed in ${room.name} by ${currentSimUser ? currentSimUser : "Parents"} request.`;
           console.log(message);
           // Use the functional update form to ensure the state is correctly updated
           updateConsoleMessages(message);
