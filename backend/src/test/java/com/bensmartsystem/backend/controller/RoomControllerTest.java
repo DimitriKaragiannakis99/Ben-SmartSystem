@@ -24,6 +24,42 @@ class RoomControllerTest {
     }
 
     @Test
+    void testToggleLightWithUnavailableRoom() {
+        // Assuming the room "3" does not exist.
+        ResponseEntity<?> response = roomController.toggleLight("3");
+        assertEquals(404, response.getStatusCodeValue()); // HttpStatus.NOT_FOUND.value() == 404
+        assertTrue(response.getBody() instanceof String);
+        assertEquals("Room not found with id: 3", response.getBody());
+    }
+
+    @Test
+    void testToggleWindowWithUnavailableRoom() {
+        // Assuming the room "3" does not exist.
+        ResponseEntity<?> response = roomController.toggleWindow("3");
+        assertEquals(404, response.getStatusCodeValue()); // HttpStatus.NOT_FOUND.value() == 404
+        assertTrue(response.getBody() instanceof String);
+        assertEquals("Room not found with id: 3", response.getBody());
+    }
+
+    @Test
+    void testToggleDoorWithUnavailableRoom() {
+        // Assuming the room "3" does not exist.
+        ResponseEntity<?> response = roomController.toggleDoor("3");
+        assertEquals(404, response.getStatusCodeValue()); // HttpStatus.NOT_FOUND.value() == 404
+        assertTrue(response.getBody() instanceof String);
+        assertEquals("Room not found with id: 3", response.getBody());
+    }
+
+    @Test
+    void testToggleHVACWithUnavailableRoom() {
+        // Assuming the room "3" does not exist.
+        ResponseEntity<?> response = roomController.toggleHeater("3");
+        assertEquals(404, response.getStatusCodeValue()); // HttpStatus.NOT_FOUND.value() == 404
+        assertTrue(response.getBody() instanceof String);
+        assertEquals("Room not found with id: 3", response.getBody());
+    }
+
+    @Test
     void getAllRooms() {
         ResponseEntity<ArrayList<Room>> response = roomController.getAllRooms();
         assertNotNull(response.getBody());
