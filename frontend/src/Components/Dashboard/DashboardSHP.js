@@ -4,7 +4,7 @@ import { RoomContext } from "./RoomProvider";
 
 const DashboardSHP = () => {
     const [rooms, setRooms] = useState([]);
-    const { toggleMotionDetector } = useContext(RoomContext);
+    const { toggleHasMotionDetector, toggleMotionDetector } = useContext(RoomContext);
 
     useEffect(() => {
         axios.get('http://localhost:8080/api/rooms')
@@ -26,11 +26,18 @@ const DashboardSHP = () => {
           <ul key={room.id}>
             {room.name}
             <button 
-                onClick={() => toggleMotionDetector(room.id)}
+                onClick={() => toggleHasMotionDetector(room.id)}
                 className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
             >
-                Toggle Motion Detector
+                Toggle Has Motion Detector
             </button>
+            {room.hasMotionDetector && (
+                <button 
+                onClick={() => toggleMotionDetector(room.id)}
+                className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded">
+                    Toggle Motion Detector
+                </button>
+            )}
           </ul>
         ))}
         </div>

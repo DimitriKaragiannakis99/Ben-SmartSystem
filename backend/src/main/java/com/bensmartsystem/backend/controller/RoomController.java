@@ -130,16 +130,31 @@ public class RoomController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
-    @PostMapping("/toggleMotionDetector")
-    public ResponseEntity<?> toggleMotionDetector(@RequestParam String roomId) {
+    @PostMapping("/toggleHasMotionDetector")
+    public ResponseEntity<?> toggleHasMotionDetector(@RequestParam String roomId) {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setHasMotionDetector(!room.getHasMotionDetector());
+                if (room.getHasMotionDetector() == false) {
+                    room.setIsMotionDetectorOn(false);
+                }
                 return ResponseEntity.ok(room);
             }
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
+
+    @PostMapping("/toggleMotionDetector")
+    public ResponseEntity<?> toggleMotionDetector(@RequestParam String roomId) {
+        for (Room room : roomList) {
+            if (room.getId().equals(roomId)) {
+                room.setIsMotionDetectorOn(!room.getIsMotionDetectorOn());
+                return ResponseEntity.ok(room);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
+    }
+
 
     @PutMapping("/rooms/{roomId}/temperature")
     public ResponseEntity<?> updateRoomTemperature(@PathVariable String roomId,

@@ -15,3 +15,19 @@
 [4:18:06 PM] Guests was placed in Dining room by Parent request.
 [4:18:06 PM] Parents was placed in Living room by Parent request.
 [4:18:06 PM] Chidren was placed in Kitchen by Parent request.
+[5:26:10 PM] Parents was placed in Living room by Parent request.
+[5:26:10 PM] Guests was placed in Living room by Parent request.
+[5:26:10 PM] Chidren was placed in Living room by Parent request.
+[5:26:10 PM] Strangers was placed in Living room by Parent request.
+[5:33:36 PM] Parents was placed in Living room by Parent request.
+[5:33:36 PM] Guests was placed in Living room by Parent request.
+[5:33:36 PM] Strangers was placed in Living room by Parent request.
+[5:33:36 PM] Chidren was placed in Living room by Parent request.
+[5:37:42 PM] Guests was placed in Living room by Parent request.
+[5:37:42 PM] Parents was placed in Living room by Parent request.
+[5:37:42 PM] Chidren was placed in Living room by Parent request.
+[5:37:42 PM] Strangers was placed in Living room by Parent request.
+[5:44:51 PM] Guests was placed in Living room by Parent request.
+[5:44:51 PM] Strangers was placed in Living room by Parent request.
+[5:44:51 PM] Chidren was placed in Living room by Parent request.
+[5:44:51 PM] Parents was placed in Living room by Parent request.

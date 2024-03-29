@@ -33,6 +33,7 @@ public class Room {
     private boolean isHeaterOn;
     private boolean isAcOn;
     private boolean hasMotionDetector;
+    private boolean isMotionDetectorOn;
 
     public Room(String name, List<String> roomComponents) {
         this.id = UUID.randomUUID().toString();
@@ -50,6 +51,7 @@ public class Room {
         this.isHeaterOn = false;
         this.isAcOn = false;
         this.hasMotionDetector = false;
+        this.isMotionDetectorOn = false;
     }
 
     public Room(String name, List<String> roomComponents, List<String> users) {
@@ -68,6 +70,7 @@ public class Room {
         this.isHeaterOn = false;
         this.isAcOn = false;
         this.hasMotionDetector = false;
+        this.isMotionDetectorOn = false;
     }
 
     public Room(String name, List<String> users, List<String> roomComponents, boolean isWindowBlocked,
@@ -112,6 +115,7 @@ public class Room {
         this.isHeaterOn = incomingRoom.isHeaterOn;
         this.isAcOn = incomingRoom.isAcOn;
         this.hasMotionDetector = incomingRoom.hasMotionDetector;
+        this.isMotionDetectorOn = incomingRoom.isMotionDetectorOn;
     }
 
     public String getId() {
@@ -245,5 +249,13 @@ public class Room {
 
     public void setHasMotionDetector(boolean hasMotionDetecter) {
         this.hasMotionDetector = hasMotionDetecter;
+    }
+
+    public boolean getIsMotionDetectorOn() {
+        return isMotionDetectorOn;
+    }
+
+    public void setIsMotionDetectorOn(boolean isMotionDetectorOn) {
+        this.isMotionDetectorOn = isMotionDetectorOn;
     }
 }

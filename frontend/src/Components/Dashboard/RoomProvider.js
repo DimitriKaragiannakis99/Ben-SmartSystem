@@ -96,8 +96,8 @@ const RoomProvider = ({ children }) => {
       });
   }
 
-  const toggleMotionDetector = (roomId) => {
-    axios.post(`http://localhost:8080/api/toggleMotionDetector?roomId=${roomId}`)
+  const toggleHasMotionDetector = (roomId) => {
+    axios.post(`http://localhost:8080/api/toggleHasMotionDetector?roomId=${roomId}`)
         .then(() => {
             setRooms((prevRooms) =>
                 prevRooms.map((room) =>
@@ -108,7 +108,21 @@ const RoomProvider = ({ children }) => {
         .catch((error) => {
             console.error("Error toggling motion detector", error);
         });
-};
+  };
+
+  const toggleMotionDetector = (roomId) => {
+    axios.post(`http://localhost:8080/api/toggleMotionDetector?roomId=${roomId}`)
+        .then(() => {
+            setRooms((prevRooms) =>
+                prevRooms.map((room) =>
+                    room.id === roomId ? { ...room, isMotionDetectorOn: !room.isMotionDetectorOn } : room
+                )
+            );
+        })
+        .catch((error) => {
+            console.error("Error toggling motion detector", error);
+        });
+  };
 
   const updateRoomTemperature = (roomId, newTemperature, isOverridden) => {
     setRooms((prevRooms) =>
@@ -124,7 +138,7 @@ const RoomProvider = ({ children }) => {
 
 
   return (
-    <RoomContext.Provider value={{ rooms, toggleLight, toggleWindowBlocked, toggleWindow, toggleDoor, isSimulationOn, setSimulationOn, isSHHOn, setIsSHHOn, updateRoomTemperature, toggleHVAC, toggleMotionDetector }}>
+    <RoomContext.Provider value={{ rooms, toggleLight, toggleWindowBlocked, toggleWindow, toggleDoor, isSimulationOn, setSimulationOn, isSHHOn, setIsSHHOn, updateRoomTemperature, toggleHVAC, toggleHasMotionDetector, toggleMotionDetector }}>
       {children}
     </RoomContext.Provider>
   );

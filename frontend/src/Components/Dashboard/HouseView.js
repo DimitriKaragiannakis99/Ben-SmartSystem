@@ -94,7 +94,7 @@ const HouseView = () => {
                   {room.isWindowOpen && <WindowFigure />}
                   {room.isDoorOpen && <DoorFigure />}
                   {room.isHVACOn && <HVACFigure />}
-                  {room.hasMotionDetector && <MotionDetectorFigure />}
+                  {room.isMotionDetectorOn && <MotionDetectorFigure />}
                 </div>
               </div>
             </div>
