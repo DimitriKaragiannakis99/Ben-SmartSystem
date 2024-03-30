@@ -47,6 +47,7 @@ const DashboardSHP = () => {
 
     return (
         <div>
+          <p>{isAwayModeOn ? 'Away Mode: ON' : 'Away Mode: OFF'}</p>
           <button 
             className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
             onClick={toggleAwayMode}>{isAwayModeOn ? 'Turn Off Away Mode' : 'Turn On Away Mode'}
