@@ -209,7 +209,7 @@ public class RoomController {
             if (firstLine != null && firstLine.startsWith("House:")) {
                 String houseName = firstLine.substring(6).trim();
                 House house = new House("1", houseName); // Create a new House instance
-                HouseControllerTest.setHouse(house); // Set the new house in HouseController
+                HouseController.setHouse(house); // Set the new house in HouseController
                 RoomController.roomList.clear(); // Clear existing rooms
     
                 String line;
