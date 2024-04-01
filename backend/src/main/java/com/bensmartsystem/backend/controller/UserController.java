@@ -29,10 +29,10 @@ public class UserController {
 
     public UserController() {
         // Hardcoded user data
-        users.add(new User("1L", "Parents", "{\"remoteAccess\":true,\"doorAccess\":true,\"windowAccess\":true,\"lightAccess\":true,\"shhAccess\":true}"));
-        users.add(new User("2L", "Chidren", "{\"remoteAccess\":false,\"doorAccess\":true,\"windowAccess\":true,\"lightAccess\":true,\"shhAccess\":true}"));
-        users.add(new User("3L", "Guests", "{\"remoteAccess\":false,\"doorAccess\":true,\"windowAccess\":true,\"lightAccess\":true,\"shhAccess\":true}"));
-        users.add(new User("4L", "Strangers", "{\"remoteAccess\":false,\"doorAccess\":false,\"windowAccess\":false,\"lightAccess\":false,\"shhAccess\":false}"));
+        users.add(new User("1L", "Parents", "{\"remoteAccess\":true,\"doorAccess\":true,\"windowAccess\":true,\"lightAccess\":true,\"shhAccess\":true,\"shpAccess\":true}"));
+        users.add(new User("2L", "Chidren", "{\"remoteAccess\":false,\"doorAccess\":true,\"windowAccess\":true,\"lightAccess\":true,\"shhAccess\":true,\"shhAccess\":false}"));
+        users.add(new User("3L", "Guests", "{\"remoteAccess\":false,\"doorAccess\":true,\"windowAccess\":true,\"lightAccess\":true,\"shhAccess\":true,\"shhAccess\":false}"));
+        users.add(new User("4L", "Strangers", "{\"remoteAccess\":false,\"doorAccess\":false,\"windowAccess\":false,\"lightAccess\":false,\"shhAccess\":false,\"shhAccess\":false}"));
     
         // Assigj the current user to the first
         currentUser = users.get(0);

@@ -59,6 +59,12 @@ const columns = [
 		type: "boolean",
 		width: 150,
 	},
+	{
+		field: "shpAccess",
+		headerName: "SHP Access",
+		type: "boolean",
+		width: 150,
+	}
 ];
 
 //! Harcoded data for now
