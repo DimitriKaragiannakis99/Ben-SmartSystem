@@ -37,6 +37,14 @@ public class HouseController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", false));
         }
+
+        // Implementing the permissions 
+         if (!RoomController.checkPermissions("shpAccess", 0)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", false));
+         }
+          
+
+
         house.setAwayModeOn(!house.isAwayModeOn());
         SimulationEventManager.getInstance().Notify("AwayModeToggled");
         return ResponseEntity.ok(Map.of("isAwayModeOn", house.isAwayModeOn()));

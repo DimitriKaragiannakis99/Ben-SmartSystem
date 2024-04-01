@@ -39,3 +39,14 @@
 [1:04:39 p.m.] the user  has been logged in
 [1:04:43 p.m.] the user  has been logged in
 [1:04:47 p.m.] the user 1L has been logged in
+[1:18:52 p.m.] Parents was placed in Living room by Parent request.
+[1:18:52 p.m.] Chidren was placed in Kitchen by Parent request.
+[1:18:52 p.m.] Guests was placed in Kitchen by Parent request.
+[1:18:52 p.m.] Strangers was placed in Bedroom by Parent request.
+[1:18:57 p.m.] the user 1L has been logged in
+[1:24:27 p.m.] Parents was placed in Living room by Parent request.
+[1:24:27 p.m.] Guests was placed in Dining room by Parent request.
+[1:24:27 p.m.] Chidren was placed in Living room by Parent request.
+[1:24:27 p.m.] Strangers was placed in Kitchen by Parent request.
+[1:24:38 p.m.] the user 1L has been logged in
+[1:25:03 p.m.] the user 4L has been logged in
