@@ -40,7 +40,6 @@ function SHC() {
 
         setRooms(roomsResponse.data);
         setIsAwayMode(awayModeResponse.data.isAwayModeOn);
-        console.log("Isaway: ", isAwayMode);
       })
       .catch((error) => {
         // This will catch any error that was thrown during the fetching of rooms or away mode
