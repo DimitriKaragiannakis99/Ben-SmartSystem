@@ -95,11 +95,13 @@ function SHC() {
     const message = `[${currentTime}] [${selectedComponent}] in ${selectedRoomNames.join(
       ", "
     )} was ${actionText} by ${simulatorUser} request.`;
-
-    // updating OutputConsole context
-    updateConsoleMessages(message);
+    const message2 = `[${currentTime}] [${selectedComponent}] in ${selectedRoomNames.join(
+      ", "
+    )} was not ${actionText} by ${simulatorUser} request due to being in Away Mode.`;
 
     if (selectedComponent === "light") {
+      // updating OutputConsole context
+      updateConsoleMessages(message);
       selectedRoomNames.forEach((roomName) => {
         const room = rooms.find((r) => r.name === roomName);
         if (room) {
@@ -111,6 +113,8 @@ function SHC() {
       if (isAwayMode) {
         // If in Away mode, close all windows
       } else {
+        // updating OutputConsole context
+        updateConsoleMessages(message);
         selectedRoomNames.forEach((roomName) => {
           const room = rooms.find((r) => r.name === roomName);
           if (room) {
@@ -119,13 +123,18 @@ function SHC() {
         });
       }
     } else if (selectedComponent === " door") {
-      //Check if in Away mode
-      selectedRoomNames.forEach((roomName) => {
-        const room = rooms.find((r) => r.name === roomName);
-        if (room) {
-          toggleDoor(room.id);
-        }
-      });
+      if (isAwayMode) {
+        // If in Away mode, close all windows
+      } else {
+        // updating OutputConsole context
+        updateConsoleMessages(message);
+        selectedRoomNames.forEach((roomName) => {
+          const room = rooms.find((r) => r.name === roomName);
+          if (room) {
+            toggleDoor(room.id);
+          }
+        });
+      }
     }
   };
 
