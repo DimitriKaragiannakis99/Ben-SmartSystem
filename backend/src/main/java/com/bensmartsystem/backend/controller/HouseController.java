@@ -28,7 +28,6 @@ public class HouseController {
         if (house == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("House has not been created");
         }
-        System.out.println("Getting Away mode is " + house.isAwayModeOn());
         return ResponseEntity.ok(Map.of("isAwayModeOn", house.isAwayModeOn()));
     }
 
@@ -40,7 +39,6 @@ public class HouseController {
         }
         house.setAwayModeOn(!house.isAwayModeOn());
         SimulationEventManager.getInstance().Notify("AwayModeToggled");
-        System.out.println("Away mode toggled" + house.isAwayModeOn());
         return ResponseEntity.ok(Map.of("isAwayModeOn", house.isAwayModeOn()));
     }
 
