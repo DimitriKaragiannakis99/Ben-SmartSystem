@@ -15,6 +15,7 @@ function SHC() {
   const [simulatorUser, setSimulatorUser] = useState("Parents");
   const [selectedRooms, setSelectedRooms] = useState({});
   const [selectedComponent, setSelectedComponent] = useState("");
+  const [isAwayMode, setIsAwayMode] = useState(false);
 
   // added OutputConsoleContext
   const { consoleMessages, updateConsoleMessages } =
@@ -26,17 +27,25 @@ function SHC() {
   // state for auto locks
   const [autoLock, setAutoLock] = useState(false);
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/rooms")
-      .then((response) => {
-        setRooms(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching room information", error);
+  useEffect(
+    () => {
+      axios
+        .get("http://localhost:8080/api/rooms")
+        .then((response) => {
+          setRooms(response.data);
+          console.log("Rooms", response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching room information", error);
+        });
+    },
+    axios.get("http://localhost:8080/api/house/awaymode").then((response) => {
+      console.log("Away Mode", response.data).catch((error) => {
+        console.error("Error fetching away mode information", error);
       });
-  }, []);
+    }),
+    []
+  );
 
   const handleRoomCheckChange = (roomName) => {
     setSelectedRooms((prevSelectedRooms) => ({
