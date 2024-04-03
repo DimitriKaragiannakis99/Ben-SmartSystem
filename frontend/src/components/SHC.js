@@ -108,12 +108,16 @@ function SHC() {
       });
     } else if (selectedComponent === " window") {
       //Check if in Away mode
-      selectedRoomNames.forEach((roomName) => {
-        const room = rooms.find((r) => r.name === roomName);
-        if (room) {
-          toggleWindow(room.id);
-        }
-      });
+      if (isAwayMode) {
+        // If in Away mode, close all windows
+      } else {
+        selectedRoomNames.forEach((roomName) => {
+          const room = rooms.find((r) => r.name === roomName);
+          if (room) {
+            toggleWindow(room.id);
+          }
+        });
+      }
     } else if (selectedComponent === " door") {
       //Check if in Away mode
       selectedRoomNames.forEach((roomName) => {
