@@ -1,5 +1,6 @@
 package com.bensmartsystem.backend.controller;
 
+import com.bensmartsystem.backend.model.House;
 import com.bensmartsystem.backend.model.Room;
 import com.bensmartsystem.backend.model.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -130,6 +131,32 @@ public class RoomController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
+    @PostMapping("/toggleHasMotionDetector")
+    public ResponseEntity<?> toggleHasMotionDetector(@RequestParam String roomId) {
+        for (Room room : roomList) {
+            if (room.getId().equals(roomId)) {
+                room.setHasMotionDetector(!room.getHasMotionDetector());
+                if (room.getHasMotionDetector() == false) {
+                    room.setIsMotionDetectorOn(false);
+                }
+                return ResponseEntity.ok(room);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
+    }
+
+    @PostMapping("/toggleMotionDetector")
+    public ResponseEntity<?> toggleMotionDetector(@RequestParam String roomId) {
+        for (Room room : roomList) {
+            if (room.getId().equals(roomId)) {
+                room.setIsMotionDetectorOn(!room.getIsMotionDetectorOn());
+                return ResponseEntity.ok(room);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
+    }
+
+
     @PutMapping("/rooms/{roomId}/temperature")
     public ResponseEntity<?> updateRoomTemperature(@PathVariable String roomId,
                                                 @RequestBody Map<String, Object> payload) {
@@ -172,44 +199,49 @@ public class RoomController {
     // the info and adding it to the hashmap.
     @PostMapping("/uploadRoomLayout")
     public ResponseEntity<String> uploadRoomLayout(@RequestParam("file") MultipartFile file) {
-        // Clear existing rooms
-        roomList.clear();
-
-        // File was not uploaded correctly
         if (file.isEmpty()) {
             return new ResponseEntity<>("No file uploaded", HttpStatus.BAD_REQUEST);
         }
-
-        // Read file in and perform tasks:
+    
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
-            String line;
-            int roomNumber = 1;
-            while ((line = reader.readLine()) != null) {
-                // Split the line by a delimiter to separate room name and components
-                String[] parts = line.split(":");
-                // Check if the line has both room name and components
-                if (parts.length == 3) {
-                    String roomName = parts[0].trim();
-                    List<String> components = Arrays.asList(parts[1].trim().split(","));
-                    List<String> users = Arrays.asList(parts[2].trim().split(","));
-
-                    // Create a new Room instance and add it to the map
-                    roomList.add(new Room(roomName, components, users));
-                    roomNumber++;
+            String firstLine = reader.readLine(); // Read the first line for the house name
+    
+            if (firstLine != null && firstLine.startsWith("House:")) {
+                String houseName = firstLine.substring(6).trim();
+                House house = new House("1", houseName); // Create a new House instance
+                HouseController.setHouse(house); // Set the new house in HouseController
+                RoomController.roomList.clear(); // Clear existing rooms
+    
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] parts = line.split(":");
+                    if (parts.length >= 2) {
+                        String roomName = parts[0].trim();
+                        List<String> components = Arrays.asList(parts[1].trim().split(","));
+                        Room newRoom;
+    
+                        if (parts.length == 3) {
+                            List<String> users = Arrays.asList(parts[2].trim().split(","));
+                            newRoom = new Room(roomName, components, users);
+                        } else {
+                            newRoom = new Room(roomName, components);
+                        }
+                        house.addRoom(newRoom); // Add the room to the house
+                        RoomController.roomList.add(newRoom); // Add the room to the static list
+                    } else {
+                        return new ResponseEntity<>("Invalid room format in file", HttpStatus.BAD_REQUEST);
+                    }
                 }
-                if (parts.length == 2) {
-                    String roomName = parts[0].trim();
-                    List<String> components = Arrays.asList(parts[1].trim().split(","));
-                    // Create a new Room instance and add it to the map
-                    roomList.add(new Room(roomName, components));
-                    roomNumber++;
-                }
+                return new ResponseEntity<>("House and room layout uploaded successfully", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("The first line must start with 'House:' followed by the house name.", HttpStatus.BAD_REQUEST);
             }
-            return new ResponseEntity<>("Room layout uploaded successfully", HttpStatus.OK);
         } catch (IOException e) {
+            e.printStackTrace();
             return new ResponseEntity<>("Error processing file: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
 
     // This method assigns a given user to the first room

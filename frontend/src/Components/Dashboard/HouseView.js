@@ -46,6 +46,14 @@ function HVACFigure() {
   );
 }
 
+function MotionDetectorFigure() {
+  return (
+    <div className="text-center m-2.5">
+      <img src="/images/motionDetector.png" alt="Motion Detector" className="w-12 h-auto"/>
+    </div>
+  );
+}
+
 const HouseView = () => {
   const { rooms, isSimulationOn } = useContext(RoomContext);
 
@@ -86,6 +94,7 @@ const HouseView = () => {
                   {room.isWindowOpen && <WindowFigure />}
                   {room.isDoorOpen && <DoorFigure />}
                   {room.isHVACOn && <HVACFigure />}
+                  {room.isMotionDetectorOn && <MotionDetectorFigure />}
                 </div>
               </div>
             </div>
