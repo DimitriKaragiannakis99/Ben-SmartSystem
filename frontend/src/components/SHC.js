@@ -30,7 +30,7 @@ function SHC() {
   useEffect(() => {
     // Define the requests
     const fetchRooms = axios.get("http://localhost:8080/api/rooms");
-    const fetchAwayMode = axios.get("http://localhost:8080/api/house/awaymode");
+    const fetchAwayMode = axios.get("http://localhost:8080/api/house/awayMode");
 
     Promise.all([fetchRooms, fetchAwayMode])
       .then((responses) => {
