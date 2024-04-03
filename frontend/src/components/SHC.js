@@ -27,25 +27,30 @@ function SHC() {
   // state for auto locks
   const [autoLock, setAutoLock] = useState(false);
 
-  useEffect(
-    () => {
-      axios
-        .get("http://localhost:8080/api/rooms")
-        .then((response) => {
-          setRooms(response.data);
-          console.log("Rooms", response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching room information", error);
-        });
-    },
-    axios.get("http://localhost:8080/api/house/awaymode").then((response) => {
-      console.log("Away Mode", response.data).catch((error) => {
-        console.error("Error fetching away mode information", error);
+  useEffect(() => {
+    // Define the requests
+    const fetchRooms = axios.get("http://localhost:8080/api/rooms");
+    const fetchAwayMode = axios.get("http://localhost:8080/api/house/awaymode");
+
+    Promise.all([fetchRooms, fetchAwayMode])
+      .then((responses) => {
+        // responses[0] corresponds to the rooms, responses[1] to the away mode
+        const roomsResponse = responses[0];
+        const awayModeResponse = responses[1];
+
+        // Assuming you have a method setRooms to set rooms data
+        setRooms(roomsResponse.data);
+        console.log("Rooms", roomsResponse.data);
+
+        // Assuming you have a method setAwayMode to set away mode data
+        // setAwayMode(awayModeResponse.data); // Uncomment and use if you have a setter for away mode
+        console.log("Away Mode", awayModeResponse.data);
+      })
+      .catch((error) => {
+        // This will catch any error that was thrown during the fetching of rooms or away mode
+        console.error("Error fetching data", error);
       });
-    }),
-    []
-  );
+  }, []);
 
   const handleRoomCheckChange = (roomName) => {
     setSelectedRooms((prevSelectedRooms) => ({
