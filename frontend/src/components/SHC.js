@@ -38,13 +38,9 @@ function SHC() {
         const roomsResponse = responses[0];
         const awayModeResponse = responses[1];
 
-        // Assuming you have a method setRooms to set rooms data
         setRooms(roomsResponse.data);
-        console.log("Rooms", roomsResponse.data);
-
-        // Assuming you have a method setAwayMode to set away mode data
-        // setAwayMode(awayModeResponse.data); // Uncomment and use if you have a setter for away mode
-        console.log("Away Mode", awayModeResponse.data);
+        setIsAwayMode(awayModeResponse.data.isAwayModeOn);
+        console.log("Isaway: ", isAwayMode);
       })
       .catch((error) => {
         // This will catch any error that was thrown during the fetching of rooms or away mode
