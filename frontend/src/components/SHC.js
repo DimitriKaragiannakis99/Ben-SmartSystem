@@ -4,20 +4,27 @@ import { RoomContext } from "./Dashboard/RoomProvider";
 import { OutputConsoleContext } from "./OutputConsoleProvider";
 
 function SHC() {
-  const { toggleLight, toggleWindow, toggleDoor,currentSimUser, fetchCurrentSimUser } = useContext(RoomContext); // Destructure toggleLight, toggleWindow, and toggleDoor functions
+  const {
+    toggleLight,
+    toggleWindow,
+    toggleDoor,
+    currentSimUser,
+    fetchCurrentSimUser,
+  } = useContext(RoomContext); // Destructure toggleLight, toggleWindow, and toggleDoor functions
   const [rooms, setRooms] = useState([]);
   const [simulatorUser, setSimulatorUser] = useState("Parents");
   const [selectedRooms, setSelectedRooms] = useState({});
   const [selectedComponent, setSelectedComponent] = useState("");
-  
+
   // added OutputConsoleContext
-  const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
+  const { consoleMessages, updateConsoleMessages } =
+    useContext(OutputConsoleContext);
 
-	// state for auto lights
-	const [autoLight, setAutoLight] = useState(false);
+  // state for auto lights
+  const [autoLight, setAutoLight] = useState(false);
 
-	// state for auto locks
-	const [autoLock, setAutoLock] = useState(false);
+  // state for auto locks
+  const [autoLock, setAutoLock] = useState(false);
 
   useEffect(() => {
     axios
@@ -30,8 +37,6 @@ function SHC() {
         console.error("Error fetching room information", error);
       });
   }, []);
-
-
 
   const handleRoomCheckChange = (roomName) => {
     setSelectedRooms((prevSelectedRooms) => ({
@@ -74,7 +79,7 @@ function SHC() {
 
     console.log(selectedComponent);
 
-    console.log(consoleMessages)
+    console.log(consoleMessages);
 
     const currentTime = new Date().toLocaleTimeString();
     const actionText = action === "open" ? "opened" : "closed";
@@ -84,7 +89,6 @@ function SHC() {
 
     // updating OutputConsole context
     updateConsoleMessages(message);
-    
 
     if (selectedComponent === "light") {
       selectedRoomNames.forEach((roomName) => {
@@ -94,6 +98,7 @@ function SHC() {
         }
       });
     } else if (selectedComponent === " window") {
+      //Check if in Away mode
       selectedRoomNames.forEach((roomName) => {
         const room = rooms.find((r) => r.name === roomName);
         if (room) {
@@ -101,6 +106,7 @@ function SHC() {
         }
       });
     } else if (selectedComponent === " door") {
+      //Check if in Away mode
       selectedRoomNames.forEach((roomName) => {
         const room = rooms.find((r) => r.name === roomName);
         if (room) {
@@ -110,37 +116,37 @@ function SHC() {
     }
   };
 
-	const handleAutoLight = (action) => {
-		const currentTime = new Date().toLocaleTimeString();
+  const handleAutoLight = (action) => {
+    const currentTime = new Date().toLocaleTimeString();
 
-		if (action === "on") {
-			setAutoLight(true);
-		} else {
-			setAutoLight(false);
-		}
+    if (action === "on") {
+      setAutoLight(true);
+    } else {
+      setAutoLight(false);
+    }
 
-		const actionText = action === "on" ? "activated" : "deactivated";
-		const message = `[${currentTime}] [Auto Lights] was ${actionText} by ${simulatorUser} request.`;
+    const actionText = action === "on" ? "activated" : "deactivated";
+    const message = `[${currentTime}] [Auto Lights] was ${actionText} by ${simulatorUser} request.`;
 
-		 // updating OutputConsole context
-     updateConsoleMessages(message);
-	};
+    // updating OutputConsole context
+    updateConsoleMessages(message);
+  };
 
-	const handleAutoLock = (action) => {
-		const currentTime = new Date().toLocaleTimeString();
+  const handleAutoLock = (action) => {
+    const currentTime = new Date().toLocaleTimeString();
 
-		if (action === "on") {
-			setAutoLock(true);
-		} else {
-			setAutoLock(false);
-		}
+    if (action === "on") {
+      setAutoLock(true);
+    } else {
+      setAutoLock(false);
+    }
 
-		const actionText = action === "on" ? "activated" : "deactivated";
-		const message = `[${currentTime}] [Auto Locks] was ${actionText} by ${simulatorUser} request.`;
+    const actionText = action === "on" ? "activated" : "deactivated";
+    const message = `[${currentTime}] [Auto Locks] was ${actionText} by ${simulatorUser} request.`;
 
-		 // updating OutputConsole context
-     updateConsoleMessages(message);
-	};
+    // updating OutputConsole context
+    updateConsoleMessages(message);
+  };
 
   return (
     <>
@@ -189,77 +195,77 @@ function SHC() {
               </div>
             </div>
 
-						{/* Box for rooms */}
-						<div className="p-4 border border-gray-200 rounded">
-							<h2 className="font-bold mb-3">Rooms</h2>
-							<ul>
-								{rooms.map((room) => (
-									<li key={room.id}>
-										<label className="flex items-center space-x-2">
-											<input
-												type="checkbox"
-												checked={selectedRooms[room.name] || false}
-												onChange={() => handleRoomCheckChange(room.name)}
-											/>
-											<span>{room.name}</span>
-										</label>
-									</li>
-								))}
-							</ul>
-							<button
-								onClick={selectAllRooms}
-								className="px-4 py-2 mt-2 border border-gray-300 bg-green-500 text-white rounded hover:bg-blue-700 transition-colors"
-							>
-								All
-							</button>
-							<button
-								onClick={deselectAllRooms}
-								className="px-4 py-2 border  border-gray-300 bg-red-500 text-white rounded hover:bg-red-700 transition-colors ml-2"
-							>
-								None
-							</button>
-						</div>
-						{/* Box for the auto lights */}
+            {/* Box for rooms */}
+            <div className="p-4 border border-gray-200 rounded">
+              <h2 className="font-bold mb-3">Rooms</h2>
+              <ul>
+                {rooms.map((room) => (
+                  <li key={room.id}>
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={selectedRooms[room.name] || false}
+                        onChange={() => handleRoomCheckChange(room.name)}
+                      />
+                      <span>{room.name}</span>
+                    </label>
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={selectAllRooms}
+                className="px-4 py-2 mt-2 border border-gray-300 bg-green-500 text-white rounded hover:bg-blue-700 transition-colors"
+              >
+                All
+              </button>
+              <button
+                onClick={deselectAllRooms}
+                className="px-4 py-2 border  border-gray-300 bg-red-500 text-white rounded hover:bg-red-700 transition-colors ml-2"
+              >
+                None
+              </button>
+            </div>
+            {/* Box for the auto lights */}
 
-						<div className=" mt-4 p-4 border border-gray-200 rounded">
-							<h2 className="font-bold mb-3">Auto Lights</h2>
-							<div>
-								<button
-									className="px-4 py-2 mt-2 border border-gray-300 bg-green-500 text-white rounded hover:bg-green-700 transition-colors mr-2"
-									onClick={() => handleAutoLight("on")}
-								>
-									On
-								</button>
-								<button
-									className="px-4 py-2 border border-gray-300 bg-red-500 text-white rounded hover:bg-red-700 transition-colors"
-									onClick={() => handleAutoLight("off")}
-								>
-									Off
-								</button>
-							</div>
-						</div>
+            <div className=" mt-4 p-4 border border-gray-200 rounded">
+              <h2 className="font-bold mb-3">Auto Lights</h2>
+              <div>
+                <button
+                  className="px-4 py-2 mt-2 border border-gray-300 bg-green-500 text-white rounded hover:bg-green-700 transition-colors mr-2"
+                  onClick={() => handleAutoLight("on")}
+                >
+                  On
+                </button>
+                <button
+                  className="px-4 py-2 border border-gray-300 bg-red-500 text-white rounded hover:bg-red-700 transition-colors"
+                  onClick={() => handleAutoLight("off")}
+                >
+                  Off
+                </button>
+              </div>
+            </div>
 
-						{/* Box for the auto locks */}
+            {/* Box for the auto locks */}
 
-						<div className=" mt-4 p-4 border border-gray-200 rounded">
-							<h2 className="font-bold mb-3">Auto Locks</h2>
-							<div>
-								<button
-									className="px-4 py-2 mt-2 border border-gray-300 bg-green-500 text-white rounded hover:bg-green-700 transition-colors mr-2"
-									onClick={() => handleAutoLock("on")}
-								>
-									On
-								</button>
-								<button
-									className="px-4 py-2 border border-gray-300 bg-red-500 text-white rounded hover:bg-red-700 transition-colors"
-									onClick={() => handleAutoLock("off")}
-								>
-									Off
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
+            <div className=" mt-4 p-4 border border-gray-200 rounded">
+              <h2 className="font-bold mb-3">Auto Locks</h2>
+              <div>
+                <button
+                  className="px-4 py-2 mt-2 border border-gray-300 bg-green-500 text-white rounded hover:bg-green-700 transition-colors mr-2"
+                  onClick={() => handleAutoLock("on")}
+                >
+                  On
+                </button>
+                <button
+                  className="px-4 py-2 border border-gray-300 bg-red-500 text-white rounded hover:bg-red-700 transition-colors"
+                  onClick={() => handleAutoLock("off")}
+                >
+                  Off
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div className="p-4 border border-gray-200 rounded h-48 overflow-auto">
           <h2 className="font-bold mb-3">Output Console</h2>
