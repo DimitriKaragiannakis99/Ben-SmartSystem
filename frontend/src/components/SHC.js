@@ -111,6 +111,7 @@ function SHC() {
     } else if (selectedComponent === " window") {
       //Check if in Away mode
       if (isAwayMode) {
+        updateConsoleMessages(message2);
         // If in Away mode, close all windows
       } else {
         // updating OutputConsole context
@@ -124,6 +125,7 @@ function SHC() {
       }
     } else if (selectedComponent === " door") {
       if (isAwayMode) {
+        updateConsoleMessages(message2);
         // If in Away mode, close all windows
       } else {
         // updating OutputConsole context
