@@ -59,7 +59,7 @@ class ZoneRepositoryTest {
         boolean result = zoneRepository.updateRoomTemperature(savedZone.getId(), "room1", 25.0);
         assertTrue(result);
         Room updatedRoom = savedZone.getRooms().get(0);
-        assertEquals(25.0, updatedRoom.getTemperature());
+        assertEquals(25.0, updatedRoom.getDesiredTemperature());
     }
 
     @Test
