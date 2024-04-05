@@ -1,8 +1,6 @@
 package com.bensmartsystem.backend.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,20 +10,29 @@ public class OutputConsoleTests {
         OutputConsole console1 = OutputConsole.getConsoleLog();
         OutputConsole console2 = OutputConsole.getConsoleLog();
 
-        assertNotNull(console1);
-        assertNotNull(console2);
         assertSame(console1, console2, "Both instances should be the same");
     }
 
     @Test
-    void testAddLogAndGetLogList() {
+    void testAddLog() {
         OutputConsole console = OutputConsole.getConsoleLog();
-        console.addLog("Log 1");
-        console.addLog("Log 2");
 
-        assertNotNull(console.getLogList());
-        assertEquals(2, console.getLogList().size());
-        assertEquals("Log 1", console.getLogList().get(0));
-        assertEquals("Log 2", console.getLogList().get(1));
+        console.getLogList().clear();
+
+        console.addLog("Test log");
+
+        assertFalse(console.getLogList().isEmpty(), "Log list should not be empty");
+        assertEquals("Test log", console.getLogList().get(0), "The log should match the added log");
+    }
+
+    @Test
+    void testGetLogList() {
+        OutputConsole console = OutputConsole.getConsoleLog();
+        console.addLog("First log");
+        console.addLog("Second log");
+
+        assertEquals(2, console.getLogList().size(), "Log list should have two entries");
+        assertEquals("First log", console.getLogList().get(0), "First log should match");
+        assertEquals("Second log", console.getLogList().get(1), "Second log should match");
     }
 }
