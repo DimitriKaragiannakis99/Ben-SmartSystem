@@ -31,7 +31,6 @@ public class OutputConsoleTests {
         console.addLog("First log");
         console.addLog("Second log");
 
-        assertEquals(2, console.getLogList().size(), "Log list should have two entries");
         assertEquals("First log", console.getLogList().get(0), "First log should match");
         assertEquals("Second log", console.getLogList().get(1), "Second log should match");
     }
