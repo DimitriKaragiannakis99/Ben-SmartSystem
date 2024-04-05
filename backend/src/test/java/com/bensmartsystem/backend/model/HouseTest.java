@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 class HouseTest {
 
@@ -67,5 +69,31 @@ class HouseTest {
 
         house.setAwayModeOn(false);
         assertFalse(house.isAwayModeOn());
+    }
+
+    @Test
+    void testGetAndSetAlertTimer() {
+        AlertTimer timer = new AlertTimer(20, house);
+        house.setAlertTimer(timer);
+        assertEquals(timer, house.getAlertTimer());
+        assertEquals(20, house.getAlertTimer().getDelayInSeconds());
+    }
+
+    @Test
+    void testIsPoliceCalled() {
+        assertFalse(house.isPoliceCalled());
+        house.setPoliceCalled(true);
+        assertTrue(house.isPoliceCalled());
+    }
+
+    @Test
+    @Timeout(value = 35, unit = TimeUnit.SECONDS)
+    void testAlertTimerStartsAndCallsPolice() throws InterruptedException {
+        house.getAlertTimer().setDelayInSeconds(5);
+
+        assertFalse(house.isPoliceCalled());
+        house.getAlertTimer().startTimer();
+        Thread.sleep(6000); // Wait for the timer to finish (slightly longer than the timer delay)
+        assertTrue(house.isPoliceCalled());
     }
 }

@@ -9,11 +9,14 @@ public class House {
     private String name;
     private List<Room> rooms;
     private boolean isAwayModeOn;
+    private AlertTimer alertTimer;
+    private boolean isPoliceCalled = false;
 
     public House(String name, List<Room> rooms) {
         this.name = name;
         this.rooms = rooms;
         this.isAwayModeOn = false;
+        this.alertTimer = new AlertTimer(30, this);
     }
 
     public House(String id, String name) {
@@ -21,6 +24,7 @@ public class House {
         this.name = name;
         this.rooms = new ArrayList<>();
         this.isAwayModeOn = false;
+        this.alertTimer = new AlertTimer(30, this);
     }
 
     public void toggleAwayMode() {
@@ -62,6 +66,23 @@ public class House {
     public void addRoom(Room room) {
         this.rooms.add(room);
     }
+
+    public AlertTimer getAlertTimer() {
+        return alertTimer;
+    }
+    
+    public void setAlertTimer(AlertTimer alertTimer) {
+        this.alertTimer = alertTimer;
+    }
+
+    public boolean isPoliceCalled() {
+        return isPoliceCalled;
+    }
+    
+    public void setPoliceCalled(boolean isPoliceCalled) {
+        this.isPoliceCalled = isPoliceCalled;
+    }
+    
 
     @Override
     public String toString() {
