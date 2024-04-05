@@ -17,12 +17,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-     - name: Set up JDK 21
-  uses: actions/setup-java@v2
-  with:
-    java-version: '21'
-    distribution: 'adopt' # Replace 'adopt' with a distribution that provides JDK 21 if necessary
-
+      - name: Set up JDK 21
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'adopt' # Replace 'adopt' with a distribution that provides JDK 21 if necessary
 
       - name: Grant execute permission for mvnw
         run: chmod +x backend/mvnw
