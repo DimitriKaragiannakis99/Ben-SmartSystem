@@ -4,17 +4,17 @@ import axios from 'axios';
 export const CurrentUserContext = createContext();
 
 const CurrentUserProvider = ({ children }) => {
-  const [currentSimUser, setCurrentSimUser] = useState(null);
+  const [currSimUser, setCurrSimUser] = useState(null);
 
 
 
    const updateCurrentSimUser = (newSimUser) =>{
-        setCurrentSimUser(newSimUser)
+        setCurrSimUser(newSimUser)
    }
 
 
   return (
-    <CurrentUserContext.Provider value={{ currentSimUser,updateCurrentSimUser }}>
+    <CurrentUserContext.Provider value={{ currSimUser,updateCurrentSimUser }}>
       {children}
     </CurrentUserContext.Provider>
   );

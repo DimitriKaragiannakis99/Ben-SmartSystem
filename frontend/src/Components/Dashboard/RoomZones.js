@@ -14,7 +14,7 @@ const RoomZones = () => {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const { isSHHOn, setIsSHHOn } = useContext(RoomContext);
 
-  const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
+  const {currSimUser, updateCurrSimUser} = useContext(CurrentUserContext);
   
 
   	  // added OutputConsoleContext
@@ -105,8 +105,9 @@ const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext
           setZones((prevZones) =>
             prevZones.map((zone) => {
               if (zone.id === zoneId) {
+                const currentDate = new Date().toLocaleDateString();
                 const currentTime = new Date().toLocaleTimeString();
-                const message = `[${currentTime}] the desired temperature ${newTemperature}C in rooms of zone ${zone.name} has been changed by  ${currentSimUser} `;
+                const message = `[${currentDate}][${currentTime}] the desired temperature ${newTemperature}C in rooms of zone ${zone.name} has been changed by  ${currSimUser} `;
                 // updating OutputConsole context
                 updateConsoleMessages(message);
       
@@ -145,9 +146,9 @@ const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext
         .then(() => {
           updateRoomTemperature(roomId, temperatureAsNumber, true);
           const roomName = rooms.find(room => room.id === roomId)?.name;
-
+          const currentDate = new Date().toLocaleDateString();
           const currentTime = new Date().toLocaleTimeString();
-          const message = `[${currentTime}] the desired temperature ${temperatureAsNumber}C in room ${roomName} has been overridden by ${currentSimUser}`;
+          const message = `[${currentDate}][${currentTime}] the desired temperature ${temperatureAsNumber}C in room ${roomName} has been overridden by ${currSimUser}`;
           // updating OutputConsole context
           updateConsoleMessages(message);
 

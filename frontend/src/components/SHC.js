@@ -22,8 +22,8 @@ function SHC() {
   const { consoleMessages, updateConsoleMessages } =
     useContext(OutputConsoleContext);
 
-  const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
-  const [simulatorUser, setSimulatorUser] = useState(currentSimUser);
+  const {currSimUser, updateCurrSimUser} = useContext(CurrentUserContext);
+  const [simulatorUser, setSimulatorUser] = useState(currSimUser);
 
   // state for auto lights
   const [autoLight, setAutoLight] = useState(false);
@@ -94,12 +94,13 @@ function SHC() {
 
     console.log(consoleMessages);
 
+    const currentDate = new Date().toLocaleDateString();
     const currentTime = new Date().toLocaleTimeString();
     const actionText = action === "open" ? "opened" : "closed";
-    const message = `[${currentTime}] [${selectedComponent}] in ${selectedRoomNames.join(
+    const message = `[${currentDate}][${currentTime}] [${selectedComponent}] in ${selectedRoomNames.join(
       ", "
     )} was ${actionText} by ${simulatorUser} request.`;
-    const message2 = `[${currentTime}] [${selectedComponent}] in ${selectedRoomNames.join(
+    const message2 = `[${currentDate}][${currentTime}] [${selectedComponent}] in ${selectedRoomNames.join(
       ", "
     )} was not ${actionText} by ${simulatorUser} request due to being in Away Mode.`;
 
@@ -145,6 +146,7 @@ function SHC() {
   };
 
   const handleAutoLight = (action) => {
+    const currentDate = new Date().toLocaleDateString();
     const currentTime = new Date().toLocaleTimeString();
 
     if (action === "on") {
@@ -154,13 +156,14 @@ function SHC() {
     }
 
     const actionText = action === "on" ? "activated" : "deactivated";
-    const message = `[${currentTime}] [Auto Lights] was ${actionText} by ${simulatorUser} request.`;
+    const message = `[${currentDate}][${currentTime}] [Auto Lights] was ${actionText} by ${simulatorUser} request.`;
 
     // updating OutputConsole context
     updateConsoleMessages(message);
   };
 
   const handleAutoLock = (action) => {
+    const currentDate = new Date().toLocaleDateString();
     const currentTime = new Date().toLocaleTimeString();
 
     if (action === "on") {
@@ -170,7 +173,7 @@ function SHC() {
     }
 
     const actionText = action === "on" ? "activated" : "deactivated";
-    const message = `[${currentTime}] [Auto Locks] was ${actionText} by ${simulatorUser} request.`;
+    const message = `[${currentDate}][${currentTime}] [Auto Locks] was ${actionText} by ${simulatorUser} request.`;
 
     // updating OutputConsole context
     updateConsoleMessages(message);

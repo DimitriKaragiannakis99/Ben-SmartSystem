@@ -9,7 +9,7 @@ const ScheduleTemperatureModal = ({ isOpen, onClose, zoneId }) => {
     	  // added OutputConsoleContext
 const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
 
-const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
+const {currSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
 
   const handleTimeSelection = (time) => {
     setSelectedTimes((prev) =>
@@ -33,8 +33,9 @@ const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
         }),
       });
 
+      const currentDate = new Date().toLocaleDateString();
       const currentTime = new Date().toLocaleTimeString();
-      const message = `[${currentTime}] the desired ${temperature}C in ${selectedTimes}  has been changed in zone id ${cleanedZoneId} by ${currentSimUser}`;
+      const message = `[${currentDate}][${currentTime}] the desired temperature ${temperature}C in ${selectedTimes}  has been changed in zone id ${cleanedZoneId} by ${currSimUser}`;
       // updating OutputConsole context
       updateConsoleMessages(message);
 

@@ -1,12 +1,15 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { RoomContext } from "./RoomProvider";
+import { OutputConsoleContext } from "../OutputConsoleProvider"
+import { CurrentUserContext } from "../CurrentUserProvider";
 
 const DashboardSHP = () => {
     const [rooms, setRooms] = useState([]);
     const [isAwayModeOn, setIsAwayModeOn] = useState(false);
     const { toggleHasMotionDetector, toggleMotionDetector } = useContext(RoomContext);
     const [timerDelay, setTimerDelay] = useState(30);
+    const {currSimUser, updateCurrSimUser} = useContext(CurrentUserContext);
 
     useEffect(() => {
         axios.get('http://localhost:8080/api/rooms')

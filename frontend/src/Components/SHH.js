@@ -11,7 +11,7 @@ function RoomInfo() {
     	  // added OutputConsoleContext
 const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
 
-const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
+const {currSimUser, updateCurrSimUser} = useContext(CurrentUserContext);
 
   useEffect(() => {
     const intervalHandler = () => {
@@ -61,8 +61,9 @@ const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
       .then((response) => {
         console.log("hvac on");
         const roomName = rooms.find(room => room.id === roomid)?.name;
+        const currentDate = new Date().toLocaleDateString();
         const currentTime = new Date().toLocaleTimeString();
-        const message = `[${currentTime}] the HVAC has been turned on in ${roomName} by ${currentSimUser} `;
+        const message = `[${currentDate}][${currentTime}] the HVAC has been turned on in ${roomName} by ${currSimUser} `;
         // updating OutputConsole context
         updateConsoleMessages(message);
         clearInterval(intervalRef.current);
@@ -81,8 +82,9 @@ const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
       .then((response) => {
         console.log("hvac off");
         const roomName = rooms.find(room => room.id === roomid)?.name;
+        const currentDate = new Date().toLocaleDateString();
         const currentTime = new Date().toLocaleTimeString();
-        const message = `[${currentTime}] the HVAC has been turned off in ${roomName} by ${currentSimUser} `;
+        const message = `[${currentDate}][${currentTime}] the HVAC has been turned off in ${roomName} by ${currSimUser} `;
          // updating OutputConsole context
          updateConsoleMessages(message);
         clearInterval(intervalRef.current);

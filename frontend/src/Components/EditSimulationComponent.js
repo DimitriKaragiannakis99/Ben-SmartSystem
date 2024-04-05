@@ -28,7 +28,7 @@ const RoomEditPage = () => {
   // adding OutputConsoleContext
   const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
 
-  const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
+  const {currSimUser, updateCurrSimUser} = useContext(CurrentUserContext);
 
 
   useEffect(() => {
@@ -87,8 +87,9 @@ const RoomEditPage = () => {
       if (`${room.id}-window` === windowId) {
         
         // updating OutputConsoleContext when window is unblocked
+       const currentDate = new Date().toLocaleDateString();
        const currentTime = new Date().toLocaleTimeString();
-       const message = `[${currentTime}] The window in ${room.name} was unblocked by ${currentSimUser ? currentSimUser : "Parents"} request.`;
+       const message = `[${currentDate}][${currentTime}] The window in ${room.name} was unblocked by ${currSimUser ? currSimUser : "Parents"} request.`;
 
        updateConsoleMessages(message);
         
@@ -177,8 +178,9 @@ const RoomEditPage = () => {
         if (room.id === roomId) {
           
            // updating OutputConsoleContext when window is blocked
+           const currentDate = new Date().toLocaleDateString();
            const currentTime = new Date().toLocaleTimeString();
-           const message = `[${currentTime}] The window in ${room.name} was blocked by ${currentSimUser ? currentSimUser : "Parents"} request.`;
+           const message = `[${currentDate}][${currentTime}] The window in ${room.name} was blocked by ${currSimUser ? currSimUser : "Parents"} request.`;
 
            updateConsoleMessages(message);
           
@@ -198,9 +200,10 @@ const RoomEditPage = () => {
    // updating OutputConsoleContext with new locations of users
     rooms.forEach(room => {
       if (room.users.length > 0) {
+        const currentDate = new Date().toLocaleDateString();
         const currentTime = new Date().toLocaleTimeString();
         room.users.forEach(user => {
-          const message = `[${currentTime}] ${user} was placed in ${room.name} by ${currentSimUser ? currentSimUser : "Parents"} request.`;
+          const message = `[${currentDate}][${currentTime}] ${user} was placed in ${room.name} by ${currSimUser ? currSimUser : "Parents"} request.`;
           console.log(message);
           // Use the functional update form to ensure the state is correctly updated
           updateConsoleMessages(message);

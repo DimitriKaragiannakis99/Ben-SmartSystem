@@ -198,7 +198,7 @@ function UserManagementTab() {
 
 	  // added OutputConsoleContext
 const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
-const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
+const {currSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
 
 	useEffect(() => {
 		setUsers([...readUsers()]);
@@ -206,13 +206,14 @@ const {currentSimUser, updateCurrentSimUser} = useContext(CurrentUserContext);
 	}, []);
 
 	useEffect(() => {
-		if (currentSimUser) { // Check ensures not to log immediately on component mount with initial state
+		if (currSimUser) { // Check ensures not to log immediately on component mount with initial state
+		  const currentDate = new Date().toLocaleDateString();
 		  const currentTime = new Date().toLocaleTimeString();
-		  const message = `[${currentTime}] the user ${currentSimUser} has been logged in`;
+		  const message = `[${currentDate}][${currentTime}] the user ${currSimUser} has been logged in`;
 		  // Update the console messages context or log the message as needed
 		  updateConsoleMessages(message);
 		}
-	  }, [currentSimUser]);
+	  }, [currSimUser]);
 
 	// TODO: Fix this, sometimes it doesnt update the users
 	function readUsers() {
