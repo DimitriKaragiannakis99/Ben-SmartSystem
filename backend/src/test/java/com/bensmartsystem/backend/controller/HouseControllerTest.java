@@ -1,5 +1,6 @@
 package com.bensmartsystem.backend.controller;
 
+import com.bensmartsystem.backend.model.AlertTimer;
 import com.bensmartsystem.backend.model.House;
 import com.bensmartsystem.backend.model.Room;
 import org.junit.jupiter.api.BeforeEach;
@@ -70,6 +71,26 @@ class HouseControllerTest {
         mockMvc.perform(post("/api/house/toggleAwayMode"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.isAwayModeOn", is(true)));
+    }
+
+    @Test
+    void getTimerDelayWhenHouseCreated() throws Exception {
+        when(house.getAlertTimer()).thenReturn(new AlertTimer(20, house));
+        HouseController.setHouse(house);
+
+        mockMvc.perform(get("/api/house/getTimerDelay"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.delayInSeconds", is(20)));
+    }
+
+    @Test
+    void checkPoliceCalledWhenHouseCreated() throws Exception {
+        when(house.isPoliceCalled()).thenReturn(true);
+        HouseController.setHouse(house);
+
+        mockMvc.perform(get("/api/house/checkPoliceCalled"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
     }
 }
 

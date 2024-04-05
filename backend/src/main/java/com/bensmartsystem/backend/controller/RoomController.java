@@ -33,14 +33,14 @@ public class RoomController {
     @Getter
     private static final ArrayList<Room> roomList = new ArrayList<>();
 
-    //For testing purposes
-    public void addRoom(Room room){
+    // For testing purposes
+    public void addRoom(Room room) {
         roomList.add(room);
     }
 
     @GetMapping("/rooms")
     public ResponseEntity<ArrayList<Room>> getAllRooms() {
-        //System.out.println(roomList);
+        // System.out.println(roomList);
         // Return a new ArrayList to avoid exposing the internal storage structure
         // In here we will assign the users to random rooms for the first time
         updateUsersInRooms();
@@ -150,19 +150,22 @@ public class RoomController {
         for (Room room : roomList) {
             if (room.getId().equals(roomId)) {
                 room.setIsMotionDetectorOn(!room.getIsMotionDetectorOn());
+                if (room.getIsMotionDetectorOn()) {
+                    // Start the timer when the motion detector is turned on
+                    HouseController.getHouse().getAlertTimer().startTimer();
+                } else {
+                    HouseController.getHouse().setPoliceCalled(false);
+                }
                 return ResponseEntity.ok(room);
             }
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found with id: " + roomId);
     }
 
-
     @PutMapping("/rooms/{roomId}/temperature")
     public ResponseEntity<?> updateRoomTemperature(@PathVariable String roomId,
-                                                @RequestBody Map<String, Object> payload) {
-        
+            @RequestBody Map<String, Object> payload) {
 
-        
         Object temperatureObj = payload.get("temperature");
         if (!(temperatureObj instanceof Number)) {
             return ResponseEntity.badRequest().body("Temperature must be a number");
@@ -174,9 +177,9 @@ public class RoomController {
         } else {
             newTemperature = (Double) temperatureObj;
         }
-        
+
         Boolean isOverridden = (Boolean) payload.getOrDefault("overridden", false);
-        
+
         Room room = findRoomById(roomId);
         if (room == null) {
             return ResponseEntity.notFound().build();
@@ -184,16 +187,15 @@ public class RoomController {
 
         if (!checkPermissions("shhAccess", roomList.indexOf(room))) {
             SimulationEventManager.getInstance().Notify("InvalidPermission");
-            return ResponseEntity.badRequest().body("You do not have permission to change the temperature in this room");
-            }
+            return ResponseEntity.badRequest()
+                    .body("You do not have permission to change the temperature in this room");
+        }
 
         room.setDesiredTemperature(newTemperature);
         room.setTemperatureOverridden(isOverridden);
         SimulationEventManager.getInstance().Notify("desiredtemperatureUpdated");
         return ResponseEntity.ok().body("Desired Temperature updated for room with ID: " + roomId);
     }
-
-
 
     // This has the logic for retrieving the .txt file from the front-end, parsing
     // the info and adding it to the hashmap.
@@ -202,16 +204,16 @@ public class RoomController {
         if (file.isEmpty()) {
             return new ResponseEntity<>("No file uploaded", HttpStatus.BAD_REQUEST);
         }
-    
+
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             String firstLine = reader.readLine(); // Read the first line for the house name
-    
+
             if (firstLine != null && firstLine.startsWith("House:")) {
                 String houseName = firstLine.substring(6).trim();
                 House house = new House("1", houseName); // Create a new House instance
                 HouseController.setHouse(house); // Set the new house in HouseController
                 RoomController.roomList.clear(); // Clear existing rooms
-    
+
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String[] parts = line.split(":");
@@ -219,7 +221,7 @@ public class RoomController {
                         String roomName = parts[0].trim();
                         List<String> components = Arrays.asList(parts[1].trim().split(","));
                         Room newRoom;
-    
+
                         if (parts.length == 3) {
                             List<String> users = Arrays.asList(parts[2].trim().split(","));
                             newRoom = new Room(roomName, components, users);
@@ -234,15 +236,14 @@ public class RoomController {
                 }
                 return new ResponseEntity<>("House and room layout uploaded successfully", HttpStatus.OK);
             } else {
-                return new ResponseEntity<>("The first line must start with 'House:' followed by the house name.", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("The first line must start with 'House:' followed by the house name.",
+                        HttpStatus.BAD_REQUEST);
             }
         } catch (IOException e) {
             e.printStackTrace();
             return new ResponseEntity<>("Error processing file: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
 
     // This method assigns a given user to the first room
     public static void assignUserToFirstRoom(User user) {
@@ -282,55 +283,53 @@ public class RoomController {
         return null; // Or throw an exception if the room is not found
     }
 
-        //Add here the checking of the permissions
-    public static boolean checkPermissions(String givenPermission, int targetRoomIndex) 
-    {
-        //First get the current user's and their permissions
-        //Then check if the given permission is in the list of permissions
-        //If it is then return true
-        //Otherwise return false
+    // Add here the checking of the permissions
+    public static boolean checkPermissions(String givenPermission, int targetRoomIndex) {
+        // First get the current user's and their permissions
+        // Then check if the given permission is in the list of permissions
+        // If it is then return true
+        // Otherwise return false
 
-        //Get the current user
+        // Get the current user
         User currentUser = UserController.getCurrentUser();
 
         // Get the current room of the user to check if it needs remote access
         int roomIndex = currentUser.getRoomIndex();
-        //Convert that index to a string
+        // Convert that index to a string
 
         System.out.println("Room index: " + roomIndex + " Target room index: " + targetRoomIndex);
         // Get the permissions of the current user
         String permissions = currentUser.getPermissions();
         // Check if the given permission is in the list of permissions
-        
+
         Map<String, Object> mapping;
         try {
             mapping = new ObjectMapper().readValue(permissions, HashMap.class);
             boolean needsRemoteAccess = !(roomIndex == targetRoomIndex);
-            boolean hasRemoteAccess = ((mapping.containsKey("remoteAccess") && (boolean) mapping.get("remoteAccess") == true));
-
+            boolean hasRemoteAccess = ((mapping.containsKey("remoteAccess")
+                    && (boolean) mapping.get("remoteAccess") == true));
 
             // System.out.println("Needs remote access: " + needsRemoteAccess);
             // System.out.println("Has remote access: " + hasRemoteAccess);
-            if (mapping.containsKey(givenPermission) && (boolean) mapping.get(givenPermission) == true && (needsRemoteAccess == false || hasRemoteAccess == true)){
-            
+            if (mapping.containsKey(givenPermission) && (boolean) mapping.get(givenPermission) == true
+                    && (needsRemoteAccess == false || hasRemoteAccess == true)) {
+
                 SimulationEventManager.getInstance().Notify("ValidPermission");
                 return true;
-            } else 
-            {
+            } else {
                 SimulationEventManager.getInstance().Notify("InvalidPermission");
                 return false;
             }
-        
+
         } catch (JsonMappingException e) {
             e.printStackTrace();
-        
+
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
         return false;
-  
 
     }
-    
+
 }

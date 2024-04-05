@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+import java.nio.charset.StandardCharsets;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -77,11 +78,19 @@ class RoomControllerTest {
 
     @Test
     void uploadRoomLayout() {
-        MultipartFile file = new MockMultipartFile("room_layout.txt",
-                "Room1:Light,Window\nRoom2:Light,Door".getBytes(StandardCharsets.UTF_8));
-        ResponseEntity<String> response = roomController.uploadRoomLayout(file);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Room layout uploaded successfully", response.getBody());
+        String correctFileContent = "House:MyHouse\nRoom1:Light,Window\nRoom2:Light,Door";
+        MultipartFile correctFile = new MockMultipartFile("file", "room_layout.txt", "text/plain", correctFileContent.getBytes());
+
+        ResponseEntity<String> correctResponse = roomController.uploadRoomLayout(correctFile);
+        assertEquals(HttpStatus.OK, correctResponse.getStatusCode());
+        assertEquals("House and room layout uploaded successfully", correctResponse.getBody());
+
+        String incorrectFileContent = "IncorrectFirstLine\nRoom1:Light,Window\nRoom2:Light,Door";
+        MultipartFile incorrectFile = new MockMultipartFile("file", "room_layout.txt", "text/plain", incorrectFileContent.getBytes());
+
+        ResponseEntity<String> incorrectResponse = roomController.uploadRoomLayout(incorrectFile);
+        assertEquals(HttpStatus.BAD_REQUEST, incorrectResponse.getStatusCode());
+        assertEquals("The first line must start with 'House:' followed by the house name.", incorrectResponse.getBody());
     }
 
     @Test

@@ -31,3 +31,31 @@
 [5:44:51 PM] Strangers was placed in Living room by Parent request.
 [5:44:51 PM] Chidren was placed in Living room by Parent request.
 [5:44:51 PM] Parents was placed in Living room by Parent request.
+[3:20:24 PM] Chidren was placed in Living room by Parent request.
+[3:20:24 PM] Guests was placed in Kitchen by Parent request.
+[3:20:24 PM] Parents was placed in Living room by Parent request.
+[3:20:24 PM] Strangers was placed in Dining room by Parent request.
+[3:34:14 PM] Parents was placed in Living room by Parent request.
+[3:34:14 PM] Chidren was placed in Living room by Parent request.
+[3:34:14 PM] Guests was placed in Kitchen by Parent request.
+[3:34:14 PM] Strangers was placed in Dining room by Parent request.
+[3:41:36 PM] Parents was placed in Living room by Parent request.
+[3:41:36 PM] Guests was placed in Kitchen by Parent request.
+[3:41:36 PM] Chidren was placed in Bedroom by Parent request.
+[3:41:36 PM] Strangers was placed in Dining room by Parent request.
+[3:41:47 PM] the user 1L has been logged in
+[3:50:15 PM] Guests was placed in Kitchen by Parent request.
+[3:50:15 PM] Strangers was placed in Dining room by Parent request.
+[3:50:15 PM] Chidren was placed in Bedroom by Parent request.
+[3:50:15 PM] Parents was placed in Living room by Parent request.
+[3:55:08 PM] [ window] in Living room was opened by Parents request.
+[3:55:48 PM] [ door] in Living room was opened by Parents request.
+[4:01:28 PM] [ window] in Living room was not opened by Parents request due to being in Away Mode.
+[4:01:42 PM] [light] in Living room was opened by Parents request.
+[4:01:47 PM] [ door] in Living room was not opened by Parents request due to being in Away Mode.
+[4:01:55 PM] [ door] in Living room was not opened by Parents request due to being in Away Mode.
+[4:01:55 PM] [ door] in Living room was not opened by Parents request due to being in Away Mode.
+[4:01:56 PM] [ door] in Living room was not closed by Parents request due to being in Away Mode.
+[4:04:13 PM] [ door] in Living room was closed by Parents request.
+[4:04:15 PM] [light] in Living room was closed by Parents request.
+[4:04:33 PM] [ window] in Living room was not opened by Parents request due to being in Away Mode.
