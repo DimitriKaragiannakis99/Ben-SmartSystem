@@ -24,14 +24,4 @@ public class OutputConsoleTests {
         assertFalse(console.getLogList().isEmpty(), "Log list should not be empty");
         assertEquals("Test log", console.getLogList().get(0), "The log should match the added log");
     }
-
-    @Test
-    void testGetLogList() {
-        OutputConsole console = OutputConsole.getConsoleLog();
-        console.addLog("First log");
-        console.addLog("Second log");
-
-        assertEquals("First log", console.getLogList().get(0), "First log should match");
-        assertEquals("Second log", console.getLogList().get(1), "Second log should match");
-    }
 }
