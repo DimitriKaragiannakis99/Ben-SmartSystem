@@ -31,22 +31,31 @@
 [5:44:51 PM] Strangers was placed in Living room by Parent request.
 [5:44:51 PM] Chidren was placed in Living room by Parent request.
 [5:44:51 PM] Parents was placed in Living room by Parent request.
-[1:04:23 p.m.] Strangers was placed in Bedroom by Parent request.
-[1:04:23 p.m.] Guests was placed in Dining room by Parent request.
-[1:04:23 p.m.] Parents was placed in Living room by Parent request.
-[1:04:23 p.m.] Chidren was placed in Kitchen by Parent request.
-[1:04:36 p.m.] the user 1L has been logged in
-[1:04:39 p.m.] the user  has been logged in
-[1:04:43 p.m.] the user  has been logged in
-[1:04:47 p.m.] the user 1L has been logged in
-[1:18:52 p.m.] Parents was placed in Living room by Parent request.
-[1:18:52 p.m.] Chidren was placed in Kitchen by Parent request.
-[1:18:52 p.m.] Guests was placed in Kitchen by Parent request.
-[1:18:52 p.m.] Strangers was placed in Bedroom by Parent request.
-[1:18:57 p.m.] the user 1L has been logged in
-[1:24:27 p.m.] Parents was placed in Living room by Parent request.
-[1:24:27 p.m.] Guests was placed in Dining room by Parent request.
-[1:24:27 p.m.] Chidren was placed in Living room by Parent request.
-[1:24:27 p.m.] Strangers was placed in Kitchen by Parent request.
-[1:24:38 p.m.] the user 1L has been logged in
-[1:25:03 p.m.] the user 4L has been logged in
+[3:20:24 PM] Chidren was placed in Living room by Parent request.
+[3:20:24 PM] Guests was placed in Kitchen by Parent request.
+[3:20:24 PM] Parents was placed in Living room by Parent request.
+[3:20:24 PM] Strangers was placed in Dining room by Parent request.
+[3:34:14 PM] Parents was placed in Living room by Parent request.
+[3:34:14 PM] Chidren was placed in Living room by Parent request.
+[3:34:14 PM] Guests was placed in Kitchen by Parent request.
+[3:34:14 PM] Strangers was placed in Dining room by Parent request.
+[3:41:36 PM] Parents was placed in Living room by Parent request.
+[3:41:36 PM] Guests was placed in Kitchen by Parent request.
+[3:41:36 PM] Chidren was placed in Bedroom by Parent request.
+[3:41:36 PM] Strangers was placed in Dining room by Parent request.
+[3:41:47 PM] the user 1L has been logged in
+[3:50:15 PM] Guests was placed in Kitchen by Parent request.
+[3:50:15 PM] Strangers was placed in Dining room by Parent request.
+[3:50:15 PM] Chidren was placed in Bedroom by Parent request.
+[3:50:15 PM] Parents was placed in Living room by Parent request.
+[3:55:08 PM] [ window] in Living room was opened by Parents request.
+[3:55:48 PM] [ door] in Living room was opened by Parents request.
+[4:01:28 PM] [ window] in Living room was not opened by Parents request due to being in Away Mode.
+[4:01:42 PM] [light] in Living room was opened by Parents request.
+[4:01:47 PM] [ door] in Living room was not opened by Parents request due to being in Away Mode.
+[4:01:55 PM] [ door] in Living room was not opened by Parents request due to being in Away Mode.
+[4:01:55 PM] [ door] in Living room was not opened by Parents request due to being in Away Mode.
+[4:01:56 PM] [ door] in Living room was not closed by Parents request due to being in Away Mode.
+[4:04:13 PM] [ door] in Living room was closed by Parents request.
+[4:04:15 PM] [light] in Living room was closed by Parents request.
+[4:04:33 PM] [ window] in Living room was not opened by Parents request due to being in Away Mode.

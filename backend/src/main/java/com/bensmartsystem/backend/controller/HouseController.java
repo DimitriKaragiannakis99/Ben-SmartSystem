@@ -50,6 +50,31 @@ public class HouseController {
         return ResponseEntity.ok(Map.of("isAwayModeOn", house.isAwayModeOn()));
     }
 
+    @PostMapping("/updateTimer")
+    public ResponseEntity<?> updateTimer(@RequestParam int delayInSeconds) {
+        if (house == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("House has not been created");
+        }
+        house.getAlertTimer().setDelayInSeconds(delayInSeconds);
+        return ResponseEntity.ok("Timer delay updated to " + delayInSeconds + " seconds");
+    }
+
+    @GetMapping("/getTimerDelay")
+    public ResponseEntity<?> getTimerDelay() {
+        if (house == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("House has not been created");
+        }
+        return ResponseEntity.ok(Map.of("delayInSeconds", house.getAlertTimer().getDelayInSeconds()));
+    }
+
+    @GetMapping("/checkPoliceCalled")
+    public ResponseEntity<Boolean> checkPoliceCalled() {
+        if (house == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
+        }
+        return ResponseEntity.ok(house.isPoliceCalled());
+    }
+
     public static House getHouse() {
         return house;
     }
