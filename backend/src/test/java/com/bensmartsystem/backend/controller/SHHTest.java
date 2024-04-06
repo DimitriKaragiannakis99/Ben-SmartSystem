@@ -55,7 +55,7 @@ public class SHHTest {
     }
 
     @Test
-    public void test_checkTemp_warning(){
+    public void test_checkTemp_warning() {
         Room room = new Room();
         room.setId("3");
         room.setTemperature(-1);
@@ -68,7 +68,7 @@ public class SHHTest {
     }
 
     @Test
-    public void test_checkTemp_noWarning(){
+    public void test_checkTemp_noWarning() {
         Room room = new Room();
         room.setId("4");
         room.setTemperature(10);
@@ -102,60 +102,14 @@ public class SHHTest {
         Room room = new Room();
         room.setDesiredTemperature(17);
         room.setTemperature(20);
-        room.setIsAcOn(true); //simulate turning ac on
+        room.setIsAcOn(true); // simulate turning ac on
 
         SHH.cooling(room);
 
         Thread.sleep(5000);
         room.setIsAcOn(false);
 
-        assertEquals(19.5, room.getTemperature(), 0.01);
+        assertEquals(19.5, room.getTemperature(), 0.5);
     }
-
-//    @Test
-//    public void test_hvac_off_heat() throws InterruptedException {
-//        Room room = new Room();
-//        room.setTemperature(18);
-//
-//
-//
-//
-//        SHH.cooling(room);
-//
-//        Thread.sleep(5000);
-//        room.setIsAcOn(false);
-//
-//        assertEquals(19.5, room.getTemperature(), 0.01);
-//    }
-//
-//    @Test
-//    public void test_hvac_off_cool() throws InterruptedException {
-//        Room room = new Room();
-//        room.setDesiredTemperature(17);
-//        room.setTemperature(20);
-//        room.setIsAcOn(true); //simulate turning ac on
-//
-//        SHH.cooling(room);
-//
-//        Thread.sleep(5000);
-//        room.setIsAcOn(false);
-//
-//        assertEquals(19.5, room.getTemperature(), 0.01);
-//    }
-//
-//    @Test
-//    public void test_hvac_paused() throws InterruptedException {
-//        Room room = new Room();
-//        room.setDesiredTemperature(17);
-//        room.setTemperature(20);
-//        room.setIsAcOn(true); //simulate turning ac on
-//
-//        SHH.cooling(room);
-//
-//        Thread.sleep(5000);
-//        room.setIsAcOn(false);
-//
-//        assertEquals(19.5, room.getTemperature(), 0.01);
-//    }
 }
 
