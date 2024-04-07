@@ -5,7 +5,7 @@ import { RoomContext } from "./RoomProvider";
 const DashboardSHP = () => {
     const [rooms, setRooms] = useState([]);
     const [isAwayModeOn, setIsAwayModeOn] = useState(false);
-    const { toggleHasMotionDetector, toggleMotionDetector } = useContext(RoomContext);
+    const { toggleHasMotionDetector, toggleMotionDetector, setAllWindowsAndDoorsOff } = useContext(RoomContext);
     const [timerDelay, setTimerDelay] = useState(30);
 
     useEffect(() => {
@@ -62,6 +62,9 @@ const DashboardSHP = () => {
                 if(response.data && typeof response.data.isAwayModeOn === 'boolean') {
                     setIsAwayModeOn(response.data.isAwayModeOn);
                     console.log('Away mode toggled. Current state:', response.data.isAwayModeOn);
+                    //Update the simulation screen
+                    setAllWindowsAndDoorsOff();
+                    
                 } else {
                     console.error('Unexpected response structure:', response.data);
                 }
