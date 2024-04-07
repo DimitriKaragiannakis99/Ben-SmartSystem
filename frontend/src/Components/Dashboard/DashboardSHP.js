@@ -62,6 +62,9 @@ const DashboardSHP = () => {
                 if(response.data && typeof response.data.isAwayModeOn === 'boolean') {
                     setIsAwayModeOn(response.data.isAwayModeOn);
                     console.log('Away mode toggled. Current state:', response.data.isAwayModeOn);
+                    //Update the simulation screen
+
+                    
                 } else {
                     console.error('Unexpected response structure:', response.data);
                 }
