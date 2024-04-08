@@ -1,5 +1,6 @@
 package com.bensmartsystem.backend.controller;
 
+import com.bensmartsystem.backend.ConcreteMediator;
 import com.bensmartsystem.backend.model.House;
 import com.bensmartsystem.backend.model.Room;
 import com.bensmartsystem.backend.model.User;
@@ -30,6 +31,7 @@ import java.util.Map;
 @RequestMapping("/api")
 public class RoomController {
 
+    private static final ConcreteMediator m = ConcreteMediator.getInstance();
     @Getter
     private static final ArrayList<Room> roomList = new ArrayList<>();
 
@@ -332,4 +334,14 @@ public class RoomController {
 
     }
 
+
+    public static void closeAllDoorsAndWindows() {
+        // Go over all rooms 
+        for (Room room : roomList) {
+            room.setIsDoorOpen(false);
+            room.setIsWindowOpen(false);
+        }
+
+         System.out.println("Called this method");
+    }
 }

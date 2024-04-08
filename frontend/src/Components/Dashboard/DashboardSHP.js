@@ -7,7 +7,7 @@ import { CurrentUserContext } from "../CurrentUserProvider";
 const DashboardSHP = () => {
     const [rooms, setRooms] = useState([]);
     const [isAwayModeOn, setIsAwayModeOn] = useState(false);
-    const { toggleHasMotionDetector, toggleMotionDetector } = useContext(RoomContext);
+    const { toggleHasMotionDetector, toggleMotionDetector, setAllWindowsAndDoorsOff } = useContext(RoomContext);
     const [timerDelay, setTimerDelay] = useState(30);
     const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
     const {currSimUser, updateCurrSimUser} = useContext(CurrentUserContext);
@@ -42,7 +42,6 @@ const DashboardSHP = () => {
                     if (response.data) {
                         alert('Police have been called!');
                         clearInterval(intervalId); // Stop polling once the alert is triggered
-
                         const currentDate = new Date().toLocaleDateString();
                         const currentTime = new Date().toLocaleTimeString();
                         const message = `[${currentDate}][${currentTime}] The Police have been called. `;
@@ -71,6 +70,8 @@ const DashboardSHP = () => {
                 if(response.data && typeof response.data.isAwayModeOn === 'boolean') {
                     setIsAwayModeOn(response.data.isAwayModeOn);
                     console.log('Away mode toggled. Current state:', response.data.isAwayModeOn);
+                    //Update the simulation screen
+                    setAllWindowsAndDoorsOff();
                     const currentDate = new Date().toLocaleDateString();
                     const currentTime = new Date().toLocaleTimeString();
                     let awayModeVal = "on";
@@ -102,8 +103,6 @@ const DashboardSHP = () => {
 
             const message = `[${currentDate}][${currentTime}]The timer delay was updated by ${timerDelay} seconds by ${currSimUser} `;
             updateConsoleMessages(message);
-
-
         })
         .catch(error => {
             console.error('Error updating timer delay:', error);

@@ -1,27 +1,38 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import { RoomContext } from "./Dashboard/RoomProvider";
-import { OutputConsoleContext } from "./OutputConsoleProvider"
+import { OutputConsoleContext } from "./OutputConsoleProvider";
 import { CurrentUserContext } from "./CurrentUserProvider";
 
 function RoomInfo() {
-  const { toggleHVAC, isSHHOn,rooms } = useContext(RoomContext);
+  const { toggleHVAC, isSHHOn, rooms } = useContext(RoomContext);
   const [roomTemperatures, setRoomTemperatures] = useState([]);
+  const [oldRoomTemps, setOldRoomTemperatures] = useState([]);
+  const [alertTriggered, setAlertTriggered] = useState(true);
+
   let intervalRef = useRef();
-    	  // added OutputConsoleContext
-const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
+  // added OutputConsoleContext
+  const { consoleMessages, updateConsoleMessages } =
+    useContext(OutputConsoleContext);
 
 const {currSimUser, updateCurrSimUser} = useContext(CurrentUserContext);
 
+  // Use this without dependency array to call all functions once when the page renders
   useEffect(() => {
-    const intervalHandler = () => {
+    if (alertTriggered) {
       checkTemp();
-      fetchRoomTemperatures();
-    };
+    }
+  });
 
+  useEffect(() => {
+    // const intervalHandler = () => {
+    //   checkTemp();
+    //   fetchRoomTemperatures();
+    // };
+    //checkTemp();
     fetchRoomTemperatures();
-    intervalRef.current = setInterval(intervalHandler, 1000);
-    return () => clearInterval(intervalRef.current); //cleanup on unmount
+    //intervalRef.current = setInterval(intervalHandler, 1000);
+    //return () => clearInterval(intervalRef.current); //cleanup on unmount
   }, [roomTemperatures]);
 
   //Method to check room temp continously
@@ -29,16 +40,55 @@ const {currSimUser, updateCurrSimUser} = useContext(CurrentUserContext);
     axios
       .get("http://localhost:8080/api/temp/checkTemp")
       .then((response) => {
-        if (
-          response.data.includes("Temperature is below zero, pipes may burst!")
-        ) {
-          // this should be logged on console if alert is triggered
-          clearInterval(intervalRef.current);
+        if (response.data === "Temperature is normal") {
+          //temp is normal do nothing
+        } else {
+          setAlertTriggered(false); // stop the check and send alert
+          const currentTime = new Date().toLocaleTimeString();
+          const message = `[${currentTime}] ${response.data} `;
+          // updating OutputConsole context
+          updateConsoleMessages(message);
+          toggleAwayMode();
         }
       })
       .catch((error) => {
         console.error("Error checking room temp", error);
       });
+  };
+
+  const toggleAwayMode = () => {
+    axios
+      .get("http://localhost:8080/api/house/toggleAwayMode")
+      .catch((error) => {
+        console.error("Error toggling away mode", error);
+      });
+  };
+
+  const setOldTemps = () => {
+    axios
+      .get("http://localhost:8080/api/getAllRooms")
+      .then((response) => {
+        setOldRoomTemperatures(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching room information", error);
+      });
+  };
+
+  const checkTempLimit = () => {
+    //Now information in roomTemperature array is current so we can compare with old temps;
+    console.log("This shit working");
+    if (oldRoomTemps == null) {
+      setOldTemps();
+    }
+    for (i = 0; i < oldRoomTemps.length; i++) {
+      if (oldRoomTemps[i].temperature < roomTemperatures[i].temperature - 15) {
+        console.log("ALERT");
+        setAlertTriggered(false);
+      }
+      //We need to update the old temp with the new temps
+    }
+    oldRoomTemps = roomTemperatures;
   };
 
   const fetchRoomTemperatures = () => {
@@ -54,13 +104,14 @@ const {currSimUser, updateCurrSimUser} = useContext(CurrentUserContext);
 
   //Function must send a get request to backend
   const turn_HVAC_on = (roomid) => {
+    setAlertTriggered(true); // reset the check temp method
     axios
       .get("http://localhost:8080/api/temp/HVAC-on", {
         params: { roomID: roomid },
       })
       .then((response) => {
         console.log("hvac on");
-        const roomName = rooms.find(room => room.id === roomid)?.name;
+        const roomName = rooms.find((room) => room.id === roomid)?.name;
         const currentDate = new Date().toLocaleDateString();
         const currentTime = new Date().toLocaleTimeString();
         const message = `[${currentDate}][${currentTime}] the HVAC has been turned on in ${roomName} by ${currSimUser} `;
@@ -81,7 +132,7 @@ const {currSimUser, updateCurrSimUser} = useContext(CurrentUserContext);
       })
       .then((response) => {
         console.log("hvac off");
-        const roomName = rooms.find(room => room.id === roomid)?.name;
+        const roomName = rooms.find((room) => room.id === roomid)?.name;
         const currentDate = new Date().toLocaleDateString();
         const currentTime = new Date().toLocaleTimeString();
         const message = `[${currentDate}][${currentTime}] the HVAC has been turned off in ${roomName} by ${currSimUser} `;

@@ -59,3 +59,45 @@
 [4:04:13 PM] [ door] in Living room was closed by Parents request.
 [4:04:15 PM] [light] in Living room was closed by Parents request.
 [4:04:33 PM] [ window] in Living room was not opened by Parents request due to being in Away Mode.
+[7:59:27 p.m.] The window in Living room was blocked by Parent request.
+[7:59:29 p.m.] The window in Living room was unblocked by Parent request.
+[7:59:30 p.m.] Guests was placed in Living room by Parent request.
+[7:59:30 p.m.] Parents was placed in Kitchen by Parent request.
+[7:59:30 p.m.] Chidren was placed in Kitchen by Parent request.
+[7:59:30 p.m.] Strangers was placed in Bedroom by Parent request.
+[8:03:01 p.m.] Parents was placed in Living room by Parent request.
+[8:03:01 p.m.] Chidren was placed in Living room by Parent request.
+[8:03:01 p.m.] Guests was placed in Living room by Parent request.
+[8:03:01 p.m.] Strangers was placed in Living room by Parent request.
+[8:04:08 p.m.] Guests was placed in Living room by Parent request.
+[8:04:08 p.m.] Chidren was placed in Living room by Parent request.
+[8:04:08 p.m.] Parents was placed in Living room by Parent request.
+[8:04:08 p.m.] Strangers was placed in Living room by Parent request.
+[8:04:29 p.m.] [ door] in Living room, Kitchen was opened by Parents request.
+[8:04:52 p.m.] [ door] in Living room, Kitchen, Bedroom was opened by Parents request.
+[8:10:07 p.m.] Parents was placed in Living room by Parent request.
+[8:10:07 p.m.] Chidren was placed in Living room by Parent request.
+[8:10:07 p.m.] Guests was placed in Living room by Parent request.
+[8:10:07 p.m.] Strangers was placed in Living room by Parent request.
+[8:10:17 p.m.] [ door] in Living room was opened by Parents request.
+[8:17:23 p.m.] Chidren was placed in Kitchen by Parent request.
+[8:17:23 p.m.] Parents was placed in Dining room by Parent request.
+[8:17:23 p.m.] Guests was placed in Bedroom by Parent request.
+[8:17:23 p.m.] Strangers was placed in Kitchen by Parent request.
+[8:17:33 p.m.] [ door] in Living room, Kitchen, Bedroom was opened by Parents request.
+[8:17:34 p.m.] [ window] in Living room, Kitchen, Bedroom was opened by Parents request.
+[8:18:12 p.m.] [ window] in Living room was not opened by Parents request due to being in Away Mode.
+[8:23:00 p.m.] Parents was placed in Living room by Parent request.
+[8:23:00 p.m.] Chidren was placed in Living room by Parent request.
+[8:23:00 p.m.] Guests was placed in Living room by Parent request.
+[8:23:00 p.m.] Strangers was placed in Living room by Parent request.
+[8:23:14 p.m.] [ door] in Living room, Kitchen was opened by Parents request.
+[8:25:23 p.m.] [ window] in Living room was opened by Parents request.
+[8:25:30 p.m.] [ window] in Living room, Kitchen was opened by Parents request.
+[8:25:32 p.m.] [ window] in Living room, Kitchen was opened by Parents request.
+[8:25:33 p.m.] [ window] in Living room, Kitchen was opened by Parents request.
+[8:25:49 p.m.] [light] in Living room, Kitchen, Bedroom, Dining room was opened by Parents request.
+[8:25:52 p.m.] [ window] in Living room, Kitchen, Bedroom, Dining room was not opened by Parents request due to being in Away Mode.
+[8:26:00 p.m.] [ window] in Living room, Kitchen, Bedroom, Dining room was opened by Parents request.
+[8:27:08 p.m.] [ window] in Living room, Kitchen, Bedroom, Dining room was not opened by Parents request due to being in Away Mode.
+[8:27:16 p.m.] [ door] in Living room, Kitchen, Bedroom, Dining room was opened by Parents request.

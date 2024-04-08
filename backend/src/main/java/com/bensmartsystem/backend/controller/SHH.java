@@ -1,11 +1,13 @@
 package com.bensmartsystem.backend.controller;
 
+import com.bensmartsystem.backend.ConcreteMediator;
 import com.bensmartsystem.backend.model.Room;
-import com.bensmartsystem.backend.model.Time;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -14,7 +16,7 @@ import java.util.TimerTask;
 @RequestMapping("/api/temp")
 public class SHH {
 
-
+    private static final ConcreteMediator m = ConcreteMediator.getInstance();
     public static double getCurrentOutsideTemp(){
         return Double.parseDouble(OutsideTemperatureController.getCurrentOutTemp());
     }
@@ -40,7 +42,7 @@ public class SHH {
                         hvac_paused(room);
                     }
                 }
-                room.setTemperature(room.getTemperature()+ 0.1);
+                room.setTemperature(room.getTemperature()+ 0.1); //Changed value for testing purposes!!!
             }
         }, 0, 1000);
     }
@@ -85,7 +87,7 @@ public class SHH {
                     task.cancel();
                     return;
                 }
-                room.setTemperature(room.getTemperature()- 0.05);
+                room.setTemperature(room.getTemperature()- 0.05); //Changed value for testing purposes!!!
             }
         }, 0, 1000);
     }
@@ -98,8 +100,12 @@ public class SHH {
                 //Must log to console
                 return new ResponseEntity<>("Temperature is below zero, pipes may burst!", HttpStatus.OK);
             }
+            else if(room.getTemperature() >= 135){
+
+                return new ResponseEntity<>("Alert!: Temperature is above 135!", HttpStatus.OK);
+            }
         }
-        return new ResponseEntity<>("All room temps look ok!", HttpStatus.OK);
+        return new ResponseEntity<>("Temperature is normal", HttpStatus.OK);
     }
 
     @GetMapping ("/HVAC-on")
@@ -170,4 +176,41 @@ public class SHH {
             }
         }, 0, 1000);
     }
+
+    /**
+     * SHP <-> SHH functionality
+     * im going to get an array of all room temps, cross reference it with one 1 every minute and compare
+     */
+//    public static List<Double> make_room_temp_list(){
+//        List<Double> roomTempList = new ArrayList<>();
+//        for(Room room : RoomController.getRoomList()){
+//            roomTempList.add(room.getTemperature());
+//        }
+//        return roomTempList;
+//    }
+//
+//    //Limit right now as soon as it detects one room it breaks;
+//    public static void room_limit_check(Runnable callback) throws InterruptedException {
+//        List<Double> oldRoomTemps = make_room_temp_list();
+//        //Wait 1 minute:
+//        Timer task = new Timer(true);
+//        task.schedule(new TimerTask() {
+//            public void run() {
+//                List<Double> newRoomTemps = make_room_temp_list();
+//                for(int i=0; i < oldRoomTemps.size(); i++){
+//                    if (oldRoomTemps.get(i) < newRoomTemps.get(i) - 15) {
+//                        task.cancel();
+//                        callback.run();
+//                        return;
+//                    }
+//                }
+//            }
+//        }, 0, 60000);
+//    }
+//
+//    @GetMapping("/check-temp-limit")
+//    public ResponseEntity<String> check_limit() throws InterruptedException {
+//        room_limit_check(() ->  ResponseEntity.ok("Alert!"));
+//        return ResponseEntity.ok("");
+//    }
 }

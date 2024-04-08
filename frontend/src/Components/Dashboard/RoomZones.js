@@ -3,7 +3,7 @@ import axios from "axios";
 import { RoomContext } from "./RoomProvider";
 import ScheduleTemperatureModal from "./ScheduleTempModal";
 import SHH from "../SHH";
-import { OutputConsoleContext } from "../OutputConsoleProvider"
+import { OutputConsoleContext } from "../OutputConsoleProvider";
 import { CurrentUserContext } from "../CurrentUserProvider";
 
 const RoomZones = () => {
@@ -17,8 +17,9 @@ const RoomZones = () => {
   const {currSimUser, updateCurrSimUser} = useContext(CurrentUserContext);
   
 
-  	  // added OutputConsoleContext
-const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext);
+  // added OutputConsoleContext
+  const { consoleMessages, updateConsoleMessages } =
+    useContext(OutputConsoleContext);
 
   useEffect(() => {
     const fetchRoomsAndZones = async () => {
@@ -48,8 +49,7 @@ const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext
 
   const toggleSHH = () => {
     setIsSHHOn(!isSHHOn);
-  }
-
+  };
 
   const handleAddToZone = () => {
     if (selectedRoomIds.length === 0) {
@@ -87,7 +87,6 @@ const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext
     }
   };
 
-
   const handleModifyTemperature = (zoneId) => {
     const cleanedZoneId = zoneId.replace(/\D/g, "");
     const newTemperature = prompt("Set the new desired temperature:");
@@ -110,7 +109,7 @@ const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext
                 const message = `[${currentDate}][${currentTime}] the desired temperature ${newTemperature}C in rooms of zone ${zone.name} has been changed by  ${currSimUser} `;
                 // updating OutputConsole context
                 updateConsoleMessages(message);
-      
+
                 return { ...zone, temperature: newTemperature };
               } else {
                 return zone;
@@ -133,11 +132,10 @@ const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext
       newTemperature.trim() !== "" &&
       !isNaN(newTemperature) &&
       newTemperature >= -40 &&
-      newTemperature <= 40
+      newTemperature <= 200
     ) {
       const temperatureAsNumber = parseFloat(newTemperature);
 
-  
       axios
         .put(`http://localhost:8080/api/rooms/${roomId}/temperature`, {
           temperature: temperatureAsNumber,
@@ -145,7 +143,7 @@ const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext
         })
         .then(() => {
           updateRoomTemperature(roomId, temperatureAsNumber, true);
-          const roomName = rooms.find(room => room.id === roomId)?.name;
+          const roomName = rooms.find((room) => room.id === roomId)?.name;
           const currentDate = new Date().toLocaleDateString();
           const currentTime = new Date().toLocaleTimeString();
           const message = `[${currentDate}][${currentTime}] the desired temperature ${temperatureAsNumber}C in room ${roomName} has been overridden by ${currSimUser}`;
@@ -160,77 +158,80 @@ const {consoleMessages, updateConsoleMessages} = useContext(OutputConsoleContext
         });
     }
   };
-  
-  
 
   return (
     <div>
       <div>
-      <ul>
-        {rooms.map((room) => (
-          <li key={room.id}>
-            <label>
-              <input
-                type="checkbox"
-                checked={selectedRoomIds.includes(room.id)}
-                onChange={() => handleCheckboxChange(room.id)}
-              />
-              {room.name}
-            </label>
-            {room.temperature && (
+        <ul>
+          {rooms.map((room) => (
+            <li key={room.id}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedRoomIds.includes(room.id)}
+                  onChange={() => handleCheckboxChange(room.id)}
+                />
+                {room.name}
+              </label>
+              {room.temperature && (
+                <button
+                  onClick={() => handleModifyRoomOverriddenTemperature(room.id)}
+                  className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
+                >
+                  Modify Temperature
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={handleAddToZone}
+        >
+          Add to Zone
+        </button>
+        <div className="border-b border-gray-500 pt-4"></div>
+        {zones.map((zone) => (
+          <div key={zone.id}>
+            <strong>{zone.name}</strong>
+            <div className="flex">
               <button
-                onClick={() => handleModifyRoomOverriddenTemperature(room.id)}
-                className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
+                onClick={() => handleModifyTemperature(zone.id)}
+                className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded mr-1"
               >
                 Modify Temperature
               </button>
+              <button
+                onClick={() => setIsScheduleModalOpen(true)}
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-1"
+              >
+                Schedule Temperature
+              </button>
+              <ScheduleTemperatureModal
+                isOpen={isScheduleModalOpen}
+                onClose={() => setIsScheduleModalOpen(false)}
+                zoneId={zone.id}
+              />
+            </div>
+            {zone.rooms && (
+              <ul>
+                {zone.rooms.map((roomName) => (
+                  <li key={roomName}>{roomName}</li>
+                ))}
+              </ul>
             )}
-          </li>
-        ))}
-      </ul>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        onClick={handleAddToZone}
-      >
-        Add to Zone
-      </button>
-      <div className="border-b border-gray-500 pt-4"></div>
-      {zones.map((zone) => (
-        <div key={zone.id}>
-          <strong>{zone.name}</strong>
-          <div className="flex">
-          <button
-            onClick={() => handleModifyTemperature(zone.id)}
-            className="ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded mr-1"
-          >
-            Modify Temperature
-          </button>
-          <button
-            onClick={() => setIsScheduleModalOpen(true)}
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-1"
-          >
-            Schedule Temperature
-          </button>
-          <ScheduleTemperatureModal
-            isOpen={isScheduleModalOpen}
-            onClose={() => setIsScheduleModalOpen(false)}
-            zoneId={zone.id} 
-          />
           </div>
-          {zone.rooms && (
-            <ul>
-              {zone.rooms.map((roomName) => (
-                <li key={roomName}>{roomName}</li>
-              ))}
-            </ul>
-          )}
-        </div>
-      ))}
+        ))}
       </div>
       <div className="flex items-center justify-center">
-          <span className="pr-3">Toggle SHH:</span>
+        <span className="pr-3">Toggle SHH:</span>
         <label className="inline-flex relative items-center cursor-pointer">
-          <input type="checkbox" value={isSHHOn} onChange={toggleSHH} className="sr-only peer" />
+          <input
+            type="checkbox"
+            value={isSHHOn}
+            onChange={toggleSHH}
+            className="sr-only peer"
+          />
           <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
         </label>
       </div>

@@ -1,5 +1,6 @@
 package com.bensmartsystem.backend.controller;
 
+import com.bensmartsystem.backend.ConcreteMediator;
 import com.bensmartsystem.backend.model.House;
 import com.bensmartsystem.backend.model.Room;
 
@@ -15,6 +16,7 @@ import java.util.Map;
 @RequestMapping("/api/house")
 public class HouseController {
 
+    private static final ConcreteMediator m = ConcreteMediator.getInstance();
     private static House house;
 
     @PostMapping("/create")
@@ -37,6 +39,18 @@ public class HouseController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", false));
         }
+
+        // Implementing the permissions 
+         if (!RoomController.checkPermissions("shpAccess", 0)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", false));
+         }
+          
+
+        //If the it is being set to On then we will notify the mediator
+        if (!house.isAwayModeOn()) {
+            onAwayMode();
+        }
+
         house.setAwayModeOn(!house.isAwayModeOn());
         SimulationEventManager.getInstance().Notify("AwayModeToggled");
         return ResponseEntity.ok(Map.of("isAwayModeOn", house.isAwayModeOn()));
@@ -73,5 +87,10 @@ public class HouseController {
 
     public static void setHouse(House newHouse) {
         house = newHouse;
+    }
+
+    public void onAwayMode()
+    {
+        m.notify(this,"AwayMode");
     }
 }
