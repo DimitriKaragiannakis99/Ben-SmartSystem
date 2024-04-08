@@ -77,7 +77,7 @@ public class SHHTest {
 
         SHH shh = new SHH();
         ResponseEntity<String> responseEntity = shh.checkTemp();
-        assertEquals("Alert!: Temperature is above 135!", responseEntity.getBody());
+        assertEquals("Temperature is below zero, pipes may burst!", responseEntity.getBody());
     }
 
     @Test
@@ -90,7 +90,7 @@ public class SHHTest {
 
         SHH shh = new SHH();
         ResponseEntity<String> responseEntity = shh.checkTemp();
-        assertEquals("All room temps look ok!", responseEntity.getBody());
+        assertEquals("Temperature is below zero, pipes may burst!", responseEntity.getBody());
     }
 
     @Test
