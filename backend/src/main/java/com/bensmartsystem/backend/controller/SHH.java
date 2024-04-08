@@ -1,5 +1,6 @@
 package com.bensmartsystem.backend.controller;
 
+import com.bensmartsystem.backend.ConcreteMediator;
 import com.bensmartsystem.backend.model.Room;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import java.util.TimerTask;
 @RequestMapping("/api/temp")
 public class SHH {
 
-
+    private static final ConcreteMediator m = ConcreteMediator.getInstance();
     public static double getCurrentOutsideTemp(){
         return Double.parseDouble(OutsideTemperatureController.getCurrentOutTemp());
     }

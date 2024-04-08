@@ -82,6 +82,17 @@ const RoomProvider = ({ children }) => {
       });
   }
 
+  const setAllWindowsAndDoorsOff = () => {
+    //Set all rooms' windows and doors to be closed
+    setRooms((prevRooms) =>
+      prevRooms.map((room) => ({
+        ...room,
+        isWindowOpen: false,
+        isDoorOpen: false,
+      }))
+    );
+       
+  }
   const toggleHVAC = (roomId) => {
     axios.post(`http://localhost:8080/api/toggleHVAC?roomId=${roomId}`)
       .then(() => {
@@ -138,7 +149,7 @@ const RoomProvider = ({ children }) => {
 
 
   return (
-    <RoomContext.Provider value={{ rooms, toggleLight, toggleWindowBlocked, toggleWindow, toggleDoor, isSimulationOn, setSimulationOn, isSHHOn, setIsSHHOn, updateRoomTemperature, toggleHVAC, toggleHasMotionDetector, toggleMotionDetector }}>
+    <RoomContext.Provider value={{ rooms, toggleLight, toggleWindowBlocked, toggleWindow, toggleDoor, isSimulationOn, setSimulationOn, isSHHOn, setIsSHHOn, updateRoomTemperature, toggleHVAC, toggleHasMotionDetector, toggleMotionDetector, setAllWindowsAndDoorsOff }}>
       {children}
     </RoomContext.Provider>
   );
