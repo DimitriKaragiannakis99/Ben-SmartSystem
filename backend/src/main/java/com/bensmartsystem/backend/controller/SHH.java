@@ -42,7 +42,7 @@ public class SHH {
                         hvac_paused(room);
                     }
                 }
-                room.setTemperature(room.getTemperature()+ 5); //Changed value for testing purposes!!!
+                room.setTemperature(room.getTemperature()+ 0.1); //Changed value for testing purposes!!!
             }
         }, 0, 1000);
     }
@@ -87,7 +87,7 @@ public class SHH {
                     task.cancel();
                     return;
                 }
-                room.setTemperature(room.getTemperature()- 1); //Changed value for testing purposes!!!
+                room.setTemperature(room.getTemperature()- 0.05); //Changed value for testing purposes!!!
             }
         }, 0, 1000);
     }
