@@ -1,4 +1,6 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect ,useContext } from 'react';
+import { OutputConsoleContext } from "../OutputConsoleProvider"
+import { CurrentUserContext } from "../CurrentUserProvider";
 import axios from 'axios';
 
 export const RoomContext = createContext();
@@ -9,6 +11,11 @@ const RoomProvider = ({ children }) => {
   const [isSimulationOn, setSimulationOn] = useState(false);
   const [isSHHOn, setIsSHHOn] = useState(false);
   const [currentSimUser, setCurrentSimUser] = useState({ id: '', username: '' });
+  const { consoleMessages, updateConsoleMessages } =
+    useContext(OutputConsoleContext);
+
+  const {currSimUser, updateCurrSimUser} = useContext(CurrentUserContext);
+  
 
   useEffect(() => {
     axios.get('http://localhost:8080/api/rooms')
@@ -96,6 +103,7 @@ const RoomProvider = ({ children }) => {
       });
   }
 
+/*
   const toggleHasMotionDetector = (roomId) => {
     axios.post(`http://localhost:8080/api/toggleHasMotionDetector?roomId=${roomId}`)
         .then(() => {
@@ -108,8 +116,38 @@ const RoomProvider = ({ children }) => {
         .catch((error) => {
             console.error("Error toggling motion detector", error);
         });
-  };
+  };*/
 
+  const toggleHasMotionDetector = (roomId) => {
+    axios.post(`http://localhost:8080/api/toggleHasMotionDetector?roomId=${roomId}`)
+        .then(() => {
+            setRooms((prevRooms) =>
+                prevRooms.map((room) => {
+                   
+                  const currentDate = new Date().toLocaleDateString();
+                  const currentTime = new Date().toLocaleTimeString();
+                  if (room.id === roomId) {
+                        if (!room.hasMotionDetector) {
+                          
+                            const message1 = `[${currentDate}][${currentTime}] the hasMotionDetector has been turned on in ${room.name} by ${currSimUser} request.`;
+                            updateConsoleMessages(message1);
+                        } else {
+                          const message2 = `[${currentDate}][${currentTime}] the hasMotionDetector has been turned off in ${room.name} by ${currSimUser} request.`;
+                          updateConsoleMessages(message2);
+                        }
+                        return { ...room, hasMotionDetector: !room.hasMotionDetector };
+                    } else {
+                        return room;
+                    }
+                })
+            );
+        })
+        .catch((error) => {
+            console.error("Error toggling motion detector", error);
+        });
+};
+
+/*
   const toggleMotionDetector = (roomId) => {
     axios.post(`http://localhost:8080/api/toggleMotionDetector?roomId=${roomId}`)
         .then(() => {
@@ -122,7 +160,35 @@ const RoomProvider = ({ children }) => {
         .catch((error) => {
             console.error("Error toggling motion detector", error);
         });
-  };
+  };*/
+
+  const toggleMotionDetector = (roomId) => {
+    axios.post(`http://localhost:8080/api/toggleMotionDetector?roomId=${roomId}`)
+        .then(() => {
+            setRooms((prevRooms) =>
+                prevRooms.map((room) => {
+                    const currentDate = new Date().toLocaleDateString();
+                    const currentTime = new Date().toLocaleTimeString();
+                    if (room.id === roomId) {
+                        if (!room.isMotionDetectorOn) {
+                            const message1 = `[${currentDate}][${currentTime}] the motion detector has been turned on in ${room.name} by ${currSimUser} request.`;
+                            updateConsoleMessages(message1);
+                        } else {
+                            const message2 = `[${currentDate}][${currentTime}] the motion detector has been turned off in ${room.name} by ${currSimUser} request.`;
+                            updateConsoleMessages(message2);
+                        }
+                        return { ...room, isMotionDetectorOn: !room.isMotionDetectorOn };
+                    } else {
+                        return room;
+                    }
+                })
+            );
+        })
+        .catch((error) => {
+            console.error("Error toggling motion detector", error);
+        });
+};
+
 
   const updateRoomTemperature = (roomId, newTemperature, isOverridden) => {
     setRooms((prevRooms) =>
