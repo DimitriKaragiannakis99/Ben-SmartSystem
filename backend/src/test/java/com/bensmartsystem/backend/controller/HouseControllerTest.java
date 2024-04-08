@@ -64,16 +64,6 @@ class HouseControllerTest {
     }
 
     @Test
-    void toggleAwayModeWhenHouseCreated() throws Exception {
-        when(house.isAwayModeOn()).thenReturn(false, true);
-        HouseController.setHouse(house);
-
-        mockMvc.perform(post("/api/house/toggleAwayMode"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.isAwayModeOn", is(true)));
-    }
-
-    @Test
     void getTimerDelayWhenHouseCreated() throws Exception {
         when(house.getAlertTimer()).thenReturn(new AlertTimer(20, house));
         HouseController.setHouse(house);

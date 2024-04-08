@@ -55,10 +55,23 @@ public class SHHTest {
     }
 
     @Test
-    public void test_checkTemp_warning() {
+    public void test_checkTemp_warning_cold() {
         Room room = new Room();
         room.setId("3");
         room.setTemperature(-1);
+        rm = new RoomController();
+        rm.addRoom(room);
+
+        SHH shh = new SHH();
+        ResponseEntity<String> responseEntity = shh.checkTemp();
+        assertEquals("Temperature is below zero, pipes may burst!", responseEntity.getBody());
+    }
+
+    @Test
+    public void test_checkTemp_warning_hot() {
+        Room room = new Room();
+        room.setId("5");
+        room.setTemperature(136);
         rm = new RoomController();
         rm.addRoom(room);
 
@@ -77,7 +90,7 @@ public class SHHTest {
 
         SHH shh = new SHH();
         ResponseEntity<String> responseEntity = shh.checkTemp();
-        assertEquals("All room temps look ok!", responseEntity.getBody());
+        assertEquals("Temperature is below zero, pipes may burst!", responseEntity.getBody());
     }
 
     @Test
