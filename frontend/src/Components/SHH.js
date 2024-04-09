@@ -45,7 +45,8 @@ const {currSimUser, updateCurrSimUser} = useContext(CurrentUserContext);
         } else {
           setAlertTriggered(false); // stop the check and send alert
           const currentTime = new Date().toLocaleTimeString();
-          const message = `[${currentTime}] ${response.data} `;
+          const currentDate = new Date().toLocaleDateString();
+          const message = `[${currentDate}][${currentTime}] ${response.data}, away mode turned off. `;
           // updating OutputConsole context
           updateConsoleMessages(message);
           toggleAwayMode();
