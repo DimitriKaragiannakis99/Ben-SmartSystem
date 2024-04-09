@@ -10,6 +10,7 @@ import GetOutsideTemperature from "./components/GetOutsideTemperature";
 import OutsideTemperatureProvider from './components/OutsideTemperatureProvider'
 
 import OutputConsoleProvider from "./components/OutputConsoleProvider";
+import  CurrentUserProvider  from "./components/CurrentUserProvider";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
       
       <OutputConsoleProvider>
       <OutsideTemperatureProvider>
+      <CurrentUserProvider>
       <Router>
         <div>
           <Routes>
@@ -29,6 +31,7 @@ export default function App() {
           </Routes>
         </div>
       </Router>
+      </CurrentUserProvider>
       </OutsideTemperatureProvider>
       </OutputConsoleProvider>
     </div>

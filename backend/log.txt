@@ -1,4 +1,4 @@
-
+ 
 [3:22:58 PM] Guests was placed in Dining room by Parent request.
 [3:22:58 PM] Strangers was placed in Bedroom by Parent request.
 [3:22:58 PM] Parents was placed in Living room by Parent request.

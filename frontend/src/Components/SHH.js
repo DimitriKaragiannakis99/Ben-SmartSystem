@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import { RoomContext } from "./Dashboard/RoomProvider";
 import { OutputConsoleContext } from "./OutputConsoleProvider";
+import { CurrentUserContext } from "./CurrentUserProvider";
 
 function RoomInfo() {
   const { toggleHVAC, isSHHOn, rooms } = useContext(RoomContext);
@@ -13,6 +14,8 @@ function RoomInfo() {
   // added OutputConsoleContext
   const { consoleMessages, updateConsoleMessages } =
     useContext(OutputConsoleContext);
+
+const {currSimUser, updateCurrSimUser} = useContext(CurrentUserContext);
 
   // Use this without dependency array to call all functions once when the page renders
   useEffect(() => {
@@ -42,7 +45,8 @@ function RoomInfo() {
         } else {
           setAlertTriggered(false); // stop the check and send alert
           const currentTime = new Date().toLocaleTimeString();
-          const message = `[${currentTime}] ${response.data} `;
+          const currentDate = new Date().toLocaleDateString();
+          const message = `[${currentDate}][${currentTime}] ${response.data}, away mode turned off. `;
           // updating OutputConsole context
           updateConsoleMessages(message);
           toggleAwayMode();
@@ -109,8 +113,9 @@ function RoomInfo() {
       .then((response) => {
         console.log("hvac on");
         const roomName = rooms.find((room) => room.id === roomid)?.name;
+        const currentDate = new Date().toLocaleDateString();
         const currentTime = new Date().toLocaleTimeString();
-        const message = `[${currentTime}] the HVAC has been turned on in ${roomName} `;
+        const message = `[${currentDate}][${currentTime}] the HVAC has been turned on in ${roomName} by ${currSimUser} `;
         // updating OutputConsole context
         updateConsoleMessages(message);
         clearInterval(intervalRef.current);
@@ -129,10 +134,11 @@ function RoomInfo() {
       .then((response) => {
         console.log("hvac off");
         const roomName = rooms.find((room) => room.id === roomid)?.name;
+        const currentDate = new Date().toLocaleDateString();
         const currentTime = new Date().toLocaleTimeString();
-        const message = `[${currentTime}] the HVAC has been turned off in ${roomName} `;
-        // updating OutputConsole context
-        updateConsoleMessages(message);
+        const message = `[${currentDate}][${currentTime}] the HVAC has been turned off in ${roomName} by ${currSimUser} `;
+         // updating OutputConsole context
+         updateConsoleMessages(message);
         clearInterval(intervalRef.current);
         toggleHVAC(roomid);
       })
