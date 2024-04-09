@@ -75,7 +75,7 @@ public class SHH {
                         hvac_paused(room);
                     }
                 }
-                room.setTemperature(room.getTemperature()- 1);
+                room.setTemperature(room.getTemperature()- 0.1);
             }
         }, 0, 1000);
     }
