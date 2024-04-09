@@ -5,6 +5,7 @@ import com.bensmartsystem.backend.model.Room;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.bensmartsystem.backend.model.House;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,16 +93,28 @@ public class SHH {
         }, 0, 1000);
     }
 
+    public static void turnOffAwayModeIfNeeded() {
+        House house = HouseController.getHouse();
+        if (house != null && house.isAwayModeOn()) {
+            for (Room room : RoomController.getRoomList()) {
+                if (room.getTemperature() <= 0 || room.getTemperature() >= 135) {
+                    house.setAwayModeOn(false);
+                    System.out.println("Away mode turned off due to temperature limits.");
+                    break;
+                }
+            }
+        }
+    }
+
     //Should be called continuously to verify whether the temp drops bellow zero
     @GetMapping("/checkTemp")
-    public ResponseEntity<String> checkTemp(){
-        for(Room room : RoomController.getRoomList()){
-            if (room.getTemperature() <= 0){
-                //Must log to console
+    public ResponseEntity<String> checkTemp() {
+        for (Room room : RoomController.getRoomList()) {
+            if (room.getTemperature() <= 0) {
+                turnOffAwayModeIfNeeded();
                 return new ResponseEntity<>("Temperature is below zero, pipes may burst!", HttpStatus.OK);
-            }
-            else if(room.getTemperature() >= 135){
-
+            } else if (room.getTemperature() >= 135) {
+                turnOffAwayModeIfNeeded();
                 return new ResponseEntity<>("Alert!: Temperature is above 135!", HttpStatus.OK);
             }
         }
